@@ -4,6 +4,7 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,8 +38,9 @@ Route::group([
 ], function (){
     Route::apiResource('/cities', CityController::class);
     Route::apiResource('/areas', AreaController::class);
-    Route::apiResource('/locations', LocationController::class);
     Route::get('/areas/cities/{city}',[AreaController::class,'areas']);
+    Route::apiResource('/locations', LocationController::class);
+    Route::apiResource('/subscriptions', SubscriptionController::class);
 });
 
 
