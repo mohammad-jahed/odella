@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Area\StoreAreaRequest;
 use App\Http\Requests\Area\UpdateAreaRequest;
 use App\Models\Area;
+use App\Models\City;
 use Illuminate\Http\JsonResponse;
 
 class AreaController extends Controller
@@ -60,4 +61,11 @@ class AreaController extends Controller
         $area->delete();
         return $this->getJsonResponse([],"Area Deleted Successfully");
     }
+
+    public function areas(City $city): JsonResponse
+    {
+        $areas = $city->areas;
+        return $this->getJsonResponse($areas, "Areas Fetched Successfully");
+    }
+
 }

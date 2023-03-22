@@ -63,4 +63,5 @@ class CityController extends Controller
         $city->delete();
         return $this->getJsonResponse([],"City Deleted Successfully");
     }
+
 }

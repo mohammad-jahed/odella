@@ -38,6 +38,7 @@ Route::group([
     Route::apiResource('/cities', CityController::class);
     Route::apiResource('/areas', AreaController::class);
     Route::apiResource('/locations', LocationController::class);
+    Route::get('/areas/cities/{city}',[AreaController::class,'areas']);
 });
 
 
