@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\LocationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +36,8 @@ Route::group([
     'middleware'=>'api'
 ], function (){
     Route::apiResource('/cities', CityController::class);
+    Route::apiResource('/areas', AreaController::class);
+    Route::apiResource('/locations', LocationController::class);
 });
 
 
