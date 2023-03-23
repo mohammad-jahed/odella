@@ -25,8 +25,8 @@ class StoreCityRequest extends FormRequest
     {
         return [
             //
-            "name_ar"=>['required',"bail","string","max:256"],
-            "name_en"=>['required',"bail","string","max:256"],
+            "name_ar" => ['required', "bail", "string", "max:256"],
+            "name_en" => ['required', "bail", "string", "max:256"],
         ];
     }
 }

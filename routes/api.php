@@ -5,6 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\TransferPositionController;
+use App\Http\Controllers\TransportationLineController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,13 +36,15 @@ Route::group([
 });
 
 Route::group([
-    'middleware'=>'api'
-], function (){
+    'middleware' => 'api'
+], function () {
     Route::apiResource('/cities', CityController::class);
     Route::apiResource('/areas', AreaController::class);
-    Route::get('/areas/cities/{city}',[AreaController::class,'areas']);
+    Route::get('/areas/cities/{city}', [AreaController::class, 'areas']);
     Route::apiResource('/locations', LocationController::class);
     Route::apiResource('/subscriptions', SubscriptionController::class);
+    Route::apiResource('/transportationLines', TransportationLineController::class);
+    Route::apiResource('/transferPosition', TransferPositionController::class);
 });
 
 

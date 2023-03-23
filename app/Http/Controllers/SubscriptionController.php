@@ -14,9 +14,9 @@ class SubscriptionController extends Controller
      */
     public function index(): JsonResponse
     {
-        //
+
         $subscriptions = Subscription::all();
-        return $this->getJsonResponse($subscriptions,"Subscriptions Fetched Successfully");
+        return $this->getJsonResponse($subscriptions, "Subscriptions Fetched Successfully");
     }
 
     /**
@@ -24,10 +24,10 @@ class SubscriptionController extends Controller
      */
     public function store(StoreSubscriptionRequest $request): JsonResponse
     {
-        //
+
         $data = $request->validated();
         $subscription = Subscription::query()->create($data);
-        return $this->getJsonResponse($subscription,"Subscription Created Successfully");
+        return $this->getJsonResponse($subscription, "Subscription Created Successfully");
     }
 
     /**
@@ -35,7 +35,7 @@ class SubscriptionController extends Controller
      */
     public function show(Subscription $subscription): JsonResponse
     {
-        //
+
         return $this->getJsonResponse($subscription, "Subscription Fetched Successfully");
     }
 
@@ -44,10 +44,10 @@ class SubscriptionController extends Controller
      */
     public function update(UpdateSubscriptionRequest $request, Subscription $subscription): JsonResponse
     {
-        //
+
         $data = $request->validated();
         $subscription->update($data);
-        return $this->getJsonResponse($subscription,"Subscription Updated Successfully");
+        return $this->getJsonResponse($subscription, "Subscription Updated Successfully");
     }
 
     /**
@@ -55,8 +55,8 @@ class SubscriptionController extends Controller
      */
     public function destroy(Subscription $subscription): JsonResponse
     {
-        //
+
         $subscription->delete();
-        return $this->getJsonResponse([],"Subscription Deleted Successfully");
+        return $this->getJsonResponse([], "Subscription Deleted Successfully");
     }
 }

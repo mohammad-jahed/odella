@@ -14,9 +14,9 @@ class LocationController extends Controller
      */
     public function index(): JsonResponse
     {
-        //
+
         $locations = Location::all();
-        return $this->getJsonResponse($locations,"Locations Fetched Successfully");
+        return $this->getJsonResponse($locations, "Locations Fetched Successfully");
     }
 
     /**
@@ -24,7 +24,7 @@ class LocationController extends Controller
      */
     public function store(StoreLocationRequest $request): JsonResponse
     {
-        //
+
         $data = $request->validated();
         $location = Location::query()->create($data);
         return $this->getJsonResponse($location, "Location Created Successfully");
@@ -35,8 +35,8 @@ class LocationController extends Controller
      */
     public function show(Location $location): JsonResponse
     {
-        //
-        return $this->getJsonResponse($location,"Location Fetched Successfully");
+
+        return $this->getJsonResponse($location, "Location Fetched Successfully");
     }
 
 
@@ -45,7 +45,7 @@ class LocationController extends Controller
      */
     public function update(UpdateLocationRequest $request, Location $location): JsonResponse
     {
-        //
+
         $data = $request->validated();
         $location->update($data);
         return $this->getJsonResponse($location, "Location Updated Successfully");
@@ -56,7 +56,7 @@ class LocationController extends Controller
      */
     public function destroy(Location $location): JsonResponse
     {
-        //
+
         $location->delete();
         return $this->getJsonResponse([], "Location Deleted Successfully");
     }

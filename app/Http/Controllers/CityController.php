@@ -14,7 +14,7 @@ class CityController extends Controller
      */
     public function index(): JsonResponse
     {
-        //
+
 
         $cities = City::all();
         return $this->getJsonResponse($cities, "Cities Fetched Successfully");
@@ -26,10 +26,10 @@ class CityController extends Controller
      */
     public function store(StoreCityRequest $request): JsonResponse
     {
-        //
+
         $data = $request->validated();
         $city = City::query()->create($data);
-        return $this->getJsonResponse($city,"City Created Successfully");
+        return $this->getJsonResponse($city, "City Created Successfully");
     }
 
     /**
@@ -37,10 +37,9 @@ class CityController extends Controller
      */
     public function show(City $city): JsonResponse
     {
-        //
-        return $this->getJsonResponse($city,"City Fetched Successfully");
-    }
 
+        return $this->getJsonResponse($city, "City Fetched Successfully");
+    }
 
 
     /**
@@ -48,10 +47,10 @@ class CityController extends Controller
      */
     public function update(UpdateCityRequest $request, City $city): JsonResponse
     {
-        //
+
         $data = $request->validated();
         $city->update($data);
-        return $this->getJsonResponse($city,"City Updated Successfully");
+        return $this->getJsonResponse($city, "City Updated Successfully");
     }
 
     /**
@@ -59,9 +58,9 @@ class CityController extends Controller
      */
     public function destroy(City $city): JsonResponse
     {
-        //
+
         $city->delete();
-        return $this->getJsonResponse([],"City Deleted Successfully");
+        return $this->getJsonResponse([], "City Deleted Successfully");
     }
 
 }

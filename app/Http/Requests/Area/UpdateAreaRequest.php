@@ -26,9 +26,9 @@ class UpdateAreaRequest extends FormRequest
     {
         return [
             //
-            "city_id"=>[Rule::exists('cities','id')],
-            "name_ar"=>["bail","string","max:256"],
-            "name_en"=>["bail","string","max:256"],
+            "city_id" => [Rule::exists('cities', 'id')],
+            "name_ar" => ["bail", "string", "max:256"],
+            "name_en" => ["bail", "string", "max:256"],
         ];
     }
 }

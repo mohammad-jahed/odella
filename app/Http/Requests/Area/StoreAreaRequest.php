@@ -26,9 +26,9 @@ class StoreAreaRequest extends FormRequest
     {
         return [
             //
-            "city_id"=>["required",Rule::exists('cities','id')],
-            "name_ar"=>['required',"bail","string","max:256"],
-            "name_en"=>['required',"bail","string","max:256"],
+            "city_id" => ["required", Rule::exists('cities', 'id')],
+            "name_ar" => ['required', "bail", "string", "max:256"],
+            "name_en" => ['required', "bail", "string", "max:256"],
         ];
     }
 }

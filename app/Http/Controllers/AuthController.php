@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    //
+
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
@@ -48,13 +48,15 @@ class AuthController extends Controller
         return $this->createNewToken(auth('api')->refresh());
     }
 
-    public function userProfile() {
+    public function userProfile()
+    {
         return response()->json(auth('api')->user());
     }
+
     /**
      * Get the token array structure.
      *
-     * @param  string $token
+     * @param string $token
      *
      * @return JsonResponse
      */

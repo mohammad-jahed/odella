@@ -25,10 +25,10 @@ class UpdateSubscriptionRequest extends FormRequest
     {
         return [
             //
-            'name_ar'=>['bail','string','max:255'],
-            'name_en'=>['bail','string','max:255'],
-            'daysNumber'=>['bail','numeric'],
-            'price'=>['bail','numeric'],
+            'name_ar' => ['bail', 'string', 'max:255'],
+            'name_en' => ['bail', 'string', 'max:255'],
+            'daysNumber' => ['bail', 'numeric'],
+            'price' => ['bail', 'numeric'],
         ];
     }
 }

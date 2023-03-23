@@ -26,9 +26,9 @@ class StoreLocationRequest extends FormRequest
     {
         return [
             //
-            "city_id"=>['required',Rule::exists("cities","id")],
-            "area_id"=>['required',Rule::exists("areas","id")],
-            "street"=>['required','string','min:3','max:255']
+            "city_id" => ['required', Rule::exists("cities", "id")],
+            "area_id" => ['required', Rule::exists("areas", "id")],
+            "street" => ['required', 'string', 'min:3', 'max:255']
         ];
     }
 }

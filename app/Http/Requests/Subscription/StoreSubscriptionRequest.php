@@ -25,10 +25,10 @@ class StoreSubscriptionRequest extends FormRequest
     {
         return [
             //
-            'name_ar'=>['required','bail','string','max:255'],
-            'name_en'=>['required','bail','string','max:255'],
-            'daysNumber'=>['required','bail','numeric'],
-            'price'=>['required','bail','numeric'],
+            'name_ar' => ['required', 'bail', 'string', 'max:255'],
+            'name_en' => ['required', 'bail', 'string', 'max:255'],
+            'daysNumber' => ['required', 'bail', 'numeric'],
+            'price' => ['required', 'bail', 'numeric'],
         ];
     }
 }

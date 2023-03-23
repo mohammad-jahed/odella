@@ -15,7 +15,7 @@ class AreaController extends Controller
      */
     public function index(): JsonResponse
     {
-        //
+
         $areas = Area::all();
         return $this->getJsonResponse($areas, "Areas Fetched Successfully");
     }
@@ -25,10 +25,10 @@ class AreaController extends Controller
      */
     public function store(StoreAreaRequest $request): JsonResponse
     {
-        //
+
         $data = $request->validated();
         $area = Area::query()->create($data);
-        return $this->getJsonResponse($area,"Area Created Successfully");
+        return $this->getJsonResponse($area, "Area Created Successfully");
 
     }
 
@@ -37,8 +37,8 @@ class AreaController extends Controller
      */
     public function show(Area $area): JsonResponse
     {
-        //
-        return $this->getJsonResponse($area,"Area Fetched Successfully");
+
+        return $this->getJsonResponse($area, "Area Fetched Successfully");
     }
 
     /**
@@ -49,7 +49,7 @@ class AreaController extends Controller
         //
         $data = $request->validated();
         $area->update($data);
-        return $this->getJsonResponse($area,"Area Updated Successfully");
+        return $this->getJsonResponse($area, "Area Updated Successfully");
     }
 
     /**
@@ -57,9 +57,9 @@ class AreaController extends Controller
      */
     public function destroy(Area $area): JsonResponse
     {
-        //
+
         $area->delete();
-        return $this->getJsonResponse([],"Area Deleted Successfully");
+        return $this->getJsonResponse([], "Area Deleted Successfully");
     }
 
     public function areas(City $city): JsonResponse

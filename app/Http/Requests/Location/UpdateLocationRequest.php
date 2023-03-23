@@ -26,9 +26,9 @@ class UpdateLocationRequest extends FormRequest
     {
         return [
             //
-            "city_id"=>[Rule::exists("cities","id")],
-            "area_id"=>[Rule::exists("areas","id")],
-            "street"=>['string','min:3','max:255']
+            "city_id" => [Rule::exists("cities", "id")],
+            "area_id" => [Rule::exists("areas", "id")],
+            "street" => ['string', 'min:3', 'max:255']
         ];
     }
 }
