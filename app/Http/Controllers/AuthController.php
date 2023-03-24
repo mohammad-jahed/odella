@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Models\Location;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
@@ -34,10 +35,10 @@ class AuthController extends Controller
         /**
          * @var Authenticatable $user;
          */
-
         $credentials = $request->validated();
         $credentials['password'] = Hash::make($credentials['password']);
         $user = User::query()->create($credentials);
+        Location::query()->create($credentials);
         $role = Role::query()->where('name', 'like', 'Student')->get();
         $user->assignRole($role);
         return $this->getJsonResponse($user, "User Registered Successfully");

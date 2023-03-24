@@ -13,13 +13,9 @@ class CityController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * @throws AuthorizationException
      */
     public function index(): JsonResponse
     {
-
-        $user = auth()->user();
-        Gate::forUser($user)->authorize('getAllCities');
         $cities = City::all();
         return $this->getJsonResponse($cities, "Cities Fetched Successfully");
     }
@@ -40,12 +36,10 @@ class CityController extends Controller
 
     /**
      * Display the specified resource.
-     * @throws AuthorizationException
      */
     public function show(City $city): JsonResponse
     {
-        $user = auth()->user();
-        Gate::forUser($user)->authorize('getCity');
+
         return $this->getJsonResponse($city, "City Fetched Successfully");
     }
 

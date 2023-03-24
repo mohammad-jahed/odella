@@ -1,15 +1,13 @@
 <?php
 
 namespace App\Policies;
+
 use App\Models\User;
 
-class CityPolicy
+
+class AreaPolicy
 {
 
-
-    /**
-     * Determine whether the user can create models.
-     */
     public function create(User $user): bool
     {
         //
@@ -33,6 +31,5 @@ class CityPolicy
         //
         return $user->hasRole('Admin');
     }
-
 
 }
