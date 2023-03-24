@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
 {
@@ -29,10 +31,15 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request): JsonResponse
     {
+        /**
+         * @var Authenticatable $user;
+         */
 
         $credentials = $request->validated();
         $credentials['password'] = Hash::make($credentials['password']);
         $user = User::query()->create($credentials);
+        $role = Role::query()->where('name', 'like', 'Student')->get();
+        $user->assignRole($role);
         return $this->getJsonResponse($user, "User Registered Successfully");
     }
 

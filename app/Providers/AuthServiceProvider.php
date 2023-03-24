@@ -3,7 +3,10 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+use App\Models\City;
+use App\Policies\CityPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -14,6 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        City::class => CityPolicy::class,
     ];
 
     /**
@@ -21,6 +25,13 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Cities
+        Gate::define('createCity', [CityPolicy::class,'create']);
+        Gate::define('getAllCities', [CityPolicy::class,'viewAny']);
+        Gate::define('getCity', [CityPolicy::class,'view']);
+        Gate::define('updateCity', [CityPolicy::class,'update']);
+        Gate::define('deleteCity', [CityPolicy::class,'delete']);
+
+
     }
 }
