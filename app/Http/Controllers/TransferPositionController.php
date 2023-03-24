@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TransferPosition\StoreTransferPositionRequest;
 use App\Http\Requests\TransferPosition\UpdateTransferPositionRequest;
 use App\Models\TransferPosition;
+use App\Models\TransportationLine;
 use Illuminate\Http\JsonResponse;
+use SebastianBergmann\Diff\Line;
 
 class TransferPositionController extends Controller
 {
@@ -15,7 +17,7 @@ class TransferPositionController extends Controller
     public function index():JsonResponse
     {
         $transferPositions = TransferPosition::all();
-        return $this->getJsonResponse($transferPositions, "TransferPositions Fetch Successfully");
+        return $this->getJsonResponse($transferPositions, "TransferPositions Fetched Successfully");
     }
 
     /**
@@ -25,6 +27,13 @@ class TransferPositionController extends Controller
     {
         $data = $request->validated();
         $transferPosition = TransferPosition::query()->create($data);
+        /**
+         * @var TransferPosition $transferPosition;
+         * @var TransportationLine $line;
+         */
+
+        $line = TransportationLine::query()->where('id',$data['line_id'])->first();
+        $transferPosition->lines()->attach($line->id);
         return $this->getJsonResponse($transferPosition, "TransferPosition Created Successfully");
     }
 
@@ -33,7 +42,7 @@ class TransferPositionController extends Controller
      */
     public function show(TransferPosition $transferPosition): JsonResponse
     {
-        return $this->getJsonResponse($transferPosition, "TransferPosition Fetch Successfully");
+        return $this->getJsonResponse($transferPosition, "TransferPosition Fetched Successfully");
     }
 
     /**
@@ -43,6 +52,13 @@ class TransferPositionController extends Controller
     {
         $data = $request->validated();
         $transferPosition->update($data);
+        if(isset($data['line_id'])) {
+            /**
+             * @var TransportationLine $line;
+             */
+            $line = TransportationLine::query()->where('id',$data['line_id'])->first();
+            $transferPosition->lines()->sync($line->id);
+        }
         return $this->getJsonResponse($transferPosition, "TransferPosition Updated Successfully");
     }
 
@@ -53,5 +69,11 @@ class TransferPositionController extends Controller
     {
         $transferPosition->delete();
         return $this->getJsonResponse([], "TransferPosition Deleted Successfully");
+    }
+
+    public function positions(TransportationLine $line): JsonResponse
+    {
+        $positions = $line->positions;
+        return $this->getJsonResponse($positions,"Position Fetched Successfully");
     }
 }

@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @property integer $id;
+ * @property mixed $positions
+ */
+
 class TransportationLine extends Model
 {
     use HasFactory;
