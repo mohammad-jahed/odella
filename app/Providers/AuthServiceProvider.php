@@ -6,9 +6,11 @@ namespace App\Providers;
 use App\Models\Area;
 use App\Models\City;
 use App\Models\Location;
+use App\Models\Subscription;
 use App\Policies\AreaPolicy;
 use App\Policies\CityPolicy;
 use App\Policies\LocationPolicy;
+use App\Policies\SubscriptionPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -24,6 +26,7 @@ class AuthServiceProvider extends ServiceProvider
         City::class => CityPolicy::class,
         Area::class => AreaPolicy::class,
         Location::class => LocationPolicy::class,
+        Subscription::class => SubscriptionPolicy::class,
     ];
 
     /**
@@ -44,6 +47,12 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('getLocation', [LocationPolicy::class,'view']);
         Gate::define('updateLocation', [LocationPolicy::class,'update']);
         Gate::define('deleteLocation', [LocationPolicy::class,'delete']);
+        //Subscriptions
+        Gate::define('getAllSubscriptions', [SubscriptionPolicy::class,'viewAny']);
+        Gate::define('getSubscription', [SubscriptionPolicy::class,'view']);
+        Gate::define('createSubscription', [SubscriptionPolicy::class,'create']);
+        Gate::define('updateSubscription', [SubscriptionPolicy::class,'update']);
+        Gate::define('deleteSubscription', [SubscriptionPolicy::class,'delete']);
 
 
 
