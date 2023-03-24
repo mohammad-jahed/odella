@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TransportationLine\StoreTransportationLineRequest;
 use App\Http\Requests\TransportationLine\UpdateTransportationLineRequest;
 use App\Models\TransportationLine;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 
 class TransportationLineController extends Controller
 {
@@ -21,9 +23,12 @@ class TransportationLineController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * @throws AuthorizationException
      */
     public function store(StoreTransportationLineRequest $request): JsonResponse
     {
+        $user = auth()->user();
+        Gate::forUser($user)->authorize('createLine');
         $data = $request->validated();
 
         $transportationLine = TransportationLine::query()->create($data);
@@ -43,9 +48,12 @@ class TransportationLineController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * @throws AuthorizationException
      */
     public function update(UpdateTransportationLineRequest $request, TransportationLine $transportationLine): JsonResponse
     {
+        $user = auth()->user();
+        Gate::forUser($user)->authorize('updateLine');
         $data = $request->validated();
 
         $transportationLine->update($data);
@@ -54,9 +62,12 @@ class TransportationLineController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * @throws AuthorizationException
      */
     public function destroy(TransportationLine $transportationLine): JsonResponse
     {
+        $user = auth()->user();
+        Gate::forUser($user)->authorize('deleteLine');
         $transportationLine->delete();
 
         return $this->getJsonResponse([], "TransportationLine Deleted Successfully");

@@ -1,16 +1,18 @@
 <?php
 
 namespace App\Providers;
-
-// use Illuminate\Support\Facades\Gate;
 use App\Models\Area;
 use App\Models\City;
 use App\Models\Location;
 use App\Models\Subscription;
+use App\Models\TransferPosition;
+use App\Models\TransportationLine;
 use App\Policies\AreaPolicy;
 use App\Policies\CityPolicy;
 use App\Policies\LocationPolicy;
 use App\Policies\SubscriptionPolicy;
+use App\Policies\TransferPositionPolicy;
+use App\Policies\TransportationLinePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -22,11 +24,12 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
         City::class => CityPolicy::class,
         Area::class => AreaPolicy::class,
         Location::class => LocationPolicy::class,
         Subscription::class => SubscriptionPolicy::class,
+        TransportationLine::class => TransportationLinePolicy::class,
+        TransferPosition::class => TransferPositionPolicy::class,
     ];
 
     /**
@@ -53,8 +56,13 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('createSubscription', [SubscriptionPolicy::class,'create']);
         Gate::define('updateSubscription', [SubscriptionPolicy::class,'update']);
         Gate::define('deleteSubscription', [SubscriptionPolicy::class,'delete']);
-
-
-
+        //Lines
+        Gate::define('createLine', [TransportationLinePolicy::class,'create']);
+        Gate::define('updateLine', [TransportationLinePolicy::class,'update']);
+        Gate::define('deleteLine', [TransportationLinePolicy::class,'delete']);
+        //Positions
+        Gate::define('createPosition', [TransferPositionPolicy::class,'create']);
+        Gate::define('updatePosition', [TransferPositionPolicy::class,'update']);
+        Gate::define('deletePosition', [TransferPositionPolicy::class,'delete']);
     }
 }
