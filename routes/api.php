@@ -44,7 +44,7 @@ Route::group([
     Route::apiResource('/locations', LocationController::class);
     Route::apiResource('/subscriptions', SubscriptionController::class);
     Route::apiResource('/transportationLines', TransportationLineController::class);
-    Route::apiResource('/transferPosition', TransferPositionController::class);
+    Route::apiResource('/transferPositions', TransferPositionController::class);
 });
 
 
