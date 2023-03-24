@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Location;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class LocationPolicy
 {
@@ -14,6 +13,7 @@ class LocationPolicy
     public function viewAny(User $user): bool
     {
         //
+        return $user->hasRole('Admin');
     }
 
     /**
@@ -22,22 +22,36 @@ class LocationPolicy
     public function view(User $user, Location $location): bool
     {
         //
+        /**
+         * @var User $currentUser ;
+         * @var User[] $users;
+         */
+        $users = $location->users;
+        foreach ($users as $currentUser) {
+            if ($user->id == $currentUser->id) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
-    {
-        //
-    }
 
     /**
      * Determine whether the user can update the model.
      */
     public function update(User $user, Location $location): bool
     {
-        //
+        /**
+         * @var User $currentUser ;
+         * @var User[] $users;
+         */
+        $users = $location->users;
+        foreach ($users as $currentUser) {
+            if ($user->id == $currentUser->id) {
+                return true;
+            }
+        }
+        return false;
 
     }
 
@@ -47,21 +61,17 @@ class LocationPolicy
     public function delete(User $user, Location $location): bool
     {
         //
+        /**
+         * @var User $currentUser ;
+         * @var User[] $users;
+         */
+        $users = $location->users;
+        foreach ($users as $currentUser) {
+            if ($user->id == $currentUser->id) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Location $location): bool
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Location $location): bool
-    {
-        //
-    }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -12,6 +13,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * @method static create(mixed $credentials)
+ * @property integer $id;
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -23,9 +25,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
-        'city_id',
-        'area_id',
-        'street',
+        'location_id',
         'firstName',
         'lastName',
         'email',
@@ -69,6 +69,10 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims(): array
     {
         return [];
+    }
+
+    public function location(): BelongsTo {
+        return $this->belongsTo(Location::class);
     }
 
 

@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property integer $id;
+ * @property mixed $users
+ */
 class Location extends Model
 {
     use HasFactory;
@@ -24,7 +28,7 @@ class Location extends Model
         return $this->belongsTo(Area::class);
     }
 
-    public function user(): HasMany {
+    public function users(): HasMany {
         return $this->hasMany(User::class);
 
     }

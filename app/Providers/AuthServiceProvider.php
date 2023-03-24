@@ -40,6 +40,8 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('updateArea', [AreaPolicy::class,'update']);
         Gate::define('deleteArea', [AreaPolicy::class,'delete']);
         //Locations
+        Gate::define('getAllLocations', [LocationPolicy::class,'viewAny']);
+        Gate::define('getLocation', [LocationPolicy::class,'view']);
         Gate::define('updateLocation', [LocationPolicy::class,'update']);
         Gate::define('deleteLocation', [LocationPolicy::class,'delete']);
 

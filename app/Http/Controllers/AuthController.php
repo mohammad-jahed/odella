@@ -37,8 +37,13 @@ class AuthController extends Controller
          */
         $credentials = $request->validated();
         $credentials['password'] = Hash::make($credentials['password']);
+        /**
+         * @var Location $location;
+         */
+        $location = Location::query()->create($credentials);
+        $credentials['location_id'] = $location->id;
         $user = User::query()->create($credentials);
-        Location::query()->create($credentials);
+
         $role = Role::query()->where('name', 'like', 'Student')->get();
         $user->assignRole($role);
         return $this->getJsonResponse($user, "User Registered Successfully");
