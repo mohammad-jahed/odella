@@ -32,8 +32,8 @@ class RegisterRequest extends FormRequest
             'password' => ['required', 'bail', 'string', 'min:6', 'max:256'],
             'phoneNumber' => ['required', 'bail', 'numeric', 'min:10'],
             'subscription_id' => ['required', Rule::exists('subscriptions', 'id')],
-            'transportation-line_id' => ['required', Rule::exists('transportation_lines', 'id')],
-            'transfer-position_id' => ['required', Rule::exists('transfer_positions', 'id')],
+            'transportation_line_id' => ['required', Rule::exists('transportation_lines', 'id')],
+            'transfer_position_id' => ['required', Rule::exists('transfer_positions', 'id')],
         ];
     }
 }
