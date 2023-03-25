@@ -64,7 +64,7 @@ class TransferPositionController extends Controller
              * @var TransportationLine $line;
              */
             $line = TransportationLine::query()->where('id',$data['line_id'])->first();
-            $transferPosition->lines()->sync($line->id);
+            $transferPosition->lines()->sync([$line->id]);
         }
         return $this->getJsonResponse($transferPosition, "TransferPosition Updated Successfully");
     }

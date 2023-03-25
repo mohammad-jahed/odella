@@ -21,7 +21,8 @@ class RegisterRequest extends FormRequest
      *
      * @return array
      */
-    #[ArrayShape(['city_id' => "array", 'area_id' => "array", 'street' => "string[]", 'subscription_id' => "array", 'firstName' => "string[]", 'lastName' => "string[]", 'email' => "string[]", 'password' => "string[]", 'phoneNumber' => "string[]"])] public function rules(): array
+    #[ArrayShape(['city_id' => "array", 'area_id' => "array", 'street' => "string[]", 'subscription_id' => "array", 'firstName' => "string[]", 'lastName' => "string[]", 'email' => "string[]", 'password' => "string[]", 'phoneNumber' => "string[]"])]
+    public function rules(): array
     {
         return [
             //
