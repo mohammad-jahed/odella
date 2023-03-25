@@ -21,19 +21,19 @@ class RegisterRequest extends FormRequest
      *
      * @return array
      */
-    #[ArrayShape(['city_id' => "array", 'area_id' => "array", 'street' => "string[]", 'firstName' => "string[]", 'lastName' => "string[]", 'email' => "string[]", 'password' => "string[]", 'phoneNumber' => "string[]"])]
-    public function rules(): array
+    #[ArrayShape(['city_id' => "array", 'area_id' => "array", 'street' => "string[]", 'subscription_id' => "array", 'firstName' => "string[]", 'lastName' => "string[]", 'email' => "string[]", 'password' => "string[]", 'phoneNumber' => "string[]"])] public function rules(): array
     {
         return [
             //
-            'city_id'=>['required',Rule::exists('cities','id')],
-            'area_id'=>['required',Rule::exists('areas','id')],
-            'street'=>['required', 'string', 'min:3', 'max:255'],
+            'city_id' => ['required', Rule::exists('cities', 'id')],
+            'area_id' => ['required', Rule::exists('areas', 'id')],
+            'street' => ['required', 'string', 'min:3', 'max:255'],
             'firstName' => ['required', 'bail', 'string', 'max:255'],
             'lastName' => ['required', 'bail', 'string', 'max:255'],
             'email' => ['required', 'bail', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'bail', 'string', 'min:6', 'max:256'],
-            'phoneNumber' => ['required', 'bail', 'numeric', 'min:10']
+            'phoneNumber' => ['required', 'bail', 'numeric', 'min:10'],
+            'subscription_id' => ['required', Rule::exists('subscriptions', 'id')]
         ];
     }
 }
