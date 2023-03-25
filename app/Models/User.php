@@ -27,6 +27,8 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'location_id',
         'subscription_id',
+        'transportation_line_id',
+        'transfer_position_id',
         'firstName',
         'lastName',
         'email',
@@ -74,6 +76,19 @@ class User extends Authenticatable implements JWTSubject
 
     public function location(): BelongsTo {
         return $this->belongsTo(Location::class);
+    }
+
+
+    public function subscription(): BelongsTo {
+        return $this->belongsTo(Subscription::class);
+    }
+
+    public function line(): BelongsTo {
+        return $this->belongsTo(TransportationLine::class);
+    }
+
+    public function position(): BelongsTo {
+        return $this->belongsTo(TransferPosition::class);
     }
 
 

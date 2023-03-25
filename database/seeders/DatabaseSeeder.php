@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SubscriptionSeeder::class);
         $this->call(LocationSeeder::class);
         $this->call(UserSeeder::class);
-
+        $this->call(TransportationLinesSeeder::class);
+        $this->call(TransferPositionSeeder::class);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TransferPosition extends Model
 {
@@ -21,5 +22,9 @@ class TransferPosition extends Model
             'transfer_position_id',
             'transportation_line_id'
         );
+    }
+
+    public function users(): HasMany {
+        return $this->hasMany(User::class);
     }
 }

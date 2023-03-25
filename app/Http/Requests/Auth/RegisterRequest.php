@@ -4,8 +4,6 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use JetBrains\PhpStorm\ArrayShape;
-
 class RegisterRequest extends FormRequest
 {
     /**
@@ -21,7 +19,6 @@ class RegisterRequest extends FormRequest
      *
      * @return array
      */
-    #[ArrayShape(['city_id' => "array", 'area_id' => "array", 'street' => "string[]", 'subscription_id' => "array", 'firstName' => "string[]", 'lastName' => "string[]", 'email' => "string[]", 'password' => "string[]", 'phoneNumber' => "string[]"])]
     public function rules(): array
     {
         return [
@@ -34,7 +31,9 @@ class RegisterRequest extends FormRequest
             'email' => ['required', 'bail', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'bail', 'string', 'min:6', 'max:256'],
             'phoneNumber' => ['required', 'bail', 'numeric', 'min:10'],
-            'subscription_id' => ['required', Rule::exists('subscriptions', 'id')]
+            'subscription_id' => ['required', Rule::exists('subscriptions', 'id')],
+            'transportation-line_id' => ['required', Rule::exists('transportation_lines', 'id')],
+            'transfer-position_id' => ['required', Rule::exists('transfer_positions', 'id')],
         ];
     }
 }
