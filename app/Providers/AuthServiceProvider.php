@@ -7,8 +7,10 @@ use App\Models\Location;
 use App\Models\Subscription;
 use App\Models\TransferPosition;
 use App\Models\TransportationLine;
+use App\Models\User;
 use App\Policies\AreaPolicy;
 use App\Policies\CityPolicy;
+use App\Policies\EmployeeAndSupervisorPolicy;
 use App\Policies\LocationPolicy;
 use App\Policies\SubscriptionPolicy;
 use App\Policies\TransferPositionPolicy;
@@ -30,6 +32,7 @@ class AuthServiceProvider extends ServiceProvider
         Subscription::class => SubscriptionPolicy::class,
         TransportationLine::class => TransportationLinePolicy::class,
         TransferPosition::class => TransferPositionPolicy::class,
+        User::class => EmployeeAndSupervisorPolicy::class,
     ];
 
     /**
@@ -64,5 +67,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('createPosition', [TransferPositionPolicy::class,'create']);
         Gate::define('updatePosition', [TransferPositionPolicy::class,'update']);
         Gate::define('deletePosition', [TransferPositionPolicy::class,'delete']);
+        //Employees & Supervisor
+        Gate::define('createEmployee|Supervisor', [EmployeeAndSupervisorPolicy::class,'create']);
+
+
     }
 }

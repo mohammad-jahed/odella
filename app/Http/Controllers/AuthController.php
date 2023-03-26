@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Employee\EmployeeRegisterRequest;
-use App\Http\Requests\Supervisor\SupervisorRegisterRequest;
+use App\Http\Requests\Supervisor\StoreSupervisorRequest;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -72,7 +72,7 @@ class AuthController extends Controller
     }
 
 
-    public function SupervisorRegister(SupervisorRegisterRequest $request): JsonResponse
+    public function SupervisorRegister(StoreSupervisorRequest $request): JsonResponse
     {
         /**
          * @var Authenticatable $user ;

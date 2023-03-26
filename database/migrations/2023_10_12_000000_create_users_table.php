@@ -13,9 +13,9 @@ return new class extends Migration {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->foreignId('location_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('subscription_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('transportation_line_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('transfer_position_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('subscription_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('transportation_line_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('transfer_position_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('firstName');
             $table->string('lastName');
             $table->string('email')->unique();

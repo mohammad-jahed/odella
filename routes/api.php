@@ -3,9 +3,11 @@
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\StudentSubscriptionController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\TransferPositionController;
 use App\Http\Controllers\TransportationLineController;
 use Illuminate\Http\Request;
@@ -48,8 +50,11 @@ Route::group([
     Route::apiResource('/transferPositions', TransferPositionController::class);
     Route::get('/transferPositions/transportationLines/{line}', [TransferPositionController::class, 'positions']);
     Route::get('/unActiveStudent', [StudentSubscriptionController::class, 'unActiveStudent']);
-    Route::post('/EmployeeRegister', [AuthController::class, 'EmployeeRegister']);
-    Route::post('/SupervisorRegister', [AuthController::class, 'SupervisorRegister']);
+    Route::apiResource('/employees', EmployeeController::class);
+    Route::post('/employees/confirmRegistration/{user}', [EmployeeController::class, 'confirmRegistration']);
+    Route::apiResource('/supervisors', SupervisorController::class);
+
+
 });
 
 
