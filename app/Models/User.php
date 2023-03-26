@@ -14,6 +14,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 /**
  * @method static create(mixed $credentials)
  * @property integer $id;
+ * @property integer $status;
  */
 class User extends Authenticatable implements JWTSubject
 {

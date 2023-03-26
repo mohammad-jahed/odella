@@ -19,16 +19,24 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['studentLogin', 'register']]);
     }
 
-    public function login(LoginRequest $request): JsonResponse
+    public function studentLogin(LoginRequest $request): JsonResponse
     {
         $data = $request->validated();
 
         if (!$token = auth('api')->attempt($data)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+        /**
+         * @var User $user;
+         */
+        $user = auth()->user();
+        if ($user->status == 0){
+            return $this->getJsonResponse($user, "Un authorized, Please visit the Company Office to Complete Registration Process");
+        }
+
         return $this->createNewToken($token);
     }
 
