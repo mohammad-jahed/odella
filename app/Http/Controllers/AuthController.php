@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Employee\EmployeeRegisterRequest;
+use App\Http\Requests\Supervisor\SupervisorRegisterRequest;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -33,12 +35,12 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         /**
-         * @var Authenticatable $user;
+         * @var Authenticatable $user ;
          */
         $credentials = $request->validated();
         $credentials['password'] = Hash::make($credentials['password']);
         /**
-         * @var Location $location;
+         * @var Location $location ;
          */
         $location = Location::query()->create($credentials);
         $credentials['location_id'] = $location->id;
@@ -46,8 +48,49 @@ class AuthController extends Controller
 
         $role = Role::query()->where('name', 'like', 'Student')->get();
         $user->assignRole($role);
-        return $this->getJsonResponse($user, "User Registered Successfully");
+        return $this->getJsonResponse($user, "User Registered Successfully , Please visit the Company Office to Complete Registration Process");
     }
+
+
+    public function EmployeeRegister(EmployeeRegisterRequest $request): JsonResponse
+    {
+        /**
+         * @var Authenticatable $user ;
+         */
+        $credentials = $request->validated();
+        $credentials['password'] = Hash::make($credentials['password']);
+        /**
+         * @var Location $location ;
+         */
+        $location = Location::query()->create($credentials);
+        $credentials['location_id'] = $location->id;
+        $user = User::query()->create($credentials);
+
+        $role = Role::query()->where('name', 'like', 'Employee')->get();
+        $user->assignRole($role);
+        return $this->getJsonResponse($user, "Employee Registered Successfully");
+    }
+
+
+    public function SupervisorRegister(SupervisorRegisterRequest $request): JsonResponse
+    {
+        /**
+         * @var Authenticatable $user ;
+         */
+        $credentials = $request->validated();
+        $credentials['password'] = Hash::make($credentials['password']);
+        /**
+         * @var Location $location ;
+         */
+        $location = Location::query()->create($credentials);
+        $credentials['location_id'] = $location->id;
+        $user = User::query()->create($credentials);
+
+        $role = Role::query()->where('name', 'like', 'Supervisor')->get();
+        $user->assignRole($role);
+        return $this->getJsonResponse($user, "Supervisor Registered Successfully");
+    }
+
 
     public function logout(): JsonResponse
     {

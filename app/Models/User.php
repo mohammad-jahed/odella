@@ -33,7 +33,8 @@ class User extends Authenticatable implements JWTSubject
         'lastName',
         'email',
         'password',
-        'phoneNumber'
+        'phoneNumber',
+        'status'
     ];
 
     /**
@@ -60,16 +61,17 @@ class User extends Authenticatable implements JWTSubject
      *
      * @return mixed
      */
-    public function getJWTIdentifier(): mixed
+    public function getJWTIdentifier()
     {
         return $this->getKey();
     }
+
     /**
      * Return a key value array, containing any custom claims to be added to the JWT.
      *
      * @return array
      */
-    public function getJWTCustomClaims(): array
+    public function getJWTCustomClaims()
     {
         return [];
     }

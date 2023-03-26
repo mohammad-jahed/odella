@@ -4,6 +4,7 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\StudentSubscriptionController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TransferPositionController;
 use App\Http\Controllers\TransportationLineController;
@@ -45,7 +46,10 @@ Route::group([
     Route::apiResource('/subscriptions', SubscriptionController::class);
     Route::apiResource('/transportationLines', TransportationLineController::class);
     Route::apiResource('/transferPositions', TransferPositionController::class);
-    Route::get('/transferPositions/transportationLines/{line}',[TransferPositionController::class,'positions']);
+    Route::get('/transferPositions/transportationLines/{line}', [TransferPositionController::class, 'positions']);
+    Route::get('/unActiveStudent', [StudentSubscriptionController::class, 'unActiveStudent']);
+    Route::post('/EmployeeRegister', [AuthController::class, 'EmployeeRegister']);
+    Route::post('/SupervisorRegister', [AuthController::class, 'SupervisorRegister']);
 });
 
 
