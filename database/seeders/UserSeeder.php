@@ -17,5 +17,18 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+//        $data = [
+//            'location_id'=>1,
+//            'firstName' => 'Admin',
+//            'lastName' => 'Admin',
+//            'email' => 'admin@admin.com',
+//            'password' => 00000000,
+//            'phoneNumber' => '12345678',
+//        ];
+//        $user = User::query()->create($data);
+//        /////////////////////assign role to the Admin/////////////////////////////////
+//        $role = Role::query()->where('name', 'like', 'Admin')->get();
+//        $user->assignRole($role);
+
     }
 }
