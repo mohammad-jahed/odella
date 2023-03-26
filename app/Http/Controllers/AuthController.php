@@ -19,10 +19,10 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['studentLogin', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'adminRegister']]);
     }
 
-    public function studentLogin(LoginRequest $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
         $data = $request->validated();
 
@@ -39,6 +39,8 @@ class AuthController extends Controller
 
         return $this->createNewToken($token);
     }
+
+
 
     public function register(RegisterRequest $request): JsonResponse
     {
@@ -60,7 +62,7 @@ class AuthController extends Controller
     }
 
 
-    public function EmployeeRegister(EmployeeRegisterRequest $request): JsonResponse
+    public function adminRegister(EmployeeRegisterRequest $request): JsonResponse
     {
         /**
          * @var Authenticatable $user ;
@@ -72,33 +74,13 @@ class AuthController extends Controller
          */
         $location = Location::query()->create($credentials);
         $credentials['location_id'] = $location->id;
+        $credentials['status'] = 2;
         $user = User::query()->create($credentials);
 
-        $role = Role::query()->where('name', 'like', 'Employee')->get();
+        $role = Role::query()->where('name', 'like', 'Admin')->get();
         $user->assignRole($role);
-        return $this->getJsonResponse($user, "Employee Registered Successfully");
+        return $this->getJsonResponse($user, "Admin Registered Successfully");
     }
-
-
-    public function SupervisorRegister(StoreSupervisorRequest $request): JsonResponse
-    {
-        /**
-         * @var Authenticatable $user ;
-         */
-        $credentials = $request->validated();
-        $credentials['password'] = Hash::make($credentials['password']);
-        /**
-         * @var Location $location ;
-         */
-        $location = Location::query()->create($credentials);
-        $credentials['location_id'] = $location->id;
-        $user = User::query()->create($credentials);
-
-        $role = Role::query()->where('name', 'like', 'Supervisor')->get();
-        $user->assignRole($role);
-        return $this->getJsonResponse($user, "Supervisor Registered Successfully");
-    }
-
 
     public function logout(): JsonResponse
     {
@@ -112,7 +94,7 @@ class AuthController extends Controller
         return $this->createNewToken(auth('api')->refresh());
     }
 
-    public function userProfile()
+    public function userProfile(): JsonResponse
     {
         return response()->json(auth('api')->user());
     }
@@ -124,7 +106,7 @@ class AuthController extends Controller
      *
      * @return JsonResponse
      */
-    protected function createNewToken($token): JsonResponse
+    protected function createNewToken(string $token): JsonResponse
     {
         return response()->json([
             'access_token' => $token,

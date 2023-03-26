@@ -73,8 +73,13 @@ class EmployeeController extends Controller
         //
     }
 
+    /**
+     * @throws AuthorizationException
+     */
     public function confirmRegistration(User $user): JsonResponse
     {
+        $auth = auth()->user();
+        Gate::forUser($auth)->authorize('confirmRegistration');
         $user->update(['status'=>2]);
         return $this->getJsonResponse($user, "Your Register Is Confirmed Successfully");
     }

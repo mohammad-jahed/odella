@@ -16,6 +16,14 @@ class EmployeeAndSupervisorPolicy
         return $user->hasRole('Admin');
     }
 
+
+    public function confirmRegistration(User $user): bool{
+        return $user->hasRole('Employee');
+    }
+
+    public function getUnActiveStudents(User $user): bool{
+        return $user->hasRole('Employee');
+    }
     /**
      * Determine whether the user can view the model.
      */

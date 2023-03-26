@@ -13,6 +13,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * @method static create(mixed $credentials)
+ * @method static role(string $string)
  * @property integer $id;
  * @property integer $status;
  */
