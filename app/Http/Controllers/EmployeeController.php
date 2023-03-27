@@ -12,7 +12,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use JetBrains\PhpStorm\NoReturn;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\HttpFoundation\Response;
 
 class EmployeeController extends Controller
 {
@@ -32,22 +34,26 @@ class EmployeeController extends Controller
     {
         //
         $user = auth()->user();
-        Gate::forUser($user)->authorize('createEmployee|Supervisor');
-        /**
-         * @var Authenticatable $user ;
-         */
-        $credentials = $request->validated();
-        $credentials['password'] = Hash::make($credentials['password']);
-        /**
-         * @var Location $location ;
-         */
-        $location = Location::query()->create($credentials);
-        $credentials['location_id'] = $location->id;
-        $credentials['status'] = Status::NonStudents;
-        $user = User::query()->create($credentials);
-        $role = Role::query()->where('name', 'like', 'Employee')->get();
-        $user->assignRole($role);
-        return $this->getJsonResponse($user, "Employee Registered Successfully");
+        //Gate::forUser($user)->authorize('createEmployee|Supervisor');
+        if ($user->can('Add Employee')) {
+            /**
+             * @var Authenticatable $user ;
+             */
+            $credentials = $request->validated();
+            $credentials['password'] = Hash::make($credentials['password']);
+            /**
+             * @var Location $location ;
+             */
+            $location = Location::query()->create($credentials);
+            $credentials['location_id'] = $location->id;
+            $credentials['status'] = Status::NonStudents;
+            $user = User::query()->create($credentials);
+            $role = Role::query()->where('name', 'like', 'Employee')->get();
+            $user->assignRole($role);
+            return $this->getJsonResponse($user, "Employee Registered Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
@@ -80,8 +86,24 @@ class EmployeeController extends Controller
     public function confirmRegistration(User $user): JsonResponse
     {
         $auth = auth()->user();
-        Gate::forUser($auth)->authorize('confirmRegistration');
-        $user->update(['status' => Status::Active]);
-        return $this->getJsonResponse($user, "Your Register Is Confirmed Successfully");
+        //Gate::forUser($auth)->authorize('confirmRegistration');
+        if ($auth->can('Confirm registration')) {
+            $user->update(['status' => Status::Active]);
+            return $this->getJsonResponse($user, "Your Register Is Confirmed Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+    }
+
+
+    public function students(): JsonResponse
+    {
+        $user = auth()->user();
+        if ($user->can('View Student')) {
+            $students = User::role('Student')->get();
+            return $this->getJsonResponse($students, "Students Fetch Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 }

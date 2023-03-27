@@ -99,5 +99,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(TransferPosition::class);
     }
 
+    public function payments(){
+        return $this->belongsToMany(payment::class);
+    }
+
 
 }

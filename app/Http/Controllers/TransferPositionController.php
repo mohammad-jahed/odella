@@ -9,13 +9,14 @@ use App\Models\TransportationLine;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\Response;
 
 class TransferPositionController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index():JsonResponse
+    public function index(): JsonResponse
     {
         $transferPositions = TransferPosition::all();
         return $this->getJsonResponse($transferPositions, "TransferPositions Fetched Successfully");
@@ -28,17 +29,21 @@ class TransferPositionController extends Controller
     public function store(StoreTransferPositionRequest $request): JsonResponse
     {
         $user = auth()->user();
-        Gate::forUser($user)->authorize('createPosition');
-        $data = $request->validated();
-        $transferPosition = TransferPosition::query()->create($data);
-        /**
-         * @var TransferPosition $transferPosition;
-         * @var TransportationLine $line;
-         */
+        //Gate::forUser($user)->authorize('createPosition');
+        if ($user->can('Add Position')) {
+            $data = $request->validated();
+            $transferPosition = TransferPosition::query()->create($data);
+            /**
+             * @var TransferPosition $transferPosition ;
+             * @var TransportationLine $line ;
+             */
 
-        $line = TransportationLine::query()->where('id',$data['line_id'])->first();
-        $transferPosition->lines()->attach($line->id);
-        return $this->getJsonResponse($transferPosition, "TransferPosition Created Successfully");
+            $line = TransportationLine::query()->where('id', $data['line_id'])->first();
+            $transferPosition->lines()->attach($line->id);
+            return $this->getJsonResponse($transferPosition, "TransferPosition Created Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
@@ -56,17 +61,21 @@ class TransferPositionController extends Controller
     public function update(UpdateTransferPositionRequest $request, TransferPosition $transferPosition): JsonResponse
     {
         $user = auth()->user();
-        Gate::forUser($user)->authorize('updatePosition');
-        $data = $request->validated();
-        $transferPosition->update($data);
-        if(isset($data['line_id'])) {
-            /**
-             * @var TransportationLine $line;
-             */
-            $line = TransportationLine::query()->where('id',$data['line_id'])->first();
-            $transferPosition->lines()->sync([$line->id]);
+        //Gate::forUser($user)->authorize('updatePosition');
+        if ($user->can('Update Position')) {
+            $data = $request->validated();
+            $transferPosition->update($data);
+            if (isset($data['line_id'])) {
+                /**
+                 * @var TransportationLine $line ;
+                 */
+                $line = TransportationLine::query()->where('id', $data['line_id'])->first();
+                $transferPosition->lines()->sync([$line->id]);
+            }
+            return $this->getJsonResponse($transferPosition, "TransferPosition Updated Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
         }
-        return $this->getJsonResponse($transferPosition, "TransferPosition Updated Successfully");
     }
 
     /**
@@ -76,14 +85,18 @@ class TransferPositionController extends Controller
     public function destroy(TransferPosition $transferPosition): JsonResponse
     {
         $user = auth()->user();
-        Gate::forUser($user)->authorize('deletePosition');
-        $transferPosition->delete();
-        return $this->getJsonResponse([], "TransferPosition Deleted Successfully");
+        //Gate::forUser($user)->authorize('deletePosition');
+        if ($user->can('Delete Position')) {
+            $transferPosition->delete();
+            return $this->getJsonResponse([], "TransferPosition Deleted Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     public function positions(TransportationLine $line): JsonResponse
     {
         $positions = $line->positions;
-        return $this->getJsonResponse($positions,"Position Fetched Successfully");
+        return $this->getJsonResponse($positions, "Position Fetched Successfully");
     }
 }

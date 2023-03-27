@@ -8,6 +8,7 @@ use App\Models\City;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\Response;
 
 class CityController extends Controller
 {
@@ -28,10 +29,14 @@ class CityController extends Controller
     public function store(StoreCityRequest $request): JsonResponse
     {
         $user = auth()->user();
-        Gate::forUser($user)->authorize('createCity');
-        $data = $request->validated();
-        $city = City::query()->create($data);
-        return $this->getJsonResponse($city, "City Created Successfully");
+        //Gate::forUser($user)->authorize('createCity');
+        if ($user->can('Add City')) {
+            $data = $request->validated();
+            $city = City::query()->create($data);
+            return $this->getJsonResponse($city, "City Created Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
@@ -51,10 +56,14 @@ class CityController extends Controller
     public function update(UpdateCityRequest $request, City $city): JsonResponse
     {
         $user = auth()->user();
-        Gate::forUser($user)->authorize('updateCity');
-        $data = $request->validated();
-        $city->update($data);
-        return $this->getJsonResponse($city, "City Updated Successfully");
+        //Gate::forUser($user)->authorize('updateCity');
+        if ($user->can('Update City')) {
+            $data = $request->validated();
+            $city->update($data);
+            return $this->getJsonResponse($city, "City Updated Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
@@ -64,9 +73,13 @@ class CityController extends Controller
     public function destroy(City $city): JsonResponse
     {
         $user = auth()->user();
-        Gate::forUser($user)->authorize('deleteCity');
-        $city->delete();
-        return $this->getJsonResponse([], "City Deleted Successfully");
+        //Gate::forUser($user)->authorize('deleteCity');
+        if ($user->can('Delete City')) {
+            $city->delete();
+            return $this->getJsonResponse([], "City Deleted Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
 }

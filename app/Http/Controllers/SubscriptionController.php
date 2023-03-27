@@ -8,6 +8,8 @@ use App\Models\Subscription;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\Response;
+
 
 class SubscriptionController extends Controller
 {
@@ -17,8 +19,8 @@ class SubscriptionController extends Controller
      */
     public function index(): JsonResponse
     {
-        $user = auth()->user();
-        Gate::forUser($user)->authorize('getAllSubscriptions');
+//        $user = auth()->user();
+//        Gate::forUser($user)->authorize('getAllSubscriptions');
         $subscriptions = Subscription::all();
         return $this->getJsonResponse($subscriptions, "Subscriptions Fetched Successfully");
     }
@@ -30,10 +32,15 @@ class SubscriptionController extends Controller
     public function store(StoreSubscriptionRequest $request): JsonResponse
     {
         $user = auth()->user();
-        Gate::forUser($user)->authorize('createSubscription');
-        $data = $request->validated();
-        $subscription = Subscription::query()->create($data);
-        return $this->getJsonResponse($subscription, "Subscription Created Successfully");
+//        Gate::forUser($user)->authorize('createSubscription');
+        if ($user->can('Add Subscription')) {
+            $data = $request->validated();
+            $subscription = Subscription::query()->create($data);
+            return $this->getJsonResponse($subscription, "Subscription Created Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
     }
 
     /**
@@ -42,8 +49,8 @@ class SubscriptionController extends Controller
      */
     public function show(Subscription $subscription): JsonResponse
     {
-        $user = auth()->user();
-        Gate::forUser($user)->authorize('getSubscription');
+//        $user = auth()->user();
+//        Gate::forUser($user)->authorize('getSubscription');
         return $this->getJsonResponse($subscription, "Subscription Fetched Successfully");
     }
 
@@ -54,10 +61,15 @@ class SubscriptionController extends Controller
     public function update(UpdateSubscriptionRequest $request, Subscription $subscription): JsonResponse
     {
         $user = auth()->user();
-        Gate::forUser($user)->authorize('updateSubscription');
-        $data = $request->validated();
-        $subscription->update($data);
-        return $this->getJsonResponse($subscription, "Subscription Updated Successfully");
+        //Gate::forUser($user)->authorize('updateSubscription');
+        if ($user->can('delete Subscription')) {
+            $data = $request->validated();
+            $subscription->update($data);
+            return $this->getJsonResponse($subscription, "Subscription Updated Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
     }
 
     /**
@@ -67,8 +79,13 @@ class SubscriptionController extends Controller
     public function destroy(Subscription $subscription): JsonResponse
     {
         $user = auth()->user();
-        Gate::forUser($user)->authorize('deleteSubscription');
-        $subscription->delete();
-        return $this->getJsonResponse([], "Subscription Deleted Successfully");
+        //Gate::forUser($user)->authorize('deleteSubscription');
+        if ($user->can('delete Subscription')) {
+            $subscription->delete();
+            return $this->getJsonResponse([], "Subscription Deleted Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
     }
 }

@@ -9,6 +9,7 @@ use App\Models\City;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\Response;
 
 class AreaController extends Controller
 {
@@ -29,11 +30,15 @@ class AreaController extends Controller
     public function store(StoreAreaRequest $request): JsonResponse
     {
         $user = auth()->user();
-        Gate::forUser($user)->authorize('createArea');
+        //Gate::forUser($user)->authorize('createArea');
+        if ($user->can('Add Area')) {
 
-        $data = $request->validated();
-        $area = Area::query()->create($data);
-        return $this->getJsonResponse($area, "Area Created Successfully");
+            $data = $request->validated();
+            $area = Area::query()->create($data);
+            return $this->getJsonResponse($area, "Area Created Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
     }
 
@@ -54,10 +59,14 @@ class AreaController extends Controller
     {
 
         $user = auth()->user();
-        Gate::forUser($user)->authorize('updateArea');
-        $data = $request->validated();
-        $area->update($data);
-        return $this->getJsonResponse($area, "Area Updated Successfully");
+        //Gate::forUser($user)->authorize('updateArea');
+        if ($user->can('Update Area')) {
+            $data = $request->validated();
+            $area->update($data);
+            return $this->getJsonResponse($area, "Area Updated Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
@@ -67,9 +76,13 @@ class AreaController extends Controller
     public function destroy(Area $area): JsonResponse
     {
         $user = auth()->user();
-        Gate::forUser($user)->authorize('deleteArea');
-        $area->delete();
-        return $this->getJsonResponse([], "Area Deleted Successfully");
+        //Gate::forUser($user)->authorize('deleteArea');
+        if ($user->can('Delete Area')) {
+            $area->delete();
+            return $this->getJsonResponse([], "Area Deleted Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     public function areas(City $city): JsonResponse
