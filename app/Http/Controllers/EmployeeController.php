@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
 use App\Models\Location;
 use App\Models\User;
@@ -42,7 +43,7 @@ class EmployeeController extends Controller
          */
         $location = Location::query()->create($credentials);
         $credentials['location_id'] = $location->id;
-        $credentials['status'] = 2;
+        $credentials['status'] = Status::NonStudents;
         $user = User::query()->create($credentials);
         $role = Role::query()->where('name', 'like', 'Employee')->get();
         $user->assignRole($role);
@@ -80,7 +81,7 @@ class EmployeeController extends Controller
     {
         $auth = auth()->user();
         Gate::forUser($auth)->authorize('confirmRegistration');
-        $user->update(['status'=>2]);
+        $user->update(['status' => Status::Active]);
         return $this->getJsonResponse($user, "Your Register Is Confirmed Successfully");
     }
 }

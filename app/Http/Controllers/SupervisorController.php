@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
 use App\Http\Requests\Supervisor\StoreSupervisorRequest;
 use App\Models\Location;
 use App\Models\User;
@@ -42,7 +43,7 @@ class SupervisorController extends Controller
          */
         $location = Location::query()->create($credentials);
         $credentials['location_id'] = $location->id;
-        $credentials['status'] = 2;
+        $credentials['status'] = Status::NonStudents;
         $user = User::query()->create($credentials);
         $role = Role::query()->where('name', 'like', 'Supervisor')->get();
         $user->assignRole($role);

@@ -78,20 +78,24 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function location(): BelongsTo {
+    public function location(): BelongsTo
+    {
         return $this->belongsTo(Location::class);
     }
 
 
-    public function subscription(): BelongsTo {
+    public function subscription(): BelongsTo
+    {
         return $this->belongsTo(Subscription::class);
     }
 
-    public function line(): BelongsTo {
+    public function line(): BelongsTo
+    {
         return $this->belongsTo(TransportationLine::class);
     }
 
-    public function position(): BelongsTo {
+    public function position(): BelongsTo
+    {
         return $this->belongsTo(TransferPosition::class);
     }
 
