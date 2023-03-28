@@ -19,6 +19,10 @@ class StudentSubscriptionController extends Controller
         $auth = auth()->user();
         Gate::forUser($auth)->authorize('confirmRegistration');
         $students = User::role('Student')->where('status', Status::UnActive)->get();
-        return $this->getJsonResponse($students, "Students Fetch Successfully");
+        if ($students = []) {
+            return $this->getJsonResponse($students, "Students Fetch Successfully");
+        } else {
+            return $this->getJsonResponse([], "There Are No UnActive Students");
+        }
     }
 }
