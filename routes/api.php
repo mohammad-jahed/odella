@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BusController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\DriverController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\StudentSubscriptionController;
@@ -55,6 +57,8 @@ Route::group([
     Route::post('/employees/confirmRegistration/{user}', [EmployeeController::class, 'confirmRegistration']);
     Route::get('/employees/students/list', [EmployeeController::class, 'studentsList']);
     Route::apiResource('/supervisors', SupervisorController::class);
+    Route::apiResource('/buses',BusController::class);
+    Route::apiResource('/drivers',DriverController::class);
 
 
 });
