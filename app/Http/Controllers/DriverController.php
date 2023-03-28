@@ -27,16 +27,12 @@ class DriverController extends Controller
         }else{
             abort(Response::HTTP_FORBIDDEN);
         }
-
     }
-
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreDriverRequest $request): JsonResponse
     {
-
         /**
          * @var Driver $driver;
          * @var Bus $bus;
