@@ -40,6 +40,10 @@ class SupervisorController extends Controller
              */
             $credentials = $request->validated();
             $credentials['password'] = Hash::make($credentials['password']);
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('images/supervisor');
+                $credentials['image'] = $path;
+            }
             /**
              * @var Location $location ;
              */

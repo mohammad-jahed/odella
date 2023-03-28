@@ -21,10 +21,9 @@ class StoreEmployeeRequest extends FormRequest
      *
      * @return array
      */
-    #[ArrayShape(['city_id' => "array", 'area_id' => "array", 'street' => "string[]", 'firstName' => "string[]", 'lastName' => "string[]", 'email' => "string[]", 'password' => "string[]", 'phoneNumber' => "string[]"])]
-    public function rules(): array
+    #[ArrayShape(['city_id' => "array", 'area_id' => "array", 'street' => "string[]", 'firstName' => "string[]", 'lastName' => "string[]", 'email' => "string[]", 'password' => "string[]", 'phoneNumber' => "string[]", 'image' => "string[]"])] public function rules(): array
     {
-        return[
+        return [
             'city_id' => ['required', Rule::exists('cities', 'id')],
             'area_id' => ['required', Rule::exists('areas', 'id')],
             'street' => ['required', 'string', 'min:3', 'max:255'],
@@ -33,6 +32,7 @@ class StoreEmployeeRequest extends FormRequest
             'email' => ['required', 'bail', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'bail', 'string', 'min:6', 'max:256'],
             'phoneNumber' => ['required', 'bail', 'numeric', 'min:10'],
+            'image' => ['image', 'max:1000', 'bail'],
         ];
     }
 }

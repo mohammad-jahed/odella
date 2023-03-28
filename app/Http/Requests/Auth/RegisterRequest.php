@@ -4,6 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+
 class RegisterRequest extends FormRequest
 {
     /**
@@ -34,6 +35,7 @@ class RegisterRequest extends FormRequest
             'subscription_id' => ['required', Rule::exists('subscriptions', 'id')],
             'transportation_line_id' => ['required', Rule::exists('transportation_lines', 'id')],
             'transfer_position_id' => ['required', Rule::exists('transfer_positions', 'id')],
+            'image' => ['image', 'max:1000', 'bail'],
         ];
     }
 }
