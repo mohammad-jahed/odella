@@ -6,6 +6,7 @@ use App\Enums\Status;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Employee\EmployeeRegisterRequest;
+use App\Http\Requests\Employee\StoreEmployeeRequest;
 use App\Http\Requests\Supervisor\StoreSupervisorRequest;
 use App\Models\Location;
 use App\Models\User;
@@ -67,7 +68,7 @@ class AuthController extends Controller
     }
 
 
-    public function adminRegister(EmployeeRegisterRequest $request): JsonResponse
+    public function adminRegister(StoreEmployeeRequest $request): JsonResponse
     {
         /**
          * @var Authenticatable $user ;
