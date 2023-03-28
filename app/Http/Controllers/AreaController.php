@@ -6,6 +6,7 @@ use App\Http\Requests\Area\StoreAreaRequest;
 use App\Http\Requests\Area\UpdateAreaRequest;
 use App\Models\Area;
 use App\Models\City;
+use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
@@ -25,12 +26,13 @@ class AreaController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * @throws AuthorizationException
      */
     public function store(StoreAreaRequest $request): JsonResponse
     {
+        /**
+         * @var User $user;
+         */
         $user = auth()->user();
-        //Gate::forUser($user)->authorize('createArea');
         if ($user->can('Add Area')) {
 
             $data = $request->validated();
@@ -47,19 +49,18 @@ class AreaController extends Controller
      */
     public function show(Area $area): JsonResponse
     {
-
         return $this->getJsonResponse($area, "Area Fetched Successfully");
     }
 
     /**
      * Update the specified resource in storage.
-     * @throws AuthorizationException
      */
     public function update(UpdateAreaRequest $request, Area $area): JsonResponse
     {
-
+        /**
+         * @var User $user;
+         */
         $user = auth()->user();
-        //Gate::forUser($user)->authorize('updateArea');
         if ($user->can('Update Area')) {
             $data = $request->validated();
             $area->update($data);
@@ -71,12 +72,15 @@ class AreaController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * @throws AuthorizationException
+     * @param Area $area
+     * @return JsonResponse
      */
     public function destroy(Area $area): JsonResponse
     {
+        /**
+         * @var User $user;
+         */
         $user = auth()->user();
-        //Gate::forUser($user)->authorize('deleteArea');
         if ($user->can('Delete Area')) {
             $area->delete();
             return $this->getJsonResponse([], "Area Deleted Successfully");

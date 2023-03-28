@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Bus\StorBusRequest;
+use App\Http\Requests\Bus\StoreBusRequest;
 use App\Http\Requests\Bus\UpdateBusRequest;
 use App\Models\Bus;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class BusController extends Controller
 {
@@ -14,19 +16,39 @@ class BusController extends Controller
      */
     public function index(): JsonResponse
     {
-        $buses = Bus::all();
-        return $this->getJsonResponse($buses, "Buses Fetched Successfully");
+        /**
+         * @var User $user ;
+         */
+        $user = auth()->user();
+        if ($user->can('View Buses')) {
+            $buses = Bus::all();
+            return $this->getJsonResponse($buses, "Buses Fetched Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorBusRequest $request): JsonResponse
+    public function store(StoreBusRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        $bus = Bus::query()->create($data);
-        return $this->getJsonResponse($bus, "Bus Created Successfully");
+        /**
+         * @var User $user ;
+         */
+        $user = auth()->user();
+        if ($user->can('Add Bus')) {
+            $data = $request->validated();
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('images/users');
+                $data['image'] = $path;
+            }
+            $bus = Bus::query()->create($data);
+            return $this->getJsonResponse($bus, "Bus Created Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
@@ -42,9 +64,22 @@ class BusController extends Controller
      */
     public function update(UpdateBusRequest $request, Bus $bus): JsonResponse
     {
-        $data = $request->validated();
-        $bus->update($data);
-        return $this->getJsonResponse($bus, "Bus Updated Successfully");
+        /**
+         * @var User $user ;
+         */
+        $user = auth()->user();
+        if ($user->can('Update Bus')) {
+            $data = $request->validated();
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('images/users');
+                $data['image'] = $path;
+            }
+            $bus->update($data);
+            return $this->getJsonResponse($bus, "Bus Updated Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
     }
 
     /**
@@ -52,7 +87,15 @@ class BusController extends Controller
      */
     public function destroy(Bus $bus): JsonResponse
     {
-        $bus->delete();
-        return $this->getJsonResponse([], "Bus Deleted Successfully");
+        /**
+         * @var User $user ;
+         */
+        $user = auth()->user();
+        if ($user->can('Delete Bus')) {
+            $bus->delete();
+            return $this->getJsonResponse([], "Bus Deleted Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 }

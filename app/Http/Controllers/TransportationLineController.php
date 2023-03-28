@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TransportationLine\StoreTransportationLineRequest;
 use App\Http\Requests\TransportationLine\UpdateTransportationLineRequest;
 use App\Models\TransportationLine;
-use Illuminate\Auth\Access\AuthorizationException;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class TransportationLineController extends Controller
@@ -24,10 +23,12 @@ class TransportationLineController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * @throws AuthorizationException
      */
     public function store(StoreTransportationLineRequest $request): JsonResponse
     {
+        /**
+         * @var User $user;
+         */
         $user = auth()->user();
         //Gate::forUser($user)->authorize('createLine');
         if ($user->can('Add Transportation_Line')) {
@@ -53,10 +54,12 @@ class TransportationLineController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * @throws AuthorizationException
      */
     public function update(UpdateTransportationLineRequest $request, TransportationLine $transportationLine): JsonResponse
     {
+        /**
+         * @var User $user;
+         */
         $user = auth()->user();
 //        Gate::forUser($user)->authorize('updateLine');
         if ($user->can('Update Transportation_Line')) {
@@ -71,10 +74,12 @@ class TransportationLineController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * @throws AuthorizationException
      */
     public function destroy(TransportationLine $transportationLine): JsonResponse
     {
+        /**
+         * @var User $user;
+         */
         $user = auth()->user();
         //Gate::forUser($user)->authorize('deleteLine');
         if ($user->can('Delete Transportation_Line')) {

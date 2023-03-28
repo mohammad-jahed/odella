@@ -6,9 +6,8 @@ use App\Http\Requests\TransferPosition\StoreTransferPositionRequest;
 use App\Http\Requests\TransferPosition\UpdateTransferPositionRequest;
 use App\Models\TransferPosition;
 use App\Models\TransportationLine;
-use Illuminate\Auth\Access\AuthorizationException;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class TransferPositionController extends Controller
@@ -24,10 +23,12 @@ class TransferPositionController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * @throws AuthorizationException
      */
     public function store(StoreTransferPositionRequest $request): JsonResponse
     {
+        /**
+         * @var User $user;
+         */
         $user = auth()->user();
         //Gate::forUser($user)->authorize('createPosition');
         if ($user->can('Add Position')) {
@@ -56,10 +57,12 @@ class TransferPositionController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * @throws AuthorizationException
      */
     public function update(UpdateTransferPositionRequest $request, TransferPosition $transferPosition): JsonResponse
     {
+        /**
+         * @var User $user;
+         */
         $user = auth()->user();
         //Gate::forUser($user)->authorize('updatePosition');
         if ($user->can('Update Position')) {
@@ -80,10 +83,12 @@ class TransferPositionController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * @throws AuthorizationException
      */
     public function destroy(TransferPosition $transferPosition): JsonResponse
     {
+        /**
+         * @var User $user;
+         */
         $user = auth()->user();
         //Gate::forUser($user)->authorize('deletePosition');
         if ($user->can('Delete Position')) {

@@ -6,16 +6,13 @@ use App\Enums\Status;
 use App\Http\Requests\Employee\ConfirmRegistrationRequest;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
 use App\Models\Location;
-use App\Models\pay;
-use App\Models\payment;
+use App\Models\Pay;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
-use JetBrains\PhpStorm\NoReturn;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,16 +28,17 @@ class EmployeeController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * @throws AuthorizationException
      */
     public function store(StoreEmployeeRequest $request): JsonResponse
     {
         //
+        /**
+         * @var User $user;
+         */
         $user = auth()->user();
-        //Gate::forUser($user)->authorize('createEmployee|Supervisor');
         if ($user->can('Add Employee')) {
             /**
-             * @var Authenticatable $user ;
+             * @var User $user ;
              */
             $credentials = $request->validated();
             $credentials['password'] = Hash::make($credentials['password']);
@@ -88,15 +86,17 @@ class EmployeeController extends Controller
     }
 
     /**
-     * @throws AuthorizationException
      */
     public function confirmRegistration(User $user, ConfirmRegistrationRequest $request): JsonResponse
     {
+        /**
+         * @var User $auth;
+         */
         $auth = auth()->user();
-        //Gate::forUser($auth)->authorize('confirmRegistration');
+
         if ($auth->can('Confirm registration')) {
             $Credentials = $request->validated();
-            $pay = pay::query()->create($Credentials);
+            $pay = Pay::query()->create($Credentials);
             $user->payments()->attach($pay);
             $user->update(['status' => Status::Active]);
             $user->load('payments');
@@ -109,12 +109,27 @@ class EmployeeController extends Controller
 
     public function studentsList(): JsonResponse
     {
+        /**
+         * @var User $user;
+         */
         $user = auth()->user();
         if ($user->can('View Student')) {
-            $students = User::role('Student')->get();
+            $students = User::role('Student')->where('status', Status::Active)->get();
             return $this->getJsonResponse($students, "Students Fetch Successfully");
         } else {
             abort(Response::HTTP_FORBIDDEN);
         }
+    }
+
+    /**
+     * @throws AuthorizationException
+     */
+    public function getUnActiveStudents(): JsonResponse
+    {
+        $auth = auth()->user();
+        Gate::forUser($auth)->authorize('confirmRegistration');
+        $students = User::role('Student')->where('status', Status::UnActive)->get();
+        return $this->getJsonResponse($students, "Students Fetch Successfully");
+
     }
 }

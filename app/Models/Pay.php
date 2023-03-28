@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class pay extends Model
+class Pay extends Model
 {
     use HasFactory;
 
@@ -17,7 +18,7 @@ class pay extends Model
         'date' => 'datetime',
     ];
 
-    public function payments()
+    public function payments(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'payments', 'pay_id', 'user_id');
     }

@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Subscription\StoreSubscriptionRequest;
 use App\Http\Requests\Subscription\UpdateSubscriptionRequest;
 use App\Models\Subscription;
-use Illuminate\Auth\Access\AuthorizationException;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -15,7 +14,6 @@ class SubscriptionController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * @throws AuthorizationException
      */
     public function index(): JsonResponse
     {
@@ -27,10 +25,12 @@ class SubscriptionController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * @throws AuthorizationException
      */
     public function store(StoreSubscriptionRequest $request): JsonResponse
     {
+        /**
+         * @var User $user ;
+         */
         $user = auth()->user();
 //        Gate::forUser($user)->authorize('createSubscription');
         if ($user->can('Add Subscription')) {
@@ -45,7 +45,6 @@ class SubscriptionController extends Controller
 
     /**
      * Display the specified resource.
-     * @throws AuthorizationException
      */
     public function show(Subscription $subscription): JsonResponse
     {
@@ -56,10 +55,15 @@ class SubscriptionController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * @throws AuthorizationException
+     * @param UpdateSubscriptionRequest $request
+     * @param Subscription $subscription
+     * @return JsonResponse
      */
     public function update(UpdateSubscriptionRequest $request, Subscription $subscription): JsonResponse
     {
+        /**
+         * @var User $user ;
+         */
         $user = auth()->user();
         //Gate::forUser($user)->authorize('updateSubscription');
         if ($user->can('delete Subscription')) {
@@ -74,10 +78,14 @@ class SubscriptionController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * @throws AuthorizationException
+     * @param Subscription $subscription
+     * @return JsonResponse
      */
     public function destroy(Subscription $subscription): JsonResponse
     {
+        /**
+         * @var User $user ;
+         */
         $user = auth()->user();
         //Gate::forUser($user)->authorize('deleteSubscription');
         if ($user->can('delete Subscription')) {

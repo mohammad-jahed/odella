@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\City\StoreCityRequest;
 use App\Http\Requests\City\UpdateCityRequest;
 use App\Models\City;
-use Illuminate\Auth\Access\AuthorizationException;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class CityController extends Controller
@@ -23,12 +22,15 @@ class CityController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * @throws AuthorizationException
+     * @param StoreCityRequest $request
+     * @return JsonResponse
      */
     public function store(StoreCityRequest $request): JsonResponse
     {
+        /**
+         * @var User $user;
+         */
         $user = auth()->user();
-        //Gate::forUser($user)->authorize('createCity');
         if ($user->can('Add City')) {
             $data = $request->validated();
             $city = City::query()->create($data);
@@ -49,12 +51,16 @@ class CityController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * @throws AuthorizationException
+     * @param UpdateCityRequest $request
+     * @param City $city
+     * @return JsonResponse
      */
     public function update(UpdateCityRequest $request, City $city): JsonResponse
     {
+        /**
+         * @var User $user;
+         */
         $user = auth()->user();
-        //Gate::forUser($user)->authorize('updateCity');
         if ($user->can('Update City')) {
             $data = $request->validated();
             $city->update($data);
@@ -66,12 +72,15 @@ class CityController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * @throws AuthorizationException
+     * @param City $city
+     * @return JsonResponse
      */
     public function destroy(City $city): JsonResponse
     {
+        /**
+         * @var User $user;
+         */
         $user = auth()->user();
-        //Gate::forUser($user)->authorize('deleteCity');
         if ($user->can('Delete City')) {
             $city->delete();
             return $this->getJsonResponse([], "City Deleted Successfully");

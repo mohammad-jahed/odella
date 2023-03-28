@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Driver;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use JetBrains\PhpStorm\ArrayShape;
 
 class UpdateDriverRequest extends FormRequest
@@ -19,9 +20,11 @@ class UpdateDriverRequest extends FormRequest
      * Get the validation rules that apply to the request.
      *
      */
-    #[ArrayShape(["firstname" => "string[]", "lastname" => "string[]", "number" => "string[]"])] public function rules(): array
+    #[ArrayShape(['bus_id' => "array", "firstname" => "string[]", "lastname" => "string[]", "number" => "string[]"])]
+    function rules(): array
     {
         return [
+            'bus_id' => [Rule::exists('buses', 'id')],
             "firstname" => ['string', 'max:255'],
             "lastname" => ['string', 'max:255'],
             "number" => ['numeric', 'min:10'],

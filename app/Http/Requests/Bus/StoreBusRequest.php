@@ -5,7 +5,7 @@ namespace App\Http\Requests\Bus;
 use Illuminate\Foundation\Http\FormRequest;
 use JetBrains\PhpStorm\ArrayShape;
 
-class StorBusRequest extends FormRequest
+class StoreBusRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

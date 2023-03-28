@@ -6,10 +6,8 @@ use App\Enums\Status;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
-use App\Http\Requests\Supervisor\StoreSupervisorRequest;
 use App\Models\Location;
 use App\Models\User;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -45,7 +43,7 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         /**
-         * @var Authenticatable $user ;
+         * @var User $user ;
          */
         $credentials = $request->validated();
         $credentials['password'] = Hash::make($credentials['password']);
@@ -70,7 +68,7 @@ class AuthController extends Controller
     public function adminRegister(StoreEmployeeRequest $request): JsonResponse
     {
         /**
-         * @var Authenticatable $user ;
+         * @var User $user ;
          */
         $credentials = $request->validated();
         $credentials['password'] = Hash::make($credentials['password']);
@@ -113,6 +111,9 @@ class AuthController extends Controller
      */
     protected function createNewToken(string $token): JsonResponse
     {
+        /**
+         * @var User $user;
+         */
         $user = auth()->user();
         $user->load('roles');//$roles = $user->getRoleNames();
         //$vv=$user->can('Confirm Student Attendance');

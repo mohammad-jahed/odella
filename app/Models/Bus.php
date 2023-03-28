@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @property integer $id;
+ */
 class Bus extends Model
 {
     use HasFactory;
@@ -14,8 +17,12 @@ class Bus extends Model
         'key', 'capacity', 'details', 'image'
     ];
 
-    public function Drivers(): BelongsToMany
+    public function drivers(): BelongsToMany
     {
-        return $this->belongsToMany(Driver::class);
+        return $this->belongsToMany(
+            Driver::class,
+            'bus_drivers',
+            'bus_id',
+            'driver_id');
     }
 }
