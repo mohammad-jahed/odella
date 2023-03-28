@@ -67,10 +67,11 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('createPosition', [TransferPositionPolicy::class,'create']);
         Gate::define('updatePosition', [TransferPositionPolicy::class,'update']);
         Gate::define('deletePosition', [TransferPositionPolicy::class,'delete']);
-        //Employees & Supervisor
+        //Employees & Supervisor & Student
         Gate::define('createEmployee|Supervisor', [EmployeeAndSupervisorPolicy::class,'create']);
         Gate::define('confirmRegistration', [EmployeeAndSupervisorPolicy::class,'confirmRegistration']);
         Gate::define('getUnActiveStudents', [EmployeeAndSupervisorPolicy::class,'getUnActiveStudents']);
+        Gate::define('updateProfile', [EmployeeAndSupervisorPolicy::class,'update']);
 
 
     }

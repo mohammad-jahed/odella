@@ -27,4 +27,8 @@ class TransferPosition extends Model
     public function users(): HasMany {
         return $this->hasMany(User::class);
     }
+
+    public function programs(): HasMany {
+        return $this->hasMany(Program::class);
+    }
 }

@@ -49,8 +49,7 @@ class EmployeeAndSupervisorPolicy
     public function update(User $user, User $model): bool
     {
         //
-        return $user->hasRole('Employee') || $model->hasRole('Admin');
-
+        return $user->id == $model->id;
     }
 
     /**

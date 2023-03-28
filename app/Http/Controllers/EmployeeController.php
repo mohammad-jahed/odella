@@ -107,29 +107,5 @@ class EmployeeController extends Controller
     }
 
 
-    public function studentsList(): JsonResponse
-    {
-        /**
-         * @var User $user;
-         */
-        $user = auth()->user();
-        if ($user->can('View Student')) {
-            $students = User::role('Student')->where('status', Status::Active)->get();
-            return $this->getJsonResponse($students, "Students Fetch Successfully");
-        } else {
-            abort(Response::HTTP_FORBIDDEN);
-        }
-    }
 
-    /**
-     * @throws AuthorizationException
-     */
-    public function getUnActiveStudents(): JsonResponse
-    {
-        $auth = auth()->user();
-        Gate::forUser($auth)->authorize('confirmRegistration');
-        $students = User::role('Student')->where('status', Status::UnActive)->get();
-        return $this->getJsonResponse($students, "Students Fetch Successfully");
-
-    }
 }

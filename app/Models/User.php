@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -104,6 +105,10 @@ class User extends Authenticatable implements JWTSubject
     public function payments(): BelongsToMany
     {
         return $this->belongsToMany(Pay::class, 'payments', 'user_id', 'pay_id');
+    }
+
+    public function programs(): HasMany {
+        return $this->hasMany(Program::class);
     }
 
 
