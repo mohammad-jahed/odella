@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +18,11 @@ class StudentSubscriptionController extends Controller
     {
         $auth = auth()->user();
         Gate::forUser($auth)->authorize('confirmRegistration');
-        $students = User::role('Student')->where('status', 0)->get();
-        return $this->getJsonResponse($students, "Students Fetch Successfully");
+        $students = User::role('Student')->where('status', Status::UnActive)->get();
+        if ($students = []) {
+            return $this->getJsonResponse($students, "Students Fetch Successfully");
+        } else {
+            return $this->getJsonResponse([], "There Are No UnActive Students");
+        }
     }
 }

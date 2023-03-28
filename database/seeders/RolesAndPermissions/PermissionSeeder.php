@@ -69,6 +69,16 @@ class PermissionSeeder extends Seeder
             ['name' => 'Add complain', 'guard_name' => 'api'],
             ['name' => 'Add Lost&Found', 'guard_name' => 'api'],
             ['name' => 'View Lost&Found', 'guard_name' => 'api'],
+
+
+
+
+            ['name'=>'View Employee' , 'guard_name'=> 'api'],
+            ['name'=>'Update Employee' , 'guard_name'=> 'api'],
+            ['name'=>'View Supervisor' , 'guard_name'=> 'api'],
+            ['name'=>'Update Supervisor' , 'guard_name'=> 'api'],
+            ['name'=>'View Student' , 'guard_name'=> 'api'],
+
         ]);
     }
 }

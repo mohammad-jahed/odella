@@ -19,9 +19,10 @@ return new class extends Migration {
             $table->string('firstName');
             $table->string('lastName');
             $table->string('email')->unique();
+            $table->string('phoneNumber');
+            $table->string('image')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('phoneNumber');
             $table->tinyInteger('status')->default(0);
             $table->rememberToken();
             $table->timestamps();

@@ -8,6 +8,7 @@ use App\Models\TransportationLine;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\Response;
 
 class TransportationLineController extends Controller
 {
@@ -28,12 +29,16 @@ class TransportationLineController extends Controller
     public function store(StoreTransportationLineRequest $request): JsonResponse
     {
         $user = auth()->user();
-        Gate::forUser($user)->authorize('createLine');
-        $data = $request->validated();
+        //Gate::forUser($user)->authorize('createLine');
+        if ($user->can('Add Transportation_Line')) {
+            $data = $request->validated();
 
-        $transportationLine = TransportationLine::query()->create($data);
+            $transportationLine = TransportationLine::query()->create($data);
 
-        return $this->getJsonResponse($transportationLine, "TransportationLine Created Successfully");
+            return $this->getJsonResponse($transportationLine, "TransportationLine Created Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
@@ -53,11 +58,15 @@ class TransportationLineController extends Controller
     public function update(UpdateTransportationLineRequest $request, TransportationLine $transportationLine): JsonResponse
     {
         $user = auth()->user();
-        Gate::forUser($user)->authorize('updateLine');
-        $data = $request->validated();
+//        Gate::forUser($user)->authorize('updateLine');
+        if ($user->can('Update Transportation_Line')) {
+            $data = $request->validated();
 
-        $transportationLine->update($data);
-        return $this->getJsonResponse($transportationLine, "TransportationLine Updated Successfully");
+            $transportationLine->update($data);
+            return $this->getJsonResponse($transportationLine, "TransportationLine Updated Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
@@ -67,9 +76,13 @@ class TransportationLineController extends Controller
     public function destroy(TransportationLine $transportationLine): JsonResponse
     {
         $user = auth()->user();
-        Gate::forUser($user)->authorize('deleteLine');
-        $transportationLine->delete();
+        //Gate::forUser($user)->authorize('deleteLine');
+        if ($user->can('Delete Transportation_Line')) {
+            $transportationLine->delete();
 
-        return $this->getJsonResponse([], "TransportationLine Deleted Successfully");
+            return $this->getJsonResponse([], "TransportationLine Deleted Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 }

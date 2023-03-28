@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Http\Requests\Employee\EmployeeRegisterRequest;
+use App\Http\Requests\Employee\StoreEmployeeRequest;
 use App\Http\Requests\Supervisor\StoreSupervisorRequest;
 use App\Models\Location;
 use App\Models\User;
@@ -30,16 +31,15 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
-        if ($user->status == 0){
+        if ($user->status == Status::UnActive) {
             return $this->getJsonResponse($user, "Un authorized, Please visit the Company Office to Complete Registration Process");
         }
 
         return $this->createNewToken($token);
     }
-
 
 
     public function register(RegisterRequest $request): JsonResponse
@@ -49,6 +49,11 @@ class AuthController extends Controller
          */
         $credentials = $request->validated();
         $credentials['password'] = Hash::make($credentials['password']);
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('images/users');
+            $credentials['image'] = $path;
+        }
+
         /**
          * @var Location $location ;
          */
@@ -56,13 +61,13 @@ class AuthController extends Controller
         $credentials['location_id'] = $location->id;
         $user = User::query()->create($credentials);
 
-        $role = Role::query()->where('name', 'like', 'Student')->get();
+        $role = Role::query()->where('name', 'like', 'Student')->first();
         $user->assignRole($role);
         return $this->getJsonResponse($user, "User Registered Successfully , Please visit the Company Office to Complete Registration Process");
     }
 
 
-    public function adminRegister(EmployeeRegisterRequest $request): JsonResponse
+    public function adminRegister(StoreEmployeeRequest $request): JsonResponse
     {
         /**
          * @var Authenticatable $user ;
@@ -74,10 +79,10 @@ class AuthController extends Controller
          */
         $location = Location::query()->create($credentials);
         $credentials['location_id'] = $location->id;
-        $credentials['status'] = 2;
+        $credentials['status'] = Status::NonStudents;
         $user = User::query()->create($credentials);
 
-        $role = Role::query()->where('name', 'like', 'Admin')->get();
+        $role = Role::query()->where('name', 'like', 'Admin')->first();
         $user->assignRole($role);
         return $this->getJsonResponse($user, "Admin Registered Successfully");
     }
@@ -108,11 +113,16 @@ class AuthController extends Controller
      */
     protected function createNewToken(string $token): JsonResponse
     {
+        $user = auth()->user();
+        $user->load('roles');//$roles = $user->getRoleNames();
+        //$vv=$user->can('Confirm Student Attendance');
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()
+            'user' => $user//auth()->user(),
+            //'roles'=> $roles
+            //'test'=> $vv
         ]);
     }
 }

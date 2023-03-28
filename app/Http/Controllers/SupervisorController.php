@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Status;
 use App\Http\Requests\Supervisor\StoreSupervisorRequest;
 use App\Models\Location;
 use App\Models\User;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\HttpFoundation\Response;
 
 class SupervisorController extends Controller
 {
@@ -31,22 +33,30 @@ class SupervisorController extends Controller
     {
         //
         $user = auth()->user();
-        Gate::forUser($user)->authorize('createEmployee|Supervisor');
-        /**
-         * @var Authenticatable $user ;
-         */
-        $credentials = $request->validated();
-        $credentials['password'] = Hash::make($credentials['password']);
-        /**
-         * @var Location $location ;
-         */
-        $location = Location::query()->create($credentials);
-        $credentials['location_id'] = $location->id;
-        $credentials['status'] = 2;
-        $user = User::query()->create($credentials);
-        $role = Role::query()->where('name', 'like', 'Supervisor')->get();
-        $user->assignRole($role);
-        return $this->getJsonResponse($user, "Supervisor Registered Successfully");
+        //Gate::forUser($user)->authorize('createEmployee|Supervisor');
+        if ($user->can('Add Supervisor')) {
+            /**
+             * @var Authenticatable $user ;
+             */
+            $credentials = $request->validated();
+            $credentials['password'] = Hash::make($credentials['password']);
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('images/supervisor');
+                $credentials['image'] = $path;
+            }
+            /**
+             * @var Location $location ;
+             */
+            $location = Location::query()->create($credentials);
+            $credentials['location_id'] = $location->id;
+            $credentials['status'] = Status::NonStudents;
+            $user = User::query()->create($credentials);
+            $role = Role::query()->where('name', 'like', 'Supervisor')->first();
+            $user->assignRole($role);
+            return $this->getJsonResponse($user, "Supervisor Registered Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
