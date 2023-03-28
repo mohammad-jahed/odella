@@ -20,7 +20,6 @@ class CityController extends Controller
         return $this->getJsonResponse($cities, "Cities Fetched Successfully");
     }
 
-
     /**
      * Store a newly created resource in storage.
      * @throws AuthorizationException
@@ -39,7 +38,6 @@ class CityController extends Controller
      */
     public function show(City $city): JsonResponse
     {
-
         return $this->getJsonResponse($city, "City Fetched Successfully");
     }
 
