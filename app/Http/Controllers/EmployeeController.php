@@ -42,7 +42,7 @@ class EmployeeController extends Controller
             $credentials = $request->validated();
             $credentials['password'] = Hash::make($credentials['password']);
             if ($request->hasFile('image')) {
-                $path = $request->file('image')->store('images/users');
+                $path = $request->file('image')->store('images/employee');
                 $credentials['image'] = $path;
             }
             /**
