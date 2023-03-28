@@ -19,6 +19,6 @@ class pay extends Model
 
     public function payments()
     {
-        return $this->belongsToMany(payment::class);
+        return $this->belongsToMany(User::class, 'payments', 'pay_id', 'user_id');
     }
 }

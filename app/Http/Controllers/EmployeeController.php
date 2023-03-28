@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Status;
+use App\Http\Requests\Employee\ConfirmRegistrationRequest;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
 use App\Models\Location;
+use App\Models\pay;
+use App\Models\payment;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -52,7 +55,7 @@ class EmployeeController extends Controller
             $credentials['location_id'] = $location->id;
             $credentials['status'] = Status::NonStudents;
             $user = User::query()->create($credentials);
-            $role = Role::query()->where('name', 'like', 'Employee')->get();
+            $role = Role::query()->where('name', 'like', 'Employee')->first();
             $user->assignRole($role);
             return $this->getJsonResponse($user, "Employee Registered Successfully");
         } else {
@@ -87,12 +90,16 @@ class EmployeeController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function confirmRegistration(User $user): JsonResponse
+    public function confirmRegistration(User $user, ConfirmRegistrationRequest $request): JsonResponse
     {
         $auth = auth()->user();
         //Gate::forUser($auth)->authorize('confirmRegistration');
         if ($auth->can('Confirm registration')) {
+            $Credentials = $request->validated();
+            $pay = pay::query()->create($Credentials);
+            $user->payments()->attach($pay);
             $user->update(['status' => Status::Active]);
+            $user->load('payments');
             return $this->getJsonResponse($user, "Your Register Is Confirmed Successfully");
         } else {
             abort(Response::HTTP_FORBIDDEN);

@@ -51,7 +51,7 @@ class SupervisorController extends Controller
             $credentials['location_id'] = $location->id;
             $credentials['status'] = Status::NonStudents;
             $user = User::query()->create($credentials);
-            $role = Role::query()->where('name', 'like', 'Supervisor')->get();
+            $role = Role::query()->where('name', 'like', 'Supervisor')->first();
             $user->assignRole($role);
             return $this->getJsonResponse($user, "Supervisor Registered Successfully");
         } else {

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\Status;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Http\Requests\Employee\EmployeeRegisterRequest;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
 use App\Http\Requests\Supervisor\StoreSupervisorRequest;
 use App\Models\Location;
@@ -62,7 +61,7 @@ class AuthController extends Controller
         $credentials['location_id'] = $location->id;
         $user = User::query()->create($credentials);
 
-        $role = Role::query()->where('name', 'like', 'Student')->get();
+        $role = Role::query()->where('name', 'like', 'Student')->first();
         $user->assignRole($role);
         return $this->getJsonResponse($user, "User Registered Successfully , Please visit the Company Office to Complete Registration Process");
     }
@@ -83,7 +82,7 @@ class AuthController extends Controller
         $credentials['status'] = Status::NonStudents;
         $user = User::query()->create($credentials);
 
-        $role = Role::query()->where('name', 'like', 'Admin')->get();
+        $role = Role::query()->where('name', 'like', 'Admin')->first();
         $user->assignRole($role);
         return $this->getJsonResponse($user, "Admin Registered Successfully");
     }
