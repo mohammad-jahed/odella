@@ -107,7 +107,7 @@ class EmployeeController extends Controller
     }
 
 
-    public function students(): JsonResponse
+    public function studentsList(): JsonResponse
     {
         $user = auth()->user();
         if ($user->can('View Student')) {

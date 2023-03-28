@@ -53,7 +53,7 @@ Route::group([
     Route::get('/unActiveStudent', [StudentSubscriptionController::class, 'unActiveStudent']);
     Route::apiResource('/employees', EmployeeController::class);
     Route::post('/employees/confirmRegistration/{user}', [EmployeeController::class, 'confirmRegistration']);
-    Route::get('/employees/students', [EmployeeController::class, 'students']);
+    Route::get('/employees/students/list', [EmployeeController::class, 'studentsList']);
     Route::apiResource('/supervisors', SupervisorController::class);
 
 
