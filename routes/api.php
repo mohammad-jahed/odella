@@ -55,11 +55,11 @@ Route::group([
     Route::apiResource('/employees', EmployeeController::class);
     Route::post('/employees/confirmRegistration/{user}', [EmployeeController::class, 'confirmRegistration']);
     Route::apiResource('/students', StudentController::class);
-    Route::get('/students/active', [StudentController::class, 'getActiveStudentsList']);
-    Route::get('/students/unActive', [StudentController::class, 'getUnActiveStudents']);
+    Route::get('/student/active', [StudentController::class, 'activeStudentsList']);
+    Route::get('/student/unActive', [StudentController::class, 'unActiveStudentsList']);
     Route::apiResource('/supervisors', SupervisorController::class);
-    Route::apiResource('/buses',BusController::class);
-    Route::apiResource('/drivers',DriverController::class);
+    Route::apiResource('/buses', BusController::class);
+    Route::apiResource('/drivers', DriverController::class);
 
 
 });

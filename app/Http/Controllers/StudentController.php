@@ -47,9 +47,9 @@ class StudentController extends Controller
     public function update(UpdateStudentRequest $request, User $student): JsonResponse
     {
         $user = auth()->user();
-        Gate::forUser($user)->authorize('updateProfile',$student);
+        Gate::forUser($user)->authorize('updateProfile', $student);
         $credentials = $request->validated();
-        if(isset($credentials['password'])){
+        if (isset($credentials['password'])) {
             $credentials['password'] = Hash::make($credentials['password']);
         }
         if ($request->hasFile('image')) {
@@ -57,7 +57,7 @@ class StudentController extends Controller
             $credentials['image'] = $path;
         }
 
-        if(isset($credentials['city_id'])){
+        if (isset($credentials['city_id'])) {
             /**
              * @var Location $location ;
              */
@@ -77,10 +77,10 @@ class StudentController extends Controller
         //
     }
 
-    public function getActiveStudentsList(): JsonResponse
+    public function activeStudentsList(): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
         if ($user->can('View Student')) {
@@ -94,12 +94,18 @@ class StudentController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function getUnActiveStudents(): JsonResponse
+    public function unActiveStudentsList(): JsonResponse
     {
-        $auth = auth()->user();
-        Gate::forUser($auth)->authorize('confirmRegistration');
-        $students = User::role('Student')->where('status', Status::UnActive)->get();
-        return $this->getJsonResponse($students, "Students Fetch Successfully");
+        $user = auth()->user();
+        //Gate::forUser($auth)->authorize('confirmRegistration');
+        if ($user->can('View Student')) {
+            $students = User::role('Student')->where('status', Status::UnActive)->get();
+
+            return $this->getJsonResponse($students, "Students Fetch Successfully");
+
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
     }
 }
