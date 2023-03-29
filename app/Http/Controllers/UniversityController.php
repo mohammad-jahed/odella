@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\University\UniversityStoreRequest;
-use App\Http\Requests\University\UniversityUpdateRequest;
+use App\Http\Requests\University\StoreUniversityRequest;
+use App\Http\Requests\University\UpdateUniversityRequest;
 use App\Models\University;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -33,7 +33,7 @@ class UniversityController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(UniversityStoreRequest $request)
+    public function store(StoreUniversityRequest $request)
     {
         //
         /**
@@ -61,7 +61,7 @@ class UniversityController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UniversityUpdateRequest $request, University $university)
+    public function update(UpdateUniversityRequest $request, University $university)
     {
         //
         /**

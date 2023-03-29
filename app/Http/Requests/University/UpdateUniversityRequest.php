@@ -5,7 +5,7 @@ namespace App\Http\Requests\University;
 use Illuminate\Foundation\Http\FormRequest;
 use JetBrains\PhpStorm\ArrayShape;
 
-class UniversityStoreRequest extends FormRequest
+class UpdateUniversityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,9 +25,9 @@ class UniversityStoreRequest extends FormRequest
     {
         return [
             //
-            'name_ar'=>['required','string','max:256'],
-            'name_en'=>['required','string','max:256'],
-            'shortcut'=>['required','string','min:3','max:4'],
+            'name_ar'=>['string','max:256'],
+            'name_en'=>['string','max:256'],
+            'shortcut'=>['string','min:3','max:4'],
         ];
     }
 }

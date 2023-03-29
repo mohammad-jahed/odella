@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Employee;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use JetBrains\PhpStorm\ArrayShape;
 
 class UpdateEmployeeRequest extends FormRequest
 {
@@ -11,18 +13,28 @@ class UpdateEmployeeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
+     * @return array
      */
+    #[ArrayShape(['city_id' => "array", 'area_id' => "array", 'street' => "string[]", 'firstName' => "string[]", 'lastName' => "string[]", 'email' => "string[]", 'password' => "string[]", 'phoneNumber' => "string[]", 'image' => "string[]"])]
     public function rules(): array
     {
         return [
             //
+            'city_id' => [Rule::exists('cities', 'id')],
+            'area_id' => [Rule::exists('areas', 'id')],
+            'street' => ['string', 'min:3', 'max:255'],
+            'firstName' => ['bail', 'string', 'max:255'],
+            'lastName' => ['bail', 'string', 'max:255'],
+            'email' => ['bail', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['bail', 'string', 'min:6', 'max:256'],
+            'phoneNumber' => ['bail', 'numeric', 'min:10'],
+            'image' => ['image', 'bail'],
         ];
     }
 }

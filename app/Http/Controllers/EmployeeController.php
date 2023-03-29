@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use App\Enums\Status;
 use App\Http\Requests\Employee\ConfirmRegistrationRequest;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
+use App\Http\Requests\Employee\UpdateEmployeeRequest;
 use App\Models\Location;
 use App\Models\Pay;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -33,13 +33,10 @@ class EmployeeController extends Controller
     {
         //
         /**
-         * @var User $user;
+         * @var User $auth;
          */
-        $user = auth()->user();
-        if ($user->can('Add Employee')) {
-            /**
-             * @var User $user ;
-             */
+        $auth = auth()->user();
+        if ($auth->can('Add Employee')) {
             $credentials = $request->validated();
             $credentials['password'] = Hash::make($credentials['password']);
             if ($request->hasFile('image')) {
@@ -52,6 +49,9 @@ class EmployeeController extends Controller
             $location = Location::query()->create($credentials);
             $credentials['location_id'] = $location->id;
             $credentials['status'] = Status::NonStudents;
+            /**
+             * @var User $user;
+             */
             $user = User::query()->create($credentials);
             $role = Role::query()->where('name', 'like', 'Employee')->first();
             $user->assignRole($role);
@@ -71,10 +71,35 @@ class EmployeeController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * @throws AuthorizationException
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateEmployeeRequest $request, User $employee): JsonResponse
     {
         //
+        /**
+         * @var User $auth;
+         */
+
+        $auth = auth()->user();
+        Gate::forUser($auth)->authorize('updateProfile',$employee);
+
+        $credentials = $request->validated();
+        if(isset($credentials['password'])){
+            $credentials['password'] = Hash::make($credentials['password']);
+        }
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('images/employee');
+            $credentials['image'] = $path;
+        }
+        if (isset($credentials['city_id']) || isset($credentials['area_id']) || isset($credentials['street'])) {
+            /**
+             * @var Location $location ;
+             */
+            $location = Location::query()->update($credentials);
+            $credentials['location_id'] = $location->id;
+        }
+        $employee->update($credentials);
+        return $this->getJsonResponse($employee, "Employee Updated Successfully");
     }
 
     /**

@@ -11,7 +11,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpFoundation\Response;
 
 class StudentController extends Controller
@@ -57,7 +56,7 @@ class StudentController extends Controller
             $credentials['image'] = $path;
         }
 
-        if (isset($credentials['city_id']) || $credentials['area_id'] || isset($credentials['street']) !== null) {
+        if (isset($credentials['city_id']) || isset($credentials['area_id']) || isset($credentials['street'])) {
             /**
              * @var Location $location ;
              */
@@ -96,8 +95,10 @@ class StudentController extends Controller
      */
     public function unActiveStudentsList(): JsonResponse
     {
+        /**
+         * @var User $user ;
+         */
         $user = auth()->user();
-        //Gate::forUser($auth)->authorize('confirmRegistration');
         if ($user->can('View Student')) {
             $students = User::role('Student')->where('status', Status::UnActive)->get();
 

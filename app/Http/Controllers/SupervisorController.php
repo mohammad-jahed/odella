@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Enums\Status;
 use App\Http\Requests\Supervisor\StoreSupervisorRequest;
+use App\Http\Requests\Supervisor\UpdateSupervisorRequest;
 use App\Models\Location;
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +34,6 @@ class SupervisorController extends Controller
          * @var User $user;
          */
         $user = auth()->user();
-        //Gate::forUser($user)->authorize('createEmployee|Supervisor');
         if ($user->can('Add Supervisor')) {
             /**
              * @var User $user ;
@@ -68,10 +69,35 @@ class SupervisorController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * @throws AuthorizationException
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateSupervisorRequest $request, User $supervisor): JsonResponse
     {
         //
+        /**
+         * @var User $auth;
+         */
+
+        $auth = auth()->user();
+        Gate::forUser($auth)->authorize('updateProfile',$supervisor);
+
+        $credentials = $request->validated();
+        if(isset($credentials['password'])){
+            $credentials['password'] = Hash::make($credentials['password']);
+        }
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('images/supervisor');
+            $credentials['image'] = $path;
+        }
+        if (isset($credentials['city_id']) || isset($credentials['area_id']) || isset($credentials['street'])) {
+            /**
+             * @var Location $location ;
+             */
+            $location = Location::query()->update($credentials);
+            $credentials['location_id'] = $location->id;
+        }
+        $supervisor->update($credentials);
+        return $this->getJsonResponse($supervisor, "Supervisor Updated Successfully");
     }
 
     /**
