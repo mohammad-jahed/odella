@@ -2,7 +2,6 @@
 
 namespace Database\Seeders\RolesAndPermissions;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -83,6 +82,11 @@ class PermissionSeeder extends Seeder
             ['name'=>'View Supervisor' , 'guard_name'=> 'api'],
             ['name'=>'Update Supervisor' , 'guard_name'=> 'api'],
             ['name'=>'View Student' , 'guard_name'=> 'api'],
+            ['name'=>'View Universities' , 'guard_name'=> 'api'],
+            ['name'=>'Add University' , 'guard_name'=> 'api'],
+            ['name'=>'Update University' , 'guard_name'=> 'api'],
+            ['name'=>'Delete University' , 'guard_name'=> 'api'],
+
 
         ]);
     }

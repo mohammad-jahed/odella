@@ -12,6 +12,7 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\TransferPositionController;
 use App\Http\Controllers\TransportationLineController;
+use App\Http\Controllers\UniversityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -60,8 +61,7 @@ Route::group([
     Route::apiResource('/supervisors', SupervisorController::class);
     Route::apiResource('/buses', BusController::class);
     Route::apiResource('/drivers', DriverController::class);
-
-
+    Route::apiResource('/universities', UniversityController::class);
 });
 
 
