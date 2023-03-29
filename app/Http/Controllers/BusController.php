@@ -41,7 +41,7 @@ class BusController extends Controller
         if ($user->can('Add Bus')) {
             $data = $request->validated();
             if ($request->hasFile('image')) {
-                $path = $request->file('image')->store('images/users');
+                $path = $request->file('image')->store('images/buses');
                 $data['image'] = $path;
             }
             $bus = Bus::query()->create($data);
@@ -71,7 +71,7 @@ class BusController extends Controller
         if ($user->can('Update Bus')) {
             $data = $request->validated();
             if ($request->hasFile('image')) {
-                $path = $request->file('image')->store('images/users');
+                $path = $request->file('image')->store('images/buses');
                 $data['image'] = $path;
             }
             $bus->update($data);
