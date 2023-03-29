@@ -34,6 +34,7 @@ class UpdateStudentRequest extends FormRequest
             'subscription_id' => [Rule::exists('subscriptions', 'id')],
             'transportation_line_id' => [Rule::exists('transportation_lines', 'id')],
             'transfer_position_id' => [Rule::exists('transfer_positions', 'id')],
+            'university_id' => [Rule::exists('universities', 'id')],
             'image' => ['image', 'max:1000', 'bail'],
         ];
     }
