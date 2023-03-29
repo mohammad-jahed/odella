@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->foreignId('subscription_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('transportation_line_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('transfer_position_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('university_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('firstName');
             $table->string('lastName');
             $table->string('email')->unique();

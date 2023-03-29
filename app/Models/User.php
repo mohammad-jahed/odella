@@ -33,6 +33,7 @@ class User extends Authenticatable implements JWTSubject
         'subscription_id',
         'transportation_line_id',
         'transfer_position_id',
+        'university_id',
         'firstName',
         'lastName',
         'email',
@@ -107,8 +108,14 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Pay::class, 'payments', 'user_id', 'pay_id');
     }
 
-    public function programs(): HasMany {
+    public function programs(): HasMany
+    {
         return $this->hasMany(Program::class);
+    }
+
+    public function university(): BelongsTo
+    {
+        return $this->belongsTo(University::class);
     }
 
 

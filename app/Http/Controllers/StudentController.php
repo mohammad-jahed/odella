@@ -57,11 +57,11 @@ class StudentController extends Controller
             $credentials['image'] = $path;
         }
 
-        if (isset($credentials['city_id'])) {
+        if (isset($credentials['city_id']) || $credentials['area_id'] || isset($credentials['street']) !== null) {
             /**
              * @var Location $location ;
              */
-            $location = Location::query()->create($credentials);
+            $location = Location::query()->update($credentials);
             $credentials['location_id'] = $location->id;
         }
         $student->update($credentials);
