@@ -27,4 +27,8 @@ class Trip extends Model
     {
         return $this->belongsTo(BusDriver::class, 'id', 'bus_driver_id');
     }
+    public function users(){
+        return $this->belongsToMany(User::class,
+            'trip_users','trip_id','user_id');
+    }
 }

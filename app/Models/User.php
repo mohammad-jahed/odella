@@ -118,5 +118,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(University::class);
     }
 
+    public function trips()
+    {
+        return $this->belongsToMany(Trip::class,
+            'trip_users', 'user_id', 'trip_id');
+    }
+
 
 }
