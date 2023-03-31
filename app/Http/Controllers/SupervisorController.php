@@ -31,7 +31,7 @@ class SupervisorController extends Controller
     {
         //
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
         if ($user->can('Add Supervisor')) {
@@ -75,27 +75,35 @@ class SupervisorController extends Controller
     {
         //
         /**
-         * @var User $auth;
+         * @var User $auth ;
          */
 
         $auth = auth()->user();
-        Gate::forUser($auth)->authorize('updateProfile',$supervisor);
+        Gate::forUser($auth)->authorize('updateProfile', $supervisor);
 
         $credentials = $request->validated();
-        if(isset($credentials['password'])){
+        if (isset($credentials['password'])) {
             $credentials['password'] = Hash::make($credentials['password']);
         }
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('images/supervisor');
             $credentials['image'] = $path;
         }
-        if (isset($credentials['city_id']) || isset($credentials['area_id']) || isset($credentials['street'])) {
-            /**
-             * @var Location $location ;
-             */
-            $location = Location::query()->update($credentials);
-            $credentials['location_id'] = $location->id;
+        /**
+         * @var Location $location ;
+         */
+        $data = [];
+        if (isset($credentials['city_id'])) {
+            $data += ['city_id' => $credentials['city_id']];
         }
+        if (isset($credentials['area_id'])) {
+            $data += ['area_id' => $credentials['area_id']];
+        }
+        if (isset($credentials['street'])) {
+            $data += ['street' => $credentials['street']];
+        }
+        $location = $supervisor->location;
+        $location->update($data);
         $supervisor->update($credentials);
         return $this->getJsonResponse($supervisor, "Supervisor Updated Successfully");
     }

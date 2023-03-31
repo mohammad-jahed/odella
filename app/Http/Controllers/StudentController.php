@@ -55,14 +55,21 @@ class StudentController extends Controller
             $path = $request->file('image')->store('images/users');
             $credentials['image'] = $path;
         }
-
-        if (isset($credentials['city_id']) || isset($credentials['area_id']) || isset($credentials['street'])) {
-            /**
-             * @var Location $location ;
-             */
-            $location = Location::query()->update($credentials);
-            $credentials['location_id'] = $location->id;
+        /**
+         * @var Location $location ;
+         */
+        $data = [];
+        if (isset($credentials['city_id'])) {
+            $data += ['city_id' => $credentials['city_id']];
         }
+        if (isset($credentials['area_id'])) {
+            $data += ['area_id' => $credentials['area_id']];
+        }
+        if (isset($credentials['street'])) {
+            $data += ['street' => $credentials['street']];
+        }
+        $location = $student->location;
+        $location->update($data);
         $student->update($credentials);
         return $this->getJsonResponse($student, "Student Updated Successfully");
 
