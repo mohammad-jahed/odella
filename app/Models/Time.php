@@ -10,6 +10,6 @@ class Time extends Model
     use HasFactory;
 
     protected $fillable = [
-        'start', 'end', 'date'
+        'start', 'date'
     ];
 }

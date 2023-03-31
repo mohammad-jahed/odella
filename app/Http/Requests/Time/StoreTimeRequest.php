@@ -20,11 +20,10 @@ class StoreTimeRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
      */
-    #[ArrayShape(['start' => "string[]", 'end' => "string[]", 'date' => "string[]"])] public function rules(): array
+    #[ArrayShape(['start' => "string[]", 'date' => "string[]"])] public function rules(): array
     {
         return [
-            'start' => ['required', 'date_format:H:i', 'after:5:00'],
-            'end' => ['required', 'date_format:H:i', 'before:19:00'],
+            'start' => ['required', 'date_format:H:i', 'after:5:00|before:19:00'],
             'date' => ['required', 'date'],
         ];
     }

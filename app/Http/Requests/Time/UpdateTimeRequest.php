@@ -20,11 +20,10 @@ class UpdateTimeRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
      */
-    #[ArrayShape(['start' => "string[]", 'end' => "string[]", 'date' => "string[]"])] public function rules(): array
+    #[ArrayShape(['start' => "string[]", 'date' => "string[]"])] public function rules(): array
     {
         return [
-            'start' => ['date_format:H:i', 'after:5:00'],
-            'end' => ['date_format:H:i', 'before:19:00'],
+            'start' => ['date_format:H:i', 'after:5:00|before:19:00'],
             'date' => ['date'],
         ];
     }
