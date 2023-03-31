@@ -24,11 +24,19 @@ class TransferPosition extends Model
         );
     }
 
-    public function users(): HasMany {
+    public function users(): HasMany
+    {
         return $this->hasMany(User::class);
     }
 
-    public function programs(): HasMany {
+    public function programs(): HasMany
+    {
         return $this->hasMany(Program::class);
+    }
+
+    public function trips()
+    {
+        return $this->belongsToMany(Trip::class,
+            'trip_positions_times', 'position_id', 'trip_id');
     }
 }

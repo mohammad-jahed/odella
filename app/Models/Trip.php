@@ -39,4 +39,11 @@ class Trip extends Model
         return $this->belongsToMany(TransportationLine::class,
             'trip_lines', 'trip_id', 'line_id');
     }
+
+    public function transferPositions()
+    {
+        return $this->belongsToMany(TransferPosition::class,
+            'trip_positions_times', 'trip_id', 'position_id');
+
+    }
 }
