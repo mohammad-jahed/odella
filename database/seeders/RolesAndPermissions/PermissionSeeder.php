@@ -86,6 +86,10 @@ class PermissionSeeder extends Seeder
             ['name'=>'Add University' , 'guard_name'=> 'api'],
             ['name'=>'Update University' , 'guard_name'=> 'api'],
             ['name'=>'Delete University' , 'guard_name'=> 'api'],
+            ['name'=>'View Time' , 'guard_name'=> 'api'],
+            ['name'=>'Add Time' , 'guard_name'=> 'api'],
+            ['name'=>'Update Time' , 'guard_name'=> 'api'],
+            ['name'=>'Delete Time' , 'guard_name'=> 'api'],
 
 
         ]);
