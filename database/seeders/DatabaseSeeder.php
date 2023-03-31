@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->call(TransportationLinesSeeder::class);
         $this->call(TransferPositionSeeder::class);
         $this->call(UniversitySeeder::class);
+        $this->call(DaySeeder::class);
         $this->call(UserSeeder::class);
     }
 }

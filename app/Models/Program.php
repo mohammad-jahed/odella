@@ -12,7 +12,7 @@ class Program extends Model
     protected $fillable = [
         'user_id',
         'day_id',
-        'position_id',
+        'transfer_position_id',
         'start',
         'end'
     ];
@@ -27,7 +27,7 @@ class Program extends Model
     }
 
     public function position(): BelongsTo {
-        return $this->belongsTo(TransferPosition::class);
+        return $this->belongsTo(TransferPosition::class,'transfer_position_id');
     }
 
 }

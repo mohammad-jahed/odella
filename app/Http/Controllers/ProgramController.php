@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Program;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProgramController extends Controller
@@ -10,9 +12,12 @@ class ProgramController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         //
+
+        $programs = Program::all();
+        return $this->getJsonResponse($programs,'Programs Fetched Successfully');
     }
 
     /**
@@ -46,4 +51,16 @@ class ProgramController extends Controller
     {
         //
     }
+
+    public function userPrograms(): JsonResponse
+    {
+        /**
+         * @var User $user;
+         */
+        $user = auth()->user();
+        $programs = $user->programs()->with(['day','position'])->get();
+        return $this->getJsonResponse($programs,'Programs Fetched Successfully');
+    }
+
+
 }

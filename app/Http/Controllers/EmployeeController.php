@@ -8,11 +8,15 @@ use App\Http\Requests\Employee\StoreEmployeeRequest;
 use App\Http\Requests\Employee\UpdateEmployeeRequest;
 use App\Models\Location;
 use App\Models\Pay;
+use App\Models\Program;
+use App\Models\Subscription;
 use App\Models\User;
+use http\Env\Request;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -124,12 +128,29 @@ class EmployeeController extends Controller
     {
         /**
          * @var User $auth ;
+         * @var Subscription $subscription;
          */
         $auth = auth()->user();
-
         if ($auth->can('Confirm registration')) {
-            $Credentials = $request->validated();
-            $pay = Pay::query()->create($Credentials);
+            $credentials = $request->validated();
+            for($i = 0 ; $i< sizeof($credentials['day_ids']) ; $i++){
+                for($j = 0 ; $j< sizeof($credentials['position_ids']) ; $j++){
+                    if($i == $j) {
+                        $data = [
+                          'day_id'=>$credentials['day_ids'][$i],
+                          'transfer_position_id'=>$credentials['position_ids'][$j],
+                          'user_id'=>$user->id
+                        ];
+                        Program::query()->create($data);
+                    }
+                }
+            }
+            /**
+             * @var Program $program;
+             */
+            $program = $user->programs()->first()->load(['day','position']);
+            return $this->getJsonResponse($program,'');
+            $pay = Pay::query()->create($credentials);
             $user->payments()->attach($pay);
             $user->update(['status' => Status::Active]);
             $user->load('payments');

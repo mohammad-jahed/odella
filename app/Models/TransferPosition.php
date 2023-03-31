@@ -13,7 +13,6 @@ class TransferPosition extends Model
         "name_en"
     ];
 
-
     public function lines(): BelongsToMany
     {
         return $this->belongsToMany(
