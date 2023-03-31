@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('trip_positions_times', function (Blueprint $table) {
             $table->id();
             $table->foreignId('trip_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('position_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('position_id')->constrained('transfer_positions')->cascadeOnDelete();
             $table->time('time');
             $table->timestamps();
         });
