@@ -30,12 +30,9 @@ class TransportationLineController extends Controller
          * @var User $user;
          */
         $user = auth()->user();
-        //Gate::forUser($user)->authorize('createLine');
         if ($user->can('Add Transportation_Line')) {
             $data = $request->validated();
-
             $transportationLine = TransportationLine::query()->create($data);
-
             return $this->getJsonResponse($transportationLine, "TransportationLine Created Successfully");
         } else {
             abort(Response::HTTP_FORBIDDEN);
@@ -61,7 +58,6 @@ class TransportationLineController extends Controller
          * @var User $user;
          */
         $user = auth()->user();
-//        Gate::forUser($user)->authorize('updateLine');
         if ($user->can('Update Transportation_Line')) {
             $data = $request->validated();
 
@@ -81,10 +77,8 @@ class TransportationLineController extends Controller
          * @var User $user;
          */
         $user = auth()->user();
-        //Gate::forUser($user)->authorize('deleteLine');
         if ($user->can('Delete Transportation_Line')) {
             $transportationLine->delete();
-
             return $this->getJsonResponse([], "TransportationLine Deleted Successfully");
         } else {
             abort(Response::HTTP_FORBIDDEN);

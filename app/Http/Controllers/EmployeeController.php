@@ -145,11 +145,6 @@ class EmployeeController extends Controller
                     }
                 }
             }
-            /**
-             * @var Program $program;
-             */
-            $program = $user->programs()->first()->load(['day','position']);
-            return $this->getJsonResponse($program,'');
             $pay = Pay::query()->create($credentials);
             $user->payments()->attach($pay);
             $user->update(['status' => Status::Active]);

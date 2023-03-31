@@ -6,6 +6,7 @@ use App\Models\Program;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProgramController extends Controller
 {
@@ -15,9 +16,17 @@ class ProgramController extends Controller
     public function index(): JsonResponse
     {
         //
+        /**
+         * @var User $user;
+         */
+        $user = auth()->user();
+        if($user->can('View Programs')){
+            $programs = Program::all();
+            return $this->getJsonResponse($programs,'Programs Fetched Successfully');
+        }else{
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
-        $programs = Program::all();
-        return $this->getJsonResponse($programs,'Programs Fetched Successfully');
     }
 
     /**
@@ -42,6 +51,7 @@ class ProgramController extends Controller
     public function update(Request $request, Program $program)
     {
         //
+
     }
 
     /**
@@ -52,10 +62,13 @@ class ProgramController extends Controller
         //
     }
 
+    /**
+     */
     public function userPrograms(): JsonResponse
     {
         /**
          * @var User $user;
+         * @var Program $program
          */
         $user = auth()->user();
         $programs = $user->programs()->with(['day','position'])->get();

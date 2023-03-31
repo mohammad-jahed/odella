@@ -30,7 +30,6 @@ class TransferPositionController extends Controller
          * @var User $user;
          */
         $user = auth()->user();
-        //Gate::forUser($user)->authorize('createPosition');
         if ($user->can('Add Position')) {
             $data = $request->validated();
             $transferPosition = TransferPosition::query()->create($data);
@@ -64,7 +63,6 @@ class TransferPositionController extends Controller
          * @var User $user;
          */
         $user = auth()->user();
-        //Gate::forUser($user)->authorize('updatePosition');
         if ($user->can('Update Position')) {
             $data = $request->validated();
             $transferPosition->update($data);
@@ -90,7 +88,6 @@ class TransferPositionController extends Controller
          * @var User $user;
          */
         $user = auth()->user();
-        //Gate::forUser($user)->authorize('deletePosition');
         if ($user->can('Delete Position')) {
             $transferPosition->delete();
             return $this->getJsonResponse([], "TransferPosition Deleted Successfully");

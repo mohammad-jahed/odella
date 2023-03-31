@@ -86,8 +86,7 @@ class PermissionSeeder extends Seeder
             ['name'=>'Add University' , 'guard_name'=> 'api'],
             ['name'=>'Update University' , 'guard_name'=> 'api'],
             ['name'=>'Delete University' , 'guard_name'=> 'api'],
-
-
+            ['name'=>'View Programs' , 'guard_name'=> 'api'],
         ]);
     }
 }
