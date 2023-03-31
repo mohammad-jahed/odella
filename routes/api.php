@@ -10,6 +10,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SupervisorController;
+use App\Http\Controllers\TimeController;
 use App\Http\Controllers\TransferPositionController;
 use App\Http\Controllers\TransportationLineController;
 use App\Http\Controllers\UniversityController;
@@ -62,6 +63,7 @@ Route::group([
     Route::apiResource('/buses', BusController::class);
     Route::apiResource('/drivers', DriverController::class);
     Route::apiResource('/universities', UniversityController::class);
+    Route::apiResource('/times',TimeController::class);
 });
 
 
