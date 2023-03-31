@@ -17,8 +17,6 @@ class SubscriptionController extends Controller
      */
     public function index(): JsonResponse
     {
-//        $user = auth()->user();
-//        Gate::forUser($user)->authorize('getAllSubscriptions');
         $subscriptions = Subscription::all();
         return $this->getJsonResponse($subscriptions, "Subscriptions Fetched Successfully");
     }
@@ -32,7 +30,6 @@ class SubscriptionController extends Controller
          * @var User $user ;
          */
         $user = auth()->user();
-//        Gate::forUser($user)->authorize('createSubscription');
         if ($user->can('Add Subscription')) {
             $data = $request->validated();
             $subscription = Subscription::query()->create($data);
@@ -48,8 +45,6 @@ class SubscriptionController extends Controller
      */
     public function show(Subscription $subscription): JsonResponse
     {
-//        $user = auth()->user();
-//        Gate::forUser($user)->authorize('getSubscription');
         return $this->getJsonResponse($subscription, "Subscription Fetched Successfully");
     }
 
@@ -65,15 +60,13 @@ class SubscriptionController extends Controller
          * @var User $user ;
          */
         $user = auth()->user();
-        //Gate::forUser($user)->authorize('updateSubscription');
-        if ($user->can('delete Subscription')) {
+        if ($user->can('Update Subscription')) {
             $data = $request->validated();
             $subscription->update($data);
             return $this->getJsonResponse($subscription, "Subscription Updated Successfully");
         } else {
             abort(Response::HTTP_FORBIDDEN);
         }
-
     }
 
     /**
@@ -87,7 +80,6 @@ class SubscriptionController extends Controller
          * @var User $user ;
          */
         $user = auth()->user();
-        //Gate::forUser($user)->authorize('deleteSubscription');
         if ($user->can('delete Subscription')) {
             $subscription->delete();
             return $this->getJsonResponse([], "Subscription Deleted Successfully");

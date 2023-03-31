@@ -2,7 +2,6 @@
 
 namespace Database\Seeders\RolesAndPermissions;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -18,8 +17,6 @@ class RolesSeeder extends Seeder
             ['name' => 'Employee', 'guard_name' => 'api'],
             ['name' => 'Supervisor', 'guard_name' => 'api'],
             ['name' => 'Student', 'guard_name' => 'api'],
-
-
         ]);
     }
 }

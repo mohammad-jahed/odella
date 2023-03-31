@@ -7,6 +7,7 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SupervisorController;
@@ -64,6 +65,8 @@ Route::group([
     Route::apiResource('/drivers', DriverController::class);
     Route::apiResource('/universities', UniversityController::class);
     Route::apiResource('/times',TimeController::class);
+    Route::apiResource('/programs', ProgramController::class);
+    Route::get('/programs', [ProgramController::class,'userPrograms']);
 });
 
 

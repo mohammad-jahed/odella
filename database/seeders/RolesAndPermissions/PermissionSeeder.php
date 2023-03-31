@@ -92,6 +92,7 @@ class PermissionSeeder extends Seeder
             ['name'=>'Delete Time' , 'guard_name'=> 'api'],
 
 
+            ['name'=>'View Programs' , 'guard_name'=> 'api'],
         ]);
     }
 }
