@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property integer $id;
  * @property mixed $positions
  */
-
 class TransportationLine extends Model
 {
     use HasFactory;
@@ -32,8 +31,15 @@ class TransportationLine extends Model
         );
     }
 
-    public function users(): HasMany {
+    public function users(): HasMany
+    {
         return $this->hasMany(User::class);
+    }
+
+    public function trips()
+    {
+        return $this->belongsToMany(Trip::class,
+            'trip_lines', 'line_id', 'trip_id');
     }
 
 

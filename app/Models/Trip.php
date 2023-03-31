@@ -27,8 +27,16 @@ class Trip extends Model
     {
         return $this->belongsTo(BusDriver::class, 'id', 'bus_driver_id');
     }
-    public function users(){
+
+    public function users()
+    {
         return $this->belongsToMany(User::class,
-            'trip_users','trip_id','user_id');
+            'trip_users', 'trip_id', 'user_id');
+    }
+
+    public function lines()
+    {
+        return $this->belongsToMany(TransportationLine::class,
+            'trip_lines', 'trip_id', 'line_id');
     }
 }
