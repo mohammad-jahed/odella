@@ -68,7 +68,7 @@ Route::group([
     Route::apiResource('/times',TimeController::class);
     Route::apiResource('/programs', ProgramController::class);
     Route::get('/programs', [ProgramController::class,'userPrograms']);
-    Route::apiResource('trips',TripController::class);
+    Route::apiResource('/trips',TripController::class);
 });
 
 

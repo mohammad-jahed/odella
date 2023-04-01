@@ -21,6 +21,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property mixed $location
  * @property mixed $subscription
  * @property mixed $programs
+ * @property Trip[] $trips
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -121,7 +122,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(University::class);
     }
 
-    public function trips()
+    public function trips(): BelongsToMany
     {
         return $this->belongsToMany(Trip::class,
             'trip_users', 'user_id', 'trip_id');

@@ -10,13 +10,12 @@ use App\Models\Location;
 use App\Models\Pay;
 use App\Models\Program;
 use App\Models\Subscription;
+use App\Models\Trip;
 use App\Models\User;
-use http\Env\Request;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -128,20 +127,39 @@ class EmployeeController extends Controller
     {
         /**
          * @var User $auth ;
-         * @var Subscription $subscription;
+         * @var Subscription $subscription ;
          */
         $auth = auth()->user();
         if ($auth->can('Confirm registration')) {
             $credentials = $request->validated();
-            for($i = 0 ; $i< sizeof($credentials['day_ids']) ; $i++){
-                for($j = 0 ; $j< sizeof($credentials['position_ids']) ; $j++){
-                    if($i == $j) {
-                        $data = [
-                          'day_id'=>$credentials['day_ids'][$i],
-                          'transfer_position_id'=>$credentials['position_ids'][$j],
-                          'user_id'=>$user->id
-                        ];
-                        Program::query()->create($data);
+            $user->trips()->attach($credentials['trip_ids']);
+            /**
+             * @var Trip[] $trips ;
+             * @var Trip[] $goTrips;
+             * @var Trip[] $returnTrips;
+             */
+            $trips = $user->trips;
+            $goTrips = [];
+            $returnTrips = [];
+            for ($i = 0; $i < sizeof($trips); $i++) {
+                $i % 2 == 0 ? $goTrips += [$trips[$i]] : $returnTrips += [$trips[$i]];
+            }
+
+            for ($i = 0; $i < sizeof($credentials['day_ids']); $i++) {
+                for ($j = 0; $j < sizeof($credentials['position_ids']); $j++) {
+                    for ($k = 0; $k < sizeof($goTrips); $k++) {
+                        for ($l = 0; $l < sizeof($returnTrips); $l++) {
+                            if ($i == $j && $l == $k) {
+                                $data = [
+                                    'day_id' => $credentials['day_ids'][$i],
+                                    'transfer_position_id' => $credentials['position_ids'][$j],
+                                    'start' => $goTrips[$k]->time->start,
+                                    'end' => $returnTrips[$l]->time->start,
+                                    'user_id' => $user->id
+                                ];
+                                Program::query()->create($data);
+                            }
+                        }
                     }
                 }
             }

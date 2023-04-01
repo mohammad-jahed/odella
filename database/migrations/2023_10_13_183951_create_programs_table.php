@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('day_id')->constrained()->cascadeOnDelete();
             $table->foreignId('transfer_position_id')->constrained()->cascadeOnDelete();
-            $table->timestamp('start')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->timestamp('end')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->time('start');
+            $table->time('end');
             $table->timestamps();
         });
     }

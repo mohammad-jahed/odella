@@ -33,7 +33,7 @@ class TransferPosition extends Model
         return $this->hasMany(Program::class);
     }
 
-    public function trips()
+    public function trips(): BelongsToMany
     {
         return $this->belongsToMany(Trip::class,
             'trip_positions_times', 'position_id', 'trip_id');

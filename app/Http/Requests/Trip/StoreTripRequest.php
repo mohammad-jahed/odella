@@ -20,7 +20,8 @@ class StoreTripRequest extends FormRequest
      * Get the validation rules that apply to the request.
      *
      */
-    #[ArrayShape(['supervisor_id' => "array", 'bus_driver_id' => "array", 'line_id' => "array", 'start' => "string[]", 'date' => "string[]", 'position_ids' => "string[]", 'position_ids.*' => "array", 'time' => "string[]", 'time.*' => "string[]"])] public function rules(): array
+    #[ArrayShape(['supervisor_id' => "array", 'bus_driver_id' => "array", 'line_id' => "array", 'start' => "string[]", 'date' => "string[]", 'position_ids' => "string[]", 'position_ids.*' => "array", 'time' => "string[]", 'time.*' => "string[]"])]
+    public function rules(): array
     {
         return [
             'supervisor_id' => ['required', Rule::exists('users', 'id')],

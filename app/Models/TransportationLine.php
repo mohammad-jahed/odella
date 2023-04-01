@@ -36,7 +36,7 @@ class TransportationLine extends Model
         return $this->hasMany(User::class);
     }
 
-    public function trips()
+    public function trips(): BelongsToMany
     {
         return $this->belongsToMany(Trip::class,
             'trip_lines', 'line_id', 'trip_id');
