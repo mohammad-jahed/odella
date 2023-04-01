@@ -12,4 +12,6 @@ class Time extends Model
     protected $fillable = [
         'start', 'date'
     ];
+
+    protected $table = 'times';
 }

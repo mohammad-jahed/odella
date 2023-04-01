@@ -13,4 +13,6 @@ class TripPositionsTimes extends Model
         'trip_id', 'position_id', 'time'
     ];
 
+    protected $table = 'trip_positions_times';
+
 }

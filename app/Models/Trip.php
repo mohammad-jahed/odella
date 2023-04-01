@@ -13,9 +13,11 @@ class Trip extends Model
         'supervisor_id', 'bus_driver_id', 'time_id'
     ];
 
-    public function times()
+    protected $table = 'trips';
+
+    public function time()
     {
-        return $this->belongsToMany(Time::class);
+        return $this->belongsTo(Time::class);
     }
 
     public function supervisor()
@@ -23,7 +25,7 @@ class Trip extends Model
         return $this->belongsTo(User::class, 'id', 'supervisor_id');
     }
 
-    public function bus_driver()
+    public function busDriver()
     {
         return $this->belongsTo(BusDriver::class, 'id', 'bus_driver_id');
     }

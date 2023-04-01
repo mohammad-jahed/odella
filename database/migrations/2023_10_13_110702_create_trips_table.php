@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('supervisor_id')->constrained('users','id',);
             $table->foreignId('bus_driver_id')->constrained('bus_drivers','id');
-            $table->foreignId('time_id')->constrained('times','id');
+            $table->foreignId('time_id')->constrained();
             $table->timestamps();
         });
     }

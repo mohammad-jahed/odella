@@ -12,4 +12,5 @@ class TripLines extends Model
     protected $fillable = [
         'trip_id', 'line_id'
     ];
+    protected $table = 'trip_lines';
 }

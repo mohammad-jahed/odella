@@ -14,6 +14,7 @@ use App\Http\Controllers\SupervisorController;
 use App\Http\Controllers\TimeController;
 use App\Http\Controllers\TransferPositionController;
 use App\Http\Controllers\TransportationLineController;
+use App\Http\Controllers\TripController;
 use App\Http\Controllers\UniversityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -67,6 +68,7 @@ Route::group([
     Route::apiResource('/times',TimeController::class);
     Route::apiResource('/programs', ProgramController::class);
     Route::get('/programs', [ProgramController::class,'userPrograms']);
+    Route::apiResource('trips',TripController::class);
 });
 
 
