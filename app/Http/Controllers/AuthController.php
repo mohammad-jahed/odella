@@ -10,6 +10,7 @@ use App\Models\Location;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
@@ -40,28 +41,32 @@ class AuthController extends Controller
     }
 
 
-    public function register(RegisterRequest $request): JsonResponse
+    public function register(RegisterRequest $request)
     {
-        /**
-         * @var User $user ;
-         */
-        $credentials = $request->validated();
-        $credentials['password'] = Hash::make($credentials['password']);
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('images/users');
-            $credentials['image'] = $path;
-        }
+        DB::transaction(function () use ($request) {
 
-        /**
-         * @var Location $location ;
-         */
-        $location = Location::query()->create($credentials);
-        $credentials['location_id'] = $location->id;
-        $user = User::query()->create($credentials);
+            /**
+             * @var User $user ;
+             */
+            $credentials = $request->validated();
+            $credentials['password'] = Hash::make($credentials['password']);
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('images/users');
+                $credentials['image'] = $path;
+            }
 
-        $role = Role::query()->where('name', 'like', 'Student')->first();
-        $user->assignRole($role);
-        return $this->getJsonResponse($user, "User Registered Successfully , Please visit the Company Office to Complete Registration Process");
+            /**
+             * @var Location $location ;
+             */
+            $location = Location::query()->create($credentials);
+            $credentials['location_id'] = $location->id;
+            $user = User::query()->create($credentials);
+
+            $role = Role::query()->where('name', 'like', 'Student')->first();
+            $user->assignRole($role);
+            return $this->getJsonResponse($user, "User Registered Successfully , Please visit the Company Office to Complete Registration Process");
+        });
+
     }
 
 
@@ -112,7 +117,7 @@ class AuthController extends Controller
     protected function createNewToken(string $token): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
         $user->load('roles');//$roles = $user->getRoleNames();

@@ -21,6 +21,7 @@ class AreaController extends Controller
     {
 
         $areas = Area::all();
+
         return $this->getJsonResponse($areas, "Areas Fetched Successfully");
     }
 
@@ -30,15 +31,20 @@ class AreaController extends Controller
     public function store(StoreAreaRequest $request): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Add Area')) {
 
             $data = $request->validated();
+
             $area = Area::query()->create($data);
+
             return $this->getJsonResponse($area, "Area Created Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
 
@@ -58,14 +64,20 @@ class AreaController extends Controller
     public function update(UpdateAreaRequest $request, Area $area): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Update Area')) {
+
             $data = $request->validated();
+
             $area->update($data);
+
             return $this->getJsonResponse($area, "Area Updated Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }
@@ -78,13 +90,18 @@ class AreaController extends Controller
     public function destroy(Area $area): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Delete Area')) {
+
             $area->delete();
+
             return $this->getJsonResponse([], "Area Deleted Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }
@@ -92,6 +109,7 @@ class AreaController extends Controller
     public function areas(City $city): JsonResponse
     {
         $areas = $city->areas;
+
         return $this->getJsonResponse($areas, "Areas Fetched Successfully");
     }
 

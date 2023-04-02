@@ -20,10 +20,15 @@ class BusController extends Controller
          * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('View Buses')) {
+
             $buses = Bus::all();
+
             return $this->getJsonResponse($buses, "Buses Fetched Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }
@@ -38,15 +43,23 @@ class BusController extends Controller
          * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Add Bus')) {
+
             $data = $request->validated();
+
             if ($request->hasFile('image')) {
+
                 $path = $request->file('image')->store('images/buses');
+
                 $data['image'] = $path;
             }
             $bus = Bus::query()->create($data);
+
             return $this->getJsonResponse($bus, "Bus Created Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }
@@ -68,15 +81,23 @@ class BusController extends Controller
          * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Update Bus')) {
+
             $data = $request->validated();
+
             if ($request->hasFile('image')) {
+
                 $path = $request->file('image')->store('images/buses');
+
                 $data['image'] = $path;
             }
             $bus->update($data);
+
             return $this->getJsonResponse($bus, "Bus Updated Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
 
@@ -91,10 +112,15 @@ class BusController extends Controller
          * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Delete Bus')) {
+
             $bus->delete();
+
             return $this->getJsonResponse([], "Bus Deleted Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }

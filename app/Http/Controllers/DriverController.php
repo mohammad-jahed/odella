@@ -18,33 +18,46 @@ class DriverController extends Controller
     public function index(): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
-        if($user->can('View Drivers')){
+
+        if ($user->can('View Drivers')) {
+
             $drivers = Driver::all();
+
             return $this->getJsonResponse($drivers, "Drivers Fetched Successfully");
-        }else{
+
+        } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreDriverRequest $request): JsonResponse
     {
         /**
-         * @var Driver $driver;
-         * @var Bus $bus;
-         * @var User $user;
+         * @var Driver $driver ;
+         * @var Bus $bus ;
+         * @var User $user ;
          */
         $user = auth()->user();
-        if($user->can('Add Driver')){
+
+        if ($user->can('Add Driver')) {
+
             $data = $request->validated();
+
             $driver = Driver::query()->create($data);
+
             $driver->buses()->attach($data['bus_ids']);
+
             return $this->getJsonResponse($driver, "Driver Created Successfully");
-        }else{
+
+        } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }
@@ -63,19 +76,26 @@ class DriverController extends Controller
     public function update(UpdateDriverRequest $request, Driver $driver): JsonResponse
     {
         /**
-         * @var Driver $driver;
-         * @var Bus $bus;
-         * @var User $user;
+         * @var Driver $driver ;
+         * @var Bus $bus ;
+         * @var User $user ;
          */
         $user = auth()->user();
-        if($user->can('Update Driver')){
+
+        if ($user->can('Update Driver')) {
+
             $data = $request->validated();
-            if(isset($data['bus_ids'])){
+
+            if (isset($data['bus_ids'])) {
+
                 $driver->buses()->sync($data['bus_ids']);
             }
             $driver->update($data);
+
             return $this->getJsonResponse($driver, "Driver Updated Successfully");
-        }else{
+
+        } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
 
@@ -87,14 +107,18 @@ class DriverController extends Controller
     public function destroy(Driver $driver): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
-        if($user->can('Delete Driver')){
+
+        if ($user->can('Delete Driver')) {
+
             $driver->delete();
+
             return $this->getJsonResponse([], "Driver Deleted Successfully");
 
-        }else{
+        } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }

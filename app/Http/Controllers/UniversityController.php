@@ -17,13 +17,18 @@ class UniversityController extends Controller
     public function index()
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
-        if($user->can('View Universities')){
+
+        if ($user->can('View Universities')) {
+
             $universities = University::all();
-            return $this->getJsonResponse($universities,'Universities Fetched Successfully');
-        } else{
+
+            return $this->getJsonResponse($universities, 'Universities Fetched Successfully');
+
+        } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
 
@@ -37,14 +42,20 @@ class UniversityController extends Controller
     {
         //
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
-        if($user->can('Add University')){
+
+        if ($user->can('Add University')) {
+
             $data = $request->validated();
+
             $university = University::create($data);
-            return $this->getJsonResponse($university,'University Created Successfully');
+
+            return $this->getJsonResponse($university, 'University Created Successfully');
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }
@@ -54,7 +65,7 @@ class UniversityController extends Controller
      */
     public function show(University $university): JsonResponse
     {
-        //
+
         return $this->getJsonResponse($university, 'University Fetched Successfully');
     }
 
@@ -65,14 +76,20 @@ class UniversityController extends Controller
     {
         //
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
-        if($user->can('Update University')){
+
+        if ($user->can('Update University')) {
+
             $data = $request->validated();
+
             $university->update($data);
-            return $this->getJsonResponse($university,'University Updated Successfully');
+
+            return $this->getJsonResponse($university, 'University Updated Successfully');
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
 
@@ -85,14 +102,19 @@ class UniversityController extends Controller
     {
         //
         /**
-         * @var User $user;
+         * @var User $user ;
          */
 
         $user = auth()->user();
-        if($user->can('Delete University')){
+
+        if ($user->can('Delete University')) {
+
             $university->delete();
-            return $this->getJsonResponse([],'University Deleted Successfully');
-        } else{
+
+            return $this->getJsonResponse([], 'University Deleted Successfully');
+
+        } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }

@@ -17,6 +17,7 @@ class CityController extends Controller
     public function index(): JsonResponse
     {
         $cities = City::all();
+
         return $this->getJsonResponse($cities, "Cities Fetched Successfully");
     }
 
@@ -28,14 +29,20 @@ class CityController extends Controller
     public function store(StoreCityRequest $request): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Add City')) {
+
             $data = $request->validated();
+
             $city = City::query()->create($data);
+
             return $this->getJsonResponse($city, "City Created Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }
@@ -58,14 +65,20 @@ class CityController extends Controller
     public function update(UpdateCityRequest $request, City $city): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Update City')) {
+
             $data = $request->validated();
+
             $city->update($data);
+
             return $this->getJsonResponse($city, "City Updated Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }
@@ -78,13 +91,18 @@ class CityController extends Controller
     public function destroy(City $city): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Delete City')) {
+
             $city->delete();
+
             return $this->getJsonResponse([], "City Deleted Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }

@@ -18,9 +18,13 @@ class LocationController extends Controller
     public function index(): JsonResponse
     {
         $user = auth()->user();
+
         Gate::forUser($user)->authorize('getAllLocations');
+
         $locations = Location::all();
+
         return $this->getJsonResponse($locations, "Locations Fetched Successfully");
+
     }
 
     /**
@@ -30,8 +34,11 @@ class LocationController extends Controller
     {
 
         $data = $request->validated();
+
         $location = Location::query()->create($data);
+
         return $this->getJsonResponse($location, "Location Created Successfully");
+
     }
 
     /**
@@ -41,8 +48,11 @@ class LocationController extends Controller
     public function show(Location $location): JsonResponse
     {
         $user = auth()->user();
+
         Gate::forUser($user)->authorize('getLocation', $location);
+
         return $this->getJsonResponse($location, "Location Fetched Successfully");
+
     }
 
 
@@ -53,9 +63,13 @@ class LocationController extends Controller
     public function update(UpdateLocationRequest $request, Location $location): JsonResponse
     {
         $user = auth()->user();
+
         Gate::forUser($user)->authorize('updateLocation', $location);
+
         $data = $request->validated();
+
         $location->update($data);
+
         return $this->getJsonResponse($location, "Location Updated Successfully");
     }
 
@@ -66,8 +80,11 @@ class LocationController extends Controller
     public function destroy(Location $location): JsonResponse
     {
         $user = auth()->user();
+
         Gate::forUser($user)->authorize('deleteLocation', $location);
+
         $location->delete();
+
         return $this->getJsonResponse([], "Location Deleted Successfully");
     }
 }

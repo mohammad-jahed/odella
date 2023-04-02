@@ -46,13 +46,19 @@ class StudentController extends Controller
     public function update(UpdateStudentRequest $request, User $student): JsonResponse
     {
         $user = auth()->user();
+
         Gate::forUser($user)->authorize('updateProfile', $student);
+
         $credentials = $request->validated();
+
         if (isset($credentials['password'])) {
+
             $credentials['password'] = Hash::make($credentials['password']);
         }
         if ($request->hasFile('image')) {
+
             $path = $request->file('image')->store('images/users');
+
             $credentials['image'] = $path;
         }
         /**
@@ -69,8 +75,11 @@ class StudentController extends Controller
             $data += ['street' => $credentials['street']];
         }
         $location = $student->location;
+
         $location->update($data);
+
         $student->update($credentials);
+
         return $this->getJsonResponse($student, "Student Updated Successfully");
 
     }
@@ -89,10 +98,15 @@ class StudentController extends Controller
          * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('View Student')) {
+
             $students = User::role('Student')->where('status', Status::Active)->get();
+
             return $this->getJsonResponse($students, "Students Fetch Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }
@@ -106,12 +120,15 @@ class StudentController extends Controller
          * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('View Student')) {
+
             $students = User::role('Student')->where('status', Status::UnActive)->get();
 
             return $this->getJsonResponse($students, "Students Fetch Successfully");
 
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
 

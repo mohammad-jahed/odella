@@ -27,14 +27,20 @@ class TransportationLineController extends Controller
     public function store(StoreTransportationLineRequest $request): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Add Transportation_Line')) {
+
             $data = $request->validated();
+
             $transportationLine = TransportationLine::query()->create($data);
+
             return $this->getJsonResponse($transportationLine, "TransportationLine Created Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }
@@ -55,15 +61,20 @@ class TransportationLineController extends Controller
     public function update(UpdateTransportationLineRequest $request, TransportationLine $transportationLine): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Update Transportation_Line')) {
+
             $data = $request->validated();
 
             $transportationLine->update($data);
+
             return $this->getJsonResponse($transportationLine, "TransportationLine Updated Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }
@@ -74,13 +85,18 @@ class TransportationLineController extends Controller
     public function destroy(TransportationLine $transportationLine): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Delete Transportation_Line')) {
+
             $transportationLine->delete();
+
             return $this->getJsonResponse([], "TransportationLine Deleted Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }

@@ -18,6 +18,7 @@ class TransferPositionController extends Controller
     public function index(): JsonResponse
     {
         $transferPositions = TransferPosition::all();
+
         return $this->getJsonResponse($transferPositions, "TransferPositions Fetched Successfully");
     }
 
@@ -27,11 +28,14 @@ class TransferPositionController extends Controller
     public function store(StoreTransferPositionRequest $request): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Add Position')) {
+
             $data = $request->validated();
+
             $transferPosition = TransferPosition::query()->create($data);
             /**
              * @var TransferPosition $transferPosition ;
@@ -39,9 +43,13 @@ class TransferPositionController extends Controller
              */
 
             $line = TransportationLine::query()->where('id', $data['line_id'])->first();
+
             $transferPosition->lines()->attach($line->id);
+
             return $this->getJsonResponse($transferPosition, "TransferPosition Created Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }
@@ -60,21 +68,28 @@ class TransferPositionController extends Controller
     public function update(UpdateTransferPositionRequest $request, TransferPosition $transferPosition): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Update Position')) {
+
             $data = $request->validated();
+
             $transferPosition->update($data);
+
             if (isset($data['line_id'])) {
                 /**
                  * @var TransportationLine $line ;
                  */
                 $line = TransportationLine::query()->where('id', $data['line_id'])->first();
+
                 $transferPosition->lines()->sync([$line->id]);
             }
             return $this->getJsonResponse($transferPosition, "TransferPosition Updated Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }
@@ -85,13 +100,18 @@ class TransferPositionController extends Controller
     public function destroy(TransferPosition $transferPosition): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Delete Position')) {
+
             $transferPosition->delete();
+
             return $this->getJsonResponse([], "TransferPosition Deleted Successfully");
+
         } else {
+
             abort(Response::HTTP_FORBIDDEN);
         }
     }
@@ -99,6 +119,7 @@ class TransferPositionController extends Controller
     public function positions(TransportationLine $line): JsonResponse
     {
         $positions = $line->positions;
+
         return $this->getJsonResponse($positions, "Position Fetched Successfully");
     }
 }

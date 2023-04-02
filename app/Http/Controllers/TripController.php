@@ -8,6 +8,7 @@ use App\Models\Time;
 use App\Models\TransportationLine;
 use App\Models\Trip;
 use App\Models\TripPositionsTimes;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class TripController extends Controller
@@ -17,6 +18,7 @@ class TripController extends Controller
      */
     public function index()
     {
+
         $user = auth()->user();
 
         if ($user->can('View Trips')) {
@@ -41,33 +43,39 @@ class TripController extends Controller
 
         if ($user->can('Add Trip')) {
 
-            $credentials = $request->validated();
+            DB::transaction(function () use ($request) {
 
-            $time = Time::query()->create($credentials);
+                $credentials = $request->validated();
 
-            $credentials['time_id'] = $time->id;
+                $time = Time::query()->create($credentials);
 
-            $trip = Trip::query()->create($credentials);
+                $credentials['time_id'] = $time->id;
 
-            $line = TransportationLine::where('id', $credentials['line_id'])->first();
+                $trip = Trip::query()->create($credentials);
 
-            $trip->lines()->attach($line);
+                $line = TransportationLine::where('id', $credentials['line_id'])->first();
 
-            $positionsNumber = $line->positions()->count();
+                $trip->lines()->attach($line);
+                $trip = $trip->load('lines', 'time', 'busDriver');
 
-            for ($i = 0; $i < $positionsNumber; $i++) {
-                for ($j = 0; $j < $positionsNumber; $j++) {
-                    if ($i == $j) {
-                        $data = [
-                            'position_id' => $credentials['position_ids'][$i],
-                            'time' => $credentials['time'][$j],
-                            'trip_id' => $trip->id
-                        ];
-                        TripPositionsTimes::query()->create($data);
+                $positionsNumber = $line->positions()->count();
+
+                for ($i = 0; $i < $positionsNumber; $i++) {
+                    for ($j = 0; $j < $positionsNumber; $j++) {
+                        if ($i == $j) {
+                            $data = [
+                                'position_id' => $credentials['position_ids'][$i],
+                                'time' => $credentials['time'][$j],
+                                'trip_id' => $trip->id
+                            ];
+                            TripPositionsTimes::query()->create($data);
+                        }
                     }
                 }
-            }
-            return $this->getJsonResponse($trip, "Trip Created Successfully");
+                return $this->getJsonResponse($trip, "Trip Created Successfully");
+
+            });
+
 
         } else {
 
