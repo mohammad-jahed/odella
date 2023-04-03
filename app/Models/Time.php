@@ -20,7 +20,8 @@ class Time extends Model
 
     protected $table = 'times';
 
-    public function trips(): HasMany {
+    public function trips(): HasMany
+    {
         return $this->hasMany(Trip::class);
     }
 }

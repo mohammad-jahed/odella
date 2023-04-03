@@ -75,22 +75,20 @@ class PermissionSeeder extends Seeder
             ['name' => 'View Lost&Found', 'guard_name' => 'api'],
 
 
-
-
-            ['name'=>'View Employee' , 'guard_name'=> 'api'],
-            ['name'=>'Update Employee' , 'guard_name'=> 'api'],
-            ['name'=>'View Supervisor' , 'guard_name'=> 'api'],
-            ['name'=>'Update Supervisor' , 'guard_name'=> 'api'],
-            ['name'=>'View Student' , 'guard_name'=> 'api'],
-            ['name'=>'View Universities' , 'guard_name'=> 'api'],
-            ['name'=>'Add University' , 'guard_name'=> 'api'],
-            ['name'=>'Update University' , 'guard_name'=> 'api'],
-            ['name'=>'Delete University' , 'guard_name'=> 'api'],
-            ['name'=>'View Time' , 'guard_name'=> 'api'],
-            ['name'=>'Add Time' , 'guard_name'=> 'api'],
-            ['name'=>'Update Time' , 'guard_name'=> 'api'],
-            ['name'=>'Delete Time' , 'guard_name'=> 'api'],
-            ['name'=>'View Programs' , 'guard_name'=> 'api'],
+            ['name' => 'View Employee', 'guard_name' => 'api'],
+            ['name' => 'Update Employee', 'guard_name' => 'api'],
+            ['name' => 'View Supervisor', 'guard_name' => 'api'],
+            ['name' => 'Update Supervisor', 'guard_name' => 'api'],
+            ['name' => 'View Student', 'guard_name' => 'api'],
+            ['name' => 'View Universities', 'guard_name' => 'api'],
+            ['name' => 'Add University', 'guard_name' => 'api'],
+            ['name' => 'Update University', 'guard_name' => 'api'],
+            ['name' => 'Delete University', 'guard_name' => 'api'],
+            ['name' => 'View Time', 'guard_name' => 'api'],
+            ['name' => 'Add Time', 'guard_name' => 'api'],
+            ['name' => 'Update Time', 'guard_name' => 'api'],
+            ['name' => 'Delete Time', 'guard_name' => 'api'],
+            ['name' => 'View Programs', 'guard_name' => 'api'],
         ]);
     }
 }

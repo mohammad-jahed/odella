@@ -3,8 +3,8 @@
 namespace App\Http\Requests\Employee;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
-use JetBrains\PhpStorm\ArrayShape;
 
 class UpdateEmployeeRequest extends FormRequest
 {
@@ -21,9 +21,9 @@ class UpdateEmployeeRequest extends FormRequest
      *
      * @return array
      */
-    #[ArrayShape(['city_id' => "array", 'area_id' => "array", 'street' => "string[]", 'firstName' => "string[]", 'lastName' => "string[]", 'email' => "string[]", 'password' => "string[]", 'phoneNumber' => "string[]", 'image' => "string[]"])]
     public function rules(): array
     {
+        $user = auth()->user();
         return [
             //
             'city_id' => [Rule::exists('cities', 'id')],
@@ -32,7 +32,18 @@ class UpdateEmployeeRequest extends FormRequest
             'firstName' => ['bail', 'string', 'max:255'],
             'lastName' => ['bail', 'string', 'max:255'],
             'email' => ['bail', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['bail', 'string', 'min:6', 'max:256'],
+            'oldPassword' => [
+                'bail',
+                'string',
+                'min:6',
+                'max:256',
+                function ($attribute, $value, $fail) use ($user) {
+                    if (!Hash::check($value, $user->getAuthPassword())) {
+                        $fail('Your password was not updated, since the provided current password does not match.');
+                    }
+                }
+            ],
+            'newPassword' => ['bail', 'string', 'min:6', 'max:256', 'confirmed'],
             'phoneNumber' => ['bail', 'numeric', 'min:10'],
             'image' => ['image', 'bail'],
         ];

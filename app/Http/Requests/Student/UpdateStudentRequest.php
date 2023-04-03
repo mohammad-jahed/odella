@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Student;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class UpdateStudentRequest extends FormRequest
@@ -22,6 +23,7 @@ class UpdateStudentRequest extends FormRequest
      */
     public function rules(): array
     {
+        $user = auth()->user();
         return [
             'city_id' => [Rule::exists('cities', 'id')],
             'area_id' => [Rule::exists('areas', 'id')],
@@ -29,7 +31,18 @@ class UpdateStudentRequest extends FormRequest
             'firstName' => ['bail', 'string', 'max:255'],
             'lastName' => ['bail', 'string', 'max:255'],
             'email' => ['bail', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['bail', 'string', 'min:6', 'max:256'],
+            'oldPassword' => [
+                'bail',
+                'string',
+                'min:6',
+                'max:256',
+                function ($attribute, $value, $fail) use ($user) {
+                    if (!Hash::check($value, $user->getAuthPassword())) {
+                        $fail('Your password was not updated, since the provided current password does not match.');
+                    }
+                }
+            ],
+            'newPassword' => ['bail', 'string', 'min:6', 'max:256', 'confirmed'],
             'phoneNumber' => ['bail', 'numeric', 'min:10'],
             'subscription_id' => [Rule::exists('subscriptions', 'id')],
             'transportation_line_id' => [Rule::exists('transportation_lines', 'id')],

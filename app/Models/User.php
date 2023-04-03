@@ -18,10 +18,10 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @method static role(string $string)
  * @property integer $id;
  * @property integer $status;
- * @property mixed $location
- * @property mixed $subscription
- * @property mixed $programs
- * @property Trip[] $trips
+ * @property mixed $location;
+ * @property mixed $subscription;
+ * @property mixed $programs;
+ * @property Trip[] $trips;
  */
 class User extends Authenticatable implements JWTSubject
 {

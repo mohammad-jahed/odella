@@ -147,9 +147,8 @@ class EmployeeController extends Controller
 
             $credentials = $request->validated();
 
-            if (isset($credentials['password'])) {
-
-                $credentials['password'] = Hash::make($credentials['password']);
+            if (isset($credentials['newPassword'])) {
+                $credentials['password'] = Hash::make($credentials['newPassword']);
             }
             if ($request->hasFile('image')) {
 

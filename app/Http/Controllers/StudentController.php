@@ -18,9 +18,20 @@ class StudentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         //
+        /**
+         * @var User $user ;
+         */
+        $user = auth()->user();
+        if ($user->can('View Student')) {
+            $students = User::role('Student')->get();
+            return $this->getJsonResponse($students, "Students Fetched Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
     }
 
     /**
@@ -34,9 +45,18 @@ class StudentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(User $student): JsonResponse
     {
         //
+        /**
+         * @var User $user ;
+         */
+        $user = auth()->user();
+        if ($user->can('View Student')) {
+            return $this->getJsonResponse($student, "Student Fetched Successfully");
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
@@ -51,9 +71,8 @@ class StudentController extends Controller
 
         $credentials = $request->validated();
 
-        if (isset($credentials['password'])) {
-
-            $credentials['password'] = Hash::make($credentials['password']);
+        if (isset($credentials['newPassword'])) {
+            $credentials['password'] = Hash::make($credentials['newPassword']);
         }
         if ($request->hasFile('image')) {
 
@@ -87,9 +106,20 @@ class StudentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $student): JsonResponse
     {
         //
+        /**
+         * @var User $user ;
+         */
+        $user = auth()->user();
+        if ($user->can('Delete Student')) {
+            $student->delete();
+            return $this->getJsonResponse([], 'Student Deleted Successfully');
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
     }
 
     public function activeStudentsList(): JsonResponse

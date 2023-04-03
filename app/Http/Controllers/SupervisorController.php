@@ -113,9 +113,9 @@ class SupervisorController extends Controller
 
             $credentials = $request->validated();
 
-            if (isset($credentials['password'])) {
+            if (isset($credentials['newPassword'])) {
 
-                $credentials['password'] = Hash::make($credentials['password']);
+                $credentials['password'] = Hash::make($credentials['newPassword']);
             }
             if ($request->hasFile('image')) {
 
