@@ -21,7 +21,7 @@ class DriverSeeder extends Seeder
         /**
          * @var Driver $driver
          */
-        $driver = Driver::class->find(1)->first();
+        $driver = Driver::query()->where('id', 1)->first();
 
         $driver->buses()->attach(1);
     }
