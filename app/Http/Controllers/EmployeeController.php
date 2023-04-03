@@ -28,7 +28,21 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        //
+        /**
+         * @var User $user ;
+         */
+        $user = auth()->user();
+
+        if ($user->can('View Employee')) {
+
+            $employees = User::role('Employee')->get();
+
+            return $this->getJsonResponse($employees, "Employees Fetched Successfully");
+
+        } else {
+
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
@@ -95,9 +109,21 @@ class EmployeeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(User $employee): JsonResponse
     {
-        //
+        /**
+         * @var User $user ;
+         */
+        $user = auth()->user();
+
+        if ($user->can('View Employee')) {
+
+            return $this->getJsonResponse($employee, "Employee Fetched Successfully");
+
+        } else {
+
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
@@ -168,9 +194,23 @@ class EmployeeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(User $employee)
     {
-        //
+        /**
+         * @var User $user ;
+         */
+        $user = auth()->user();
+
+        if ($user->can('Delete Employee')) {
+
+            $employee->delete();
+
+            return $this->getJsonResponse($employee, "Employee Deleted Successfully");
+
+        } else {
+
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
