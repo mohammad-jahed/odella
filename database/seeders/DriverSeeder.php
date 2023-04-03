@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Driver;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -15,11 +14,15 @@ class DriverSeeder extends Seeder
     public function run(): void
     {
         DB::table('drivers')->insert([
-            'firstname'=>'ffff',
-            'lastname'=>'llll',
-            'number'=>123456789,
+            'firstname' => 'ffff',
+            'lastname' => 'llll',
+            'number' => 123456789,
         ]);
-        $driver = Driver::where('id',1)->first();
+        /**
+         * @var Driver $driver
+         */
+        $driver = Driver::class->find(1)->first();
+
         $driver->buses()->attach(1);
     }
 }
