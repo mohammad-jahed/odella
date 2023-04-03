@@ -65,10 +65,10 @@ Route::group([
     Route::apiResource('/buses', BusController::class);
     Route::apiResource('/drivers', DriverController::class);
     Route::apiResource('/universities', UniversityController::class);
-    Route::apiResource('/times',TimeController::class);
+    Route::apiResource('/times', TimeController::class);
     Route::apiResource('/programs', ProgramController::class);
-    Route::get('/programs', [ProgramController::class,'userPrograms']);
-    Route::apiResource('/trips',TripController::class);
+    Route::get('/programs', [ProgramController::class, 'userPrograms']);
+    Route::apiResource('/trips', TripController::class);
 });
 
 
