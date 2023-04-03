@@ -7,6 +7,7 @@ use App\Http\Requests\Supervisor\StoreSupervisorRequest;
 use App\Http\Requests\Supervisor\UpdateSupervisorRequest;
 use App\Models\Location;
 use App\Models\User;
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -37,8 +38,9 @@ class SupervisorController extends Controller
 
         if ($user->can('Add Supervisor')) {
 
-            DB::transaction(function () use ($request) {
+            try {
 
+                DB::beginTransaction();
                 /**
                  * @var User $user ;
                  */
@@ -67,9 +69,16 @@ class SupervisorController extends Controller
 
                 $user->assignRole($role);
 
+                DB::commit();
+
                 return $this->getJsonResponse($user, "Supervisor Registered Successfully");
 
-            });
+            } catch (Exception $exception) {
+
+                DB::rollBack();
+
+                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+            }
 
         } else {
 
@@ -89,16 +98,18 @@ class SupervisorController extends Controller
      * Update the specified resource in storage.
      * @throws AuthorizationException
      */
-    public function update(UpdateSupervisorRequest $request, User $supervisor)
+    public function update(UpdateSupervisorRequest $request, User $supervisor): JsonResponse
     {
         /**
          * @var User $auth ;
          */
-
         $auth = auth()->user();
+
         Gate::forUser($auth)->authorize('updateProfile', $supervisor);
 
-        DB::transaction(function () use ($request, $supervisor) {
+        try {
+
+            DB::beginTransaction();
 
             $credentials = $request->validated();
 
@@ -131,10 +142,16 @@ class SupervisorController extends Controller
 
             $supervisor->update($credentials);
 
+            DB::commit();
+
             return $this->getJsonResponse($supervisor, "Supervisor Updated Successfully");
-        });
 
+        } catch (Exception $exception) {
 
+            DB::rollBack();
+
+            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+        }
     }
 
     /**

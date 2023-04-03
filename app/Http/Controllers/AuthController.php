@@ -8,6 +8,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
 use App\Models\Location;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +28,7 @@ class AuthController extends Controller
         $data = $request->validated();
 
         if (!$token = auth('api')->attempt($data)) {
+
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         /**
@@ -34,6 +36,9 @@ class AuthController extends Controller
          */
         $user = auth()->user();
         if ($user->status == Status::UnActive) {
+
+            Auth::logout();
+
             return $this->getJsonResponse($user, "Un authorized, Please visit the Company Office to Complete Registration Process");
         }
 
@@ -41,17 +46,22 @@ class AuthController extends Controller
     }
 
 
-    public function register(RegisterRequest $request)
+    public function register(RegisterRequest $request): JsonResponse
     {
-        DB::transaction(function () use ($request) {
 
+        try {
+            DB::beginTransaction();
             /**
              * @var User $user ;
              */
             $credentials = $request->validated();
+
             $credentials['password'] = Hash::make($credentials['password']);
+
             if ($request->hasFile('image')) {
+
                 $path = $request->file('image')->store('images/users');
+
                 $credentials['image'] = $path;
             }
 
@@ -59,13 +69,25 @@ class AuthController extends Controller
              * @var Location $location ;
              */
             $location = Location::query()->create($credentials);
+
             $credentials['location_id'] = $location->id;
+
             $user = User::query()->create($credentials);
 
             $role = Role::query()->where('name', 'like', 'Student')->first();
+
             $user->assignRole($role);
-            return $this->getJsonResponse($user, "User Registered Successfully , Please visit the Company Office to Complete Registration Process");
-        });
+
+            DB::commit();
+
+            return $this->getJsonResponse([], "User Registered Successfully , Please visit the Company Office to Complete Registration Process");
+
+        } catch (Exception $exception) {
+
+            DB::rollBack();
+
+            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+        }
 
     }
 

@@ -12,6 +12,7 @@ use App\Models\Program;
 use App\Models\Subscription;
 use App\Models\Trip;
 use App\Models\User;
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +43,9 @@ class EmployeeController extends Controller
 
         if ($auth->can('Add Employee')) {
 
-            DB::transaction(function () use ($request) {
+            try {
+
+                DB::beginTransaction();
 
                 $credentials = $request->validated();
 
@@ -71,9 +74,17 @@ class EmployeeController extends Controller
 
                 $user->assignRole($role);
 
+                DB::commit();
+
                 return $this->getJsonResponse($user, "Employee Registered Successfully");
 
-            });
+            } catch (Exception $exception) {
+
+                DB::rollBack();
+
+                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+            }
+
         } else {
 
             abort(Response::HTTP_FORBIDDEN);
@@ -93,7 +104,7 @@ class EmployeeController extends Controller
      * Update the specified resource in storage.
      * @throws AuthorizationException
      */
-    public function update(UpdateEmployeeRequest $request, User $employee)
+    public function update(UpdateEmployeeRequest $request, User $employee): JsonResponse
     {
 
         /**
@@ -104,7 +115,9 @@ class EmployeeController extends Controller
 
         Gate::forUser($auth)->authorize('updateProfile', $employee);
 
-        DB::transaction(function () use ($request, $employee) {
+        try {
+
+            DB::beginTransaction();
 
             $credentials = $request->validated();
 
@@ -138,9 +151,17 @@ class EmployeeController extends Controller
 
             $employee->update($credentials);
 
+            DB::commit();
+
             return $this->getJsonResponse($employee, "Employee Updated Successfully");
 
-        });
+        } catch (Exception $exception) {
+
+            DB::rollBack();
+
+            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+
+        }
 
     }
 
@@ -156,19 +177,21 @@ class EmployeeController extends Controller
      */
     public function confirmRegistration(User $user, ConfirmRegistrationRequest $request)
     {
-
+        /**
+         * @var User $auth ;
+         */
         $auth = auth()->user();
 
         if ($auth->can('Confirm registration')) {
 
-            DB::transaction(function () use ($user, $request) {
-
+            try {
                 /**
                  * @var User $auth ;
                  * @var Subscription $subscription ;
                  */
 
                 $credentials = $request->validated();
+
                 $user->trips()->attach($credentials['trip_ids']);
                 /**
                  * @var Trip[] $trips ;
@@ -208,9 +231,16 @@ class EmployeeController extends Controller
 
                 $user->load('payments');
 
+                DB::commit();
+
                 return $this->getJsonResponse($user, "Your Register Is Confirmed Successfully");
 
-            });
+            } catch (Exception $exception) {
+
+                DB::rollBack();
+
+                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+            }
 
         } else {
 

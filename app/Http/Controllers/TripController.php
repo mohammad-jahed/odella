@@ -8,6 +8,8 @@ use App\Models\Time;
 use App\Models\TransportationLine;
 use App\Models\Trip;
 use App\Models\TripPositionsTimes;
+use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,7 +20,9 @@ class TripController extends Controller
      */
     public function index()
     {
-
+        /**
+         * @var User $user ;
+         */
         $user = auth()->user();
 
         if ($user->can('View Trips')) {
@@ -38,12 +42,16 @@ class TripController extends Controller
      */
     public function store(StoreTripRequest $request)
     {
-
+        /**
+         * @var User $user ;
+         */
         $user = auth()->user();
 
         if ($user->can('Add Trip')) {
 
-            DB::transaction(function () use ($request) {
+            try {
+
+                DB::beginTransaction();
 
                 $credentials = $request->validated();
 
@@ -53,9 +61,17 @@ class TripController extends Controller
 
                 $trip = Trip::query()->create($credentials);
 
+                /**
+                 * @var Trip $trip ;
+                 */
+                /**
+                 * @var TransportationLine $line ;
+                 */
+
                 $line = TransportationLine::where('id', $credentials['line_id'])->first();
 
                 $trip->lines()->attach($line);
+
                 $trip = $trip->load('lines', 'time', 'busDriver');
 
                 $positionsNumber = $line->positions()->count();
@@ -72,10 +88,16 @@ class TripController extends Controller
                         }
                     }
                 }
+                DB::commit();
+
                 return $this->getJsonResponse($trip, "Trip Created Successfully");
 
-            });
+            } catch (Exception $exception) {
 
+                DB::rollBack();
+
+                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+            }
 
         } else {
 
@@ -88,6 +110,9 @@ class TripController extends Controller
      */
     public function show(Trip $trip)
     {
+        /**
+         * @var User $user ;
+         */
         $user = auth()->user();
 
         if ($user->can('View Trips')) {
@@ -105,6 +130,9 @@ class TripController extends Controller
      */
     public function update(UpdateTripRequest $request, Trip $trip)
     {
+        /**
+         * @var User $user ;
+         */
         $user = auth()->user();
 
         if ($user->can('Update Trip')) {
@@ -119,6 +147,9 @@ class TripController extends Controller
      */
     public function destroy(Trip $trip)
     {
+        /**
+         * @var User $user ;
+         */
         $user = auth()->user();
 
         if ($user->can('Delete Trip')) {

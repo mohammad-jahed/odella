@@ -7,9 +7,7 @@ use App\Http\Requests\Area\UpdateAreaRequest;
 use App\Models\Area;
 use App\Models\City;
 use App\Models\User;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class AreaController extends Controller

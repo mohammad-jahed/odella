@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Time\StoreTimeRequest;
 use App\Http\Requests\Time\UpdateTimeRequest;
 use App\Models\Time;
+use App\Models\User;
 use Symfony\Component\HttpFoundation\Response;
 
 class TimeController extends Controller
@@ -14,6 +15,9 @@ class TimeController extends Controller
      */
     public function index()
     {
+        /**
+         * @var User $user ;
+         */
         $user = auth()->user();
 
         if ($user->can('View Time')) {
@@ -33,6 +37,9 @@ class TimeController extends Controller
      */
     public function store(StoreTimeRequest $request)
     {
+        /**
+         * @var User $user ;
+         */
         $user = auth()->user();
 
         if ($user->can('Add Time')) {
@@ -54,6 +61,9 @@ class TimeController extends Controller
      */
     public function show(Time $time)
     {
+        /**
+         * @var User $user ;
+         */
         $user = auth()->user();
 
         if ($user->can('View Time')) {
@@ -70,6 +80,9 @@ class TimeController extends Controller
      */
     public function update(UpdateTimeRequest $request, Time $time)
     {
+        /**
+         * @var User $user ;
+         */
         $user = auth()->user();
 
         if ($user->can('Update Time')) {
@@ -91,6 +104,9 @@ class TimeController extends Controller
      */
     public function destroy(Time $time)
     {
+        /**
+         * @var User $user ;
+         */
         $user = auth()->user();
 
         if ($user->can('Delete Time')) {
