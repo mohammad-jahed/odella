@@ -23,7 +23,21 @@ class SupervisorController extends Controller
      */
     public function index()
     {
-        //
+        /**
+         * @var User $user ;
+         */
+        $user = auth()->user();
+
+        if ($user->can('View Supervisor')) {
+
+            $supervisors = User::role('Supervisor')->get();
+
+            return $this->getJsonResponse($supervisors, "Supervisors Fetched Successfully");
+
+        } else {
+
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
@@ -89,9 +103,21 @@ class SupervisorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(User $supervisor)
     {
-        //
+        /**
+         * @var User $user ;
+         */
+        $user = auth()->user();
+
+        if ($user->can('View Supervisor')) {
+
+            return $this->getJsonResponse($supervisor, "Supervisor Fetched Successfully");
+
+        } else {
+
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 
     /**
@@ -157,8 +183,22 @@ class SupervisorController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(User $supervisor)
     {
-        //
+        /**
+         * @var User $user ;
+         */
+        $user = auth()->user();
+
+        if ($user->can('Delete Supervisor')) {
+
+            $supervisor->delete();
+
+            return $this->getJsonResponse($supervisor, "Supervisor Deleted Successfully");
+
+        } else {
+
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
 }
