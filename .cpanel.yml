@@ -2,4 +2,4 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/yaamen1c/public_html/
-    - /bin/cp -R routes $DEPLOYPATH
+    - /bin/cp -R ./* $DEPLOYPATH
