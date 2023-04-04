@@ -18,6 +18,11 @@ class City extends Model
         "name_en"
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
     public function locations(): HasMany
     {
         return $this->hasMany(Location::class);

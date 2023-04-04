@@ -12,13 +12,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class University extends Model
 {
     use HasFactory;
+
     protected $fillable = [
-      'name_ar',
-      'name_en',
-      'shortcut'
+        'name_ar',
+        'name_en',
+        'shortcut'
     ];
 
-    public function users(): HasMany {
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
+    public function users(): HasMany
+    {
         return $this->hasMany(User::class);
     }
 }

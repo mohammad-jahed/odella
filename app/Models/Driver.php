@@ -11,7 +11,14 @@ class Driver extends Model
     use HasFactory;
 
     protected $fillable = [
-        'firstname', 'lastname', 'number'
+        'firstname',
+        'lastname',
+        'number'
+    ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
     ];
 
     public function buses(): BelongsToMany
