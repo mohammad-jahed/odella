@@ -10,6 +10,12 @@ class BusDriver extends Model
     use HasFactory;
 
     protected $fillable = [
-        'bus_id', 'driver_id'
+        'bus_id',
+        'driver_id'
+    ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
     ];
 }

@@ -10,7 +10,14 @@ class TripPositionsTimes extends Model
     use HasFactory;
 
     protected $fillable = [
-        'trip_id', 'position_id', 'time'
+        'trip_id',
+        'position_id',
+        'time'
+    ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
     ];
 
     protected $table = 'trip_positions_times';

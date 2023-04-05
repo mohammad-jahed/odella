@@ -14,21 +14,30 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Location extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'city_id',
         'area_id',
         'street'
     ];
 
-    public function city(): BelongsTo {
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
+    public function city(): BelongsTo
+    {
         return $this->belongsTo(City::class);
     }
 
-    public function area(): BelongsTo {
+    public function area(): BelongsTo
+    {
         return $this->belongsTo(Area::class);
     }
 
-    public function users(): HasMany {
+    public function users(): HasMany
+    {
         return $this->hasMany(User::class);
 
     }

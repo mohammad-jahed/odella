@@ -10,7 +10,14 @@ class TripUser extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'trip_id', 'studentAttendance'
+        'user_id',
+        'trip_id',
+        'studentAttendance'
+    ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
     ];
 
 

@@ -16,6 +16,10 @@ class Area extends Model
         'name_en'
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
 
     public function city(): BelongsTo
     {

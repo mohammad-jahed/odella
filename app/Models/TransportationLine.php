@@ -20,6 +20,11 @@ class TransportationLine extends Model
         "name_en"
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
     protected $appends = [
         'from',
         'to'
@@ -34,6 +39,7 @@ class TransportationLine extends Model
     {
         return $this->positions()->orderBy('id', 'desc')->first();
     }
+
 
     public function positions(): BelongsToMany
     {
