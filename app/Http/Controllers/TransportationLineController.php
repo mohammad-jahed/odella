@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TransportationLine\StoreTransportationLineRequest;
 use App\Http\Requests\TransportationLine\UpdateTransportationLineRequest;
+use App\Models\TransferPosition;
 use App\Models\TransportationLine;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -16,8 +17,20 @@ class TransportationLineController extends Controller
      */
     public function index(): JsonResponse
     {
+        /**
+         * @var TransportationLine[] $transportationLines ;
+         * @var TransportationLine $transportationLine ;
+         * @var TransferPosition[] $positions ;
+         */
         $transportationLines = TransportationLine::all();
-
+//        foreach ($transportationLines as $transportationLine) {
+//            $positions = [$transportationLine->positions];
+//            $transportationLine += [
+//                'from' => $positions[0],
+//                'to' => $positions[sizeof($positions) - 1]
+//            ];
+//            $transportationLines->add($transportationLine);
+//        }
         return $this->getJsonResponse($transportationLines, "TransportationLines Fetch Successfully");
     }
 

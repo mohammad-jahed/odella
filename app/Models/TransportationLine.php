@@ -20,6 +20,20 @@ class TransportationLine extends Model
         "name_en"
     ];
 
+    protected $appends = [
+        'from',
+        'to'
+    ];
+
+    public function getFromAttribute()
+    {
+        return $this->positions()->first();
+    }
+
+    public function getToAttribute()
+    {
+        return $this->positions()->orderBy('id', 'desc')->first();
+    }
 
     public function positions(): BelongsToMany
     {
