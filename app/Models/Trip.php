@@ -19,7 +19,10 @@ class Trip extends Model
     use HasFactory;
 
     protected $fillable = [
-        'supervisor_id', 'bus_driver_id', 'time_id'
+        'supervisor_id',
+        'bus_driver_id',
+        'time_id',
+        'status'
     ];
 
     protected $table = 'trips';
