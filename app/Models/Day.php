@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Day extends Model
 {
     use HasFactory;
-    public function programs(): HasMany {
+
+    public function programs(): HasMany
+    {
+
         return $this->hasMany(Program::class);
     }
 }

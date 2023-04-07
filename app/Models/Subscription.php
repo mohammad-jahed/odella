@@ -23,7 +23,18 @@ class Subscription extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
+        'name_ar',
+        'name_en',
     ];
+
+    protected $appends = [
+        'name'
+    ];
+
+    public function getNameAttribute()
+    {
+        return $this->{'name_' . app()->getLocale()};
+    }
 
 
     public function users(): HasMany

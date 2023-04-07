@@ -23,12 +23,20 @@ class TransportationLine extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
+        "name_ar",
+        "name_en"
     ];
 
     protected $appends = [
         'from',
-        'to'
+        'to',
+        'name'
     ];
+
+    public function getNameAttribute()
+    {
+        return $this->{'name_' . app()->getLocale()};
+    }
 
     public function getFromAttribute()
     {
