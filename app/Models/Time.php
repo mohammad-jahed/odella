@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Date;
 
 /**
  * @property Date $start;
+ * @property Date $date;
+ * @property int $id;
  */
 class Time extends Model
 {
@@ -23,6 +25,10 @@ class Time extends Model
         'created_at',
         'updated_at',
     ];
+    protected $casts = [
+        'date' => 'datetime'
+    ];
+
 
     protected $table = 'times';
 

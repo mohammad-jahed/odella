@@ -73,6 +73,8 @@ Route::group([
     Route::apiResource('/programs', ProgramController::class);
     Route::get('/programs', [ProgramController::class, 'userPrograms']);
     Route::apiResource('/trips', TripController::class);
+    Route::post('/trips/{trip}/students', [TripController::class,'addStudents']);
+    Route::get('/trips/{trip}/students/{student}', [TripController::class,'deleteStudent']);
 });
 
 

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property integer $id;
+ * @property integer $capacity;
  */
 class Bus extends Model
 {
