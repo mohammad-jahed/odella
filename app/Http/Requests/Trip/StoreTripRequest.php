@@ -4,7 +4,6 @@ namespace App\Http\Requests\Trip;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use JetBrains\PhpStorm\ArrayShape;
 
 class StoreTripRequest extends FormRequest
 {
@@ -20,7 +19,7 @@ class StoreTripRequest extends FormRequest
      * Get the validation rules that apply to the request.
      *
      */
-    #[ArrayShape(['supervisor_id' => "array", 'bus_driver_id' => "array", 'line_id' => "array", 'start' => "string[]", 'date' => "string[]", 'position_ids' => "string[]", 'position_ids.*' => "array", 'time' => "string[]", 'time.*' => "string[]"])]
+
     public function rules(): array
     {
         return [
@@ -29,6 +28,7 @@ class StoreTripRequest extends FormRequest
             'line_id' => ['required', Rule::exists('transportation_lines', 'id')],
             'start' => ['required', 'string', 'min:3', 'max:255'],
             'date' => ['required', 'bail', 'string', 'max:255'],
+            'status' => ['required', 'integer','between:1,2'],
             'position_ids' => ['required', 'array'],
             'position_ids.*' => ['required', Rule::exists('transfer_positions', 'id')],
             'time' => ['required', 'array'],

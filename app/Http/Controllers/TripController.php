@@ -68,7 +68,7 @@ class TripController extends Controller
                  * @var TransportationLine $line ;
                  */
 
-                $line = TransportationLine::where('id', $credentials['line_id'])->first();
+                $line = TransportationLine::query()->where('id', $credentials['line_id'])->first();
 
                 $trip->lines()->attach($line);
 
@@ -136,6 +136,49 @@ class TripController extends Controller
         $user = auth()->user();
 
         if ($user->can('Update Trip')) {
+
+            $credentials = $request->validated();
+
+            $data = [];
+
+            if (isset($credentials['start'])) {
+                $data += ['start' => $credentials['start']];
+            }
+            if (isset($credentials['date'])) {
+                $data += ['date' => $credentials['date']];
+            }
+
+            $time = $trip->time;
+            $time->update($data);
+
+            $trip->update($credentials);
+
+            if (isset($credentials['line_id'])) {
+                $line = TransportationLine::query()->where('id', $credentials['line_id'])->first();
+
+                $trip->lines()->sync($line);
+            }
+
+            if (isset($credentials['position_ids']) && isset($credentials['time'])) {
+
+                $transportationTimes = TripPositionsTimes::query()->where('trip_id', $trip->id)->get();
+
+                for ($i = 0; $i < sizeof($credentials['position_ids']); $i++) {
+                    for ($j = 0; $j < sizeof($credentials['time']); $j++) {
+                        if ($i == $j) {
+                            $data = [
+                                'position_id' => $credentials['position_ids'][$i],
+                                'time' => $credentials['time'][$j],
+                                'trip_id' => $trip->id
+                            ];
+                            $transportationTimes[$i]->update($data);
+                        }
+                    }
+                }
+
+            }
+
+            return $this->getJsonResponse($trip, "Trip Updated Successfully");
 
         } else {
             abort(Response::HTTP_FORBIDDEN);
