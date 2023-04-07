@@ -13,6 +13,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property User[] $users;
  * @property TransportationLine[] $lines;
  * @property TransferPosition[] $transferPositions;
+ * @property int $id;
+ * @property int $status;
+ * @property BusDriver $busDriver;
  */
 class Trip extends Model
 {

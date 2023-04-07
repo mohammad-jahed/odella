@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Date;
 
 /**
  * @property User $user
+ * @property Day $day;
+ * @property Date $start;
+ * @property Date $end;
  */
 class Program extends Model
 {

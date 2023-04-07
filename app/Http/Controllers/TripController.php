@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Student\StoreTripStudentsRequest;
 use App\Http\Requests\Trip\StoreTripRequest;
 use App\Http\Requests\Trip\UpdateTripRequest;
+use App\Models\Program;
 use App\Models\Time;
 use App\Models\TransportationLine;
 use App\Models\Trip;
 use App\Models\TripPositionsTimes;
+use App\Models\TripUser;
 use App\Models\User;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -55,6 +59,10 @@ class TripController extends Controller
 
                 $credentials = $request->validated();
 
+                /**
+                 * @var Time $time ;
+                 * @var Trip $trip ;
+                 */
                 $time = Time::query()->create($credentials);
 
                 $credentials['time_id'] = $time->id;
@@ -62,7 +70,7 @@ class TripController extends Controller
                 $trip = Trip::query()->create($credentials);
 
                 /**
-                 * @var Trip $trip ;
+                 *
                  */
                 /**
                  * @var TransportationLine $line ;
@@ -160,6 +168,83 @@ class TripController extends Controller
 
         } else {
 
+            abort(Response::HTTP_FORBIDDEN);
+        }
+    }
+
+
+    public function addStudents(StoreTripStudentsRequest $request, Trip $trip): JsonResponse
+    {
+        /**
+         * @var User $user ;
+         */
+        $user = auth()->user();
+        if ($user->hasRole('Employee')) {
+            $data = $request->validated();
+            $trip->users()->attach($data['student_ids']);
+            $day = $trip->time->date->format('l');
+            foreach ($data['student_ids'] as $student_id) {
+                /**
+                 * @var User $student ;
+                 * @var Program $program
+                 */
+                $student = User::query()->where('id', $student_id)->first();
+                $programs = $student->programs;
+                foreach ($programs as $program) {
+                    if ($program->day->name_en == $day) {
+                        if ($trip->status == 0) {
+                            $attributes = [
+                                'start' => $trip->time->start
+                            ];
+                        } else {
+                            $attributes = [
+                                'end' => $trip->time->start
+                            ];
+                        }
+                        $program->update($attributes);
+                    }
+                }
+            }
+            $trip->load('users');
+            return $this->getJsonResponse($trip, 'Students Added Successfully To This Trip');
+        } else {
+            abort(Response::HTTP_FORBIDDEN);
+
+        }
+    }
+
+
+    public function deleteStudent(Trip $trip, User $student): JsonResponse
+    {
+        /**
+         * @var Program $program ;
+         * @var User $user ;
+         */
+        $user = auth()->user();
+        if ($user->hasRole('Employee')) {
+            $day = $trip->time->date->format('l');
+            $programs = $student->programs;
+            foreach ($programs as $program) {
+                if ($program->day->name_en == $day) {
+                    if ($trip->status == 0) {
+                        $attributes = [
+                            'start' => '00:00:00'
+                        ];
+                    } else {
+                        $attributes = [
+                            'end' => '00:00:00'
+                        ];
+                    }
+                    $program->update($attributes);
+                    if ($program->start == '00:00:00' && $program->end == '00:00:00') {
+                        $program->delete();
+                    }
+                }
+            }
+            TripUser::query()->where('user_id', $student->id)->delete();
+            $trip->load('users');
+            return $this->getJsonResponse($trip, "Student Deleted Successfully");
+        } else {
             abort(Response::HTTP_FORBIDDEN);
         }
     }
