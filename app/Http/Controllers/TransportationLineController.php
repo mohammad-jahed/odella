@@ -23,14 +23,6 @@ class TransportationLineController extends Controller
          * @var TransferPosition[] $positions ;
          */
         $transportationLines = TransportationLine::all();
-//        foreach ($transportationLines as $transportationLine) {
-//            $positions = [$transportationLine->positions];
-//            $transportationLine += [
-//                'from' => $positions[0],
-//                'to' => $positions[sizeof($positions) - 1]
-//            ];
-//            $transportationLines->add($transportationLine);
-//        }
         return $this->getJsonResponse($transportationLines, "TransportationLines Fetch Successfully");
     }
 
