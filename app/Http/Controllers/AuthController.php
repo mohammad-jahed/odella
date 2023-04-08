@@ -153,4 +153,16 @@ class AuthController extends Controller
             //'test'=> $vv
         ]);
     }
+
+
+    public function profile(): JsonResponse
+    {
+        /**
+         * @var User $user;
+         */
+        $user = auth()->user();
+        $user->load('roles');
+        return $this->getJsonResponse($user,"Profile");
+
+    }
 }

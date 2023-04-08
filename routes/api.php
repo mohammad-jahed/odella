@@ -46,6 +46,8 @@ Route::group([
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::post('/refresh', [AuthController::class, 'refresh']);
+
+    Route::get('/profile', [AuthController::class, 'profile']);
 });
 
 
@@ -73,8 +75,8 @@ Route::group([
     Route::apiResource('/programs', ProgramController::class);
     Route::get('/programs', [ProgramController::class, 'userPrograms']);
     Route::apiResource('/trips', TripController::class);
-    Route::post('/trips/{trip}/students', [TripController::class,'addStudents']);
-    Route::get('/trips/{trip}/students/{student}', [TripController::class,'deleteStudent']);
+    Route::post('/trips/{trip}/students', [TripController::class, 'addStudents']);
+    Route::get('/trips/{trip}/students/{student}', [TripController::class, 'deleteStudent']);
 });
 
 
