@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Program;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
@@ -17,13 +18,16 @@ class EmployeeAndSupervisorPolicy
     }
 
 
-    public function confirmRegistration(User $user): bool{
+    public function confirmRegistration(User $user): bool
+    {
         return $user->hasRole('Employee');
     }
 
-    public function getUnActiveStudents(User $user): bool{
+    public function getUnActiveStudents(User $user): bool
+    {
         return $user->hasRole('Employee');
     }
+
     /**
      * Determine whether the user can view the model.
      */
@@ -60,6 +64,21 @@ class EmployeeAndSupervisorPolicy
         //
         return $user->hasRole('Employee') || $model->hasRole('Admin');
 
+
+    }
+
+    public function confirmAttendance(User $user, Program $program): bool
+    {
+        /**
+         * @var Program $pro ;
+         */
+        $programs = $user->programs;
+        foreach ($programs as $pro) {
+            if ($pro->id == $program->id) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

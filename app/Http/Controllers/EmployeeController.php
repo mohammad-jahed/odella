@@ -241,7 +241,7 @@ class EmployeeController extends Controller
                 $goTrips = [];
                 $returnTrips = [];
                 for ($i = 0; $i < sizeof($trips); $i++) {
-                    $trips[$i]->status == 0 ? $goTrips += [$trips[$i]] : $returnTrips += [$trips[$i]];
+                    $trips[$i]->status == 1 ? $goTrips += [$trips[$i]] : $returnTrips += [$trips[$i]];
                 }
 
                 for ($i = 0; $i < sizeof($credentials['day_ids']); $i++) {

@@ -67,6 +67,7 @@ Route::group([
     Route::apiResource('/students', StudentController::class);
     Route::get('/student/active', [StudentController::class, 'activeStudentsList']);
     Route::get('/student/unActive', [StudentController::class, 'unActiveStudentsList']);
+    Route::put('/student/programs/{program}', [StudentController::class, 'confirmAttendance']);
     Route::apiResource('/supervisors', SupervisorController::class);
     Route::apiResource('/buses', BusController::class);
     Route::apiResource('/drivers', DriverController::class);

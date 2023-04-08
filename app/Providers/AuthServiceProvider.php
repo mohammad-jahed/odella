@@ -51,11 +51,12 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('deleteLocation', [LocationPolicy::class,'delete']);
         //Employees & Supervisor & Student
         Gate::define('updateProfile', [EmployeeAndSupervisorPolicy::class,'update']);
+        Gate::define('confirmAttendance', [EmployeeAndSupervisorPolicy::class,'confirmAttendance']);
+
 
         //Program
         Gate::define('viewProgram', [ProgramPolicy::class,'view']);
         Gate::define('updateProgram', [ProgramPolicy::class,'update']);
         Gate::define('deleteProgram', [ProgramPolicy::class,'delete']);
-
     }
 }

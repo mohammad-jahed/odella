@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Status;
+use App\Http\Requests\Student\ConfirmAttendanceRequest;
 use App\Http\Requests\Student\UpdateStudentRequest;
 use App\Models\Location;
+use App\Models\Program;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
@@ -162,5 +164,21 @@ class StudentController extends Controller
             abort(Response::HTTP_FORBIDDEN);
         }
 
+    }
+
+    /**
+     * @throws AuthorizationException
+     */
+    public function confirmAttendance(Program $program, ConfirmAttendanceRequest $request): JsonResponse
+    {
+        /**
+         * @var User $user;
+         */
+        $user = auth()->user();
+        Gate::forUser($user)->authorize('confirmAttendance', $program);
+        $data = $request->validated();
+        $program->confirmAttendance1 = $data['confirmAttendance1'];
+        $program->confirmAttendance2 = $data['confirmAttendance2'];
+        return $this->getJsonResponse($program, "Your Attendance Is Confirmed Successfully");
     }
 }

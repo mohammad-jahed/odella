@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Date;
  * @property Day $day;
  * @property Date $start;
  * @property Date $end;
+ * @property boolean $confirmAttendance1;
+ * @property boolean $confirmAttendance2;
+ * @property integer $id
  */
 class Program extends Model
 {

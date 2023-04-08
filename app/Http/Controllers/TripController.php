@@ -235,7 +235,7 @@ class TripController extends Controller
                 $programs = $student->programs;
                 foreach ($programs as $program) {
                     if ($program->day->name_en == $day) {
-                        if ($trip->status == 0) {
+                        if ($trip->status == 1) {
                             $attributes = [
                                 'start' => $trip->time->start
                             ];

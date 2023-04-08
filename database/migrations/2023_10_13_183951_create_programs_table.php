@@ -18,6 +18,8 @@ return new class extends Migration
             $table->foreignId('transfer_position_id')->constrained()->cascadeOnDelete();
             $table->time('start');
             $table->time('end');
+            $table->boolean('confirmAttendance1')->default(false);
+            $table->boolean('confirmAttendance2')->default(false);
             $table->timestamps();
         });
     }
