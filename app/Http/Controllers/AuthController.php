@@ -38,7 +38,7 @@ class AuthController extends Controller
         if ($user->status == Status::UnActive) {
 
             Auth::logout();
-            return $this->getJsonResponse($user, "Un authorized, Please visit the Company Office to Complete Registration Process", 0);
+            return $this->getJsonResponse([], "Un authorized, Please visit the Company Office to Complete Registration Process", 0);
         }
 
         return $this->createNewToken($token);
