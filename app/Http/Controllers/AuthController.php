@@ -38,8 +38,7 @@ class AuthController extends Controller
         if ($user->status == Status::UnActive) {
 
             Auth::logout();
-
-            return $this->getJsonResponse($user, "Un authorized, Please visit the Company Office to Complete Registration Process");
+            return $this->getJsonResponse($user, "Un authorized, Please visit the Company Office to Complete Registration Process", 0);
         }
 
         return $this->createNewToken($token);
@@ -145,12 +144,14 @@ class AuthController extends Controller
         $user->load('roles');//$roles = $user->getRoleNames();
         //$vv=$user->can('Confirm Student Attendance');
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => $user//auth()->user(),
-            //'roles'=> $roles
-            //'test'=> $vv
+            'message' => 'User Login Successfully',
+            'status' => 1,
+            'data' => [
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => auth()->factory()->getTTL() * 60,
+                'user' => $user
+            ],
         ]);
     }
 
@@ -158,11 +159,11 @@ class AuthController extends Controller
     public function profile(): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
         $user->load('roles');
-        return $this->getJsonResponse($user,"Profile");
+        return $this->getJsonResponse($user, "Profile");
 
     }
 }
