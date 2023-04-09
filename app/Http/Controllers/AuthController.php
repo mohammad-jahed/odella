@@ -28,7 +28,6 @@ class AuthController extends Controller
         $data = $request->validated();
 
         if (!$token = auth('api')->attempt($data)) {
-
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         /**
