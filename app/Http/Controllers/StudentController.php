@@ -7,6 +7,8 @@ use App\Http\Requests\Student\ConfirmAttendanceRequest;
 use App\Http\Requests\Student\UpdateStudentRequest;
 use App\Models\Location;
 use App\Models\Program;
+use App\Models\TransferPosition;
+use App\Models\Trip;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
@@ -172,7 +174,7 @@ class StudentController extends Controller
     public function confirmAttendance(Program $program, ConfirmAttendanceRequest $request): JsonResponse
     {
         /**
-         * @var User $user;
+         * @var User $user ;
          */
         $user = auth()->user();
         Gate::forUser($user)->authorize('confirmAttendance', $program);
@@ -180,5 +182,34 @@ class StudentController extends Controller
         $program->confirmAttendance1 = $data['confirmAttendance1'];
         $program->confirmAttendance2 = $data['confirmAttendance2'];
         return $this->getJsonResponse($program, "Your Attendance Is Confirmed Successfully");
+    }
+
+    /**
+     * @throws AuthorizationException
+     */
+    public function getAllStudentsInThePosition(Trip $trip, TransferPosition $position): JsonResponse
+    {
+        /**
+         * @var User $student ;
+         * @var User $auth;
+         */
+        $auth = auth()->user();
+        Gate::forUser($auth)->authorize('getStudentsInPosition', $trip);
+        $students = $trip->users;
+        $users = [];
+        foreach ($students as $student) {
+            $users += [
+                $student->whereHas(
+                    "programs",
+                    function ($query) use ($position) {
+                        $query
+                            ->where("transfer_position_id", $position->id)
+                            ->where('confirmAttendance1', true);
+                    }
+                )->get()
+            ];
+        }
+
+        return $this->getJsonResponse($users, "Students Fetched Successfully");
     }
 }

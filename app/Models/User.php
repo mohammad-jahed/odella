@@ -16,6 +16,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 /**
  * @method static create(mixed $credentials)
  * @method static role(string $string)
+ * @method whereHas(string $string, \Closure $param)
  * @property integer $id;
  * @property integer $status;
  * @property mixed $location;

@@ -52,8 +52,7 @@ class AuthServiceProvider extends ServiceProvider
         //Employees & Supervisor & Student
         Gate::define('updateProfile', [EmployeeAndSupervisorPolicy::class,'update']);
         Gate::define('confirmAttendance', [EmployeeAndSupervisorPolicy::class,'confirmAttendance']);
-
-
+        Gate::define('getStudentsInPosition', [EmployeeAndSupervisorPolicy::class,'getStudentsInPosition']);
         //Program
         Gate::define('viewProgram', [ProgramPolicy::class,'view']);
         Gate::define('updateProgram', [ProgramPolicy::class,'update']);

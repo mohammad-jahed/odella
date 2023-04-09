@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Program;
+use App\Models\Trip;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
@@ -79,6 +80,11 @@ class EmployeeAndSupervisorPolicy
             }
         }
         return false;
+    }
+
+    public function getStudentsInPosition(User $user, Trip $trip): bool
+    {
+        return $user->id == $trip->supervisor->id;
     }
 
 }
