@@ -191,7 +191,7 @@ class StudentController extends Controller
     {
         /**
          * @var User $student ;
-         * @var User $auth;
+         * @var User $auth ;
          */
         $auth = auth()->user();
         Gate::forUser($auth)->authorize('getStudentsInPosition', $trip);
@@ -199,7 +199,7 @@ class StudentController extends Controller
         $users = [];
         foreach ($students as $student) {
             $users += [
-                $student->whereHas(
+                'students' => $student->whereHas(
                     "programs",
                     function ($query) use ($position) {
                         $query
@@ -209,6 +209,7 @@ class StudentController extends Controller
                 )->get()
             ];
         }
+        $users += ['studentsNumber' => sizeof($users) + 1];
 
         return $this->getJsonResponse($users, "Students Fetched Successfully");
     }
