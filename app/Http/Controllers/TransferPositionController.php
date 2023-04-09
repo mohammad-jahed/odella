@@ -108,7 +108,7 @@ class TransferPositionController extends Controller
 
             $transferPosition->delete();
 
-            return $this->getJsonResponse([], "TransferPosition Deleted Successfully");
+            return $this->getJsonResponse(null, "TransferPosition Deleted Successfully");
 
         } else {
 

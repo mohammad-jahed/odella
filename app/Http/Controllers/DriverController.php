@@ -115,7 +115,7 @@ class DriverController extends Controller
 
             $driver->delete();
 
-            return $this->getJsonResponse([], "Driver Deleted Successfully");
+            return $this->getJsonResponse(null, "Driver Deleted Successfully");
 
         } else {
 

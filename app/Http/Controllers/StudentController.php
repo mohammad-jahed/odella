@@ -119,7 +119,7 @@ class StudentController extends Controller
         $user = auth()->user();
         if ($user->can('Delete Student')) {
             $student->delete();
-            return $this->getJsonResponse([], 'Student Deleted Successfully');
+            return $this->getJsonResponse(null, 'Student Deleted Successfully');
         } else {
             abort(Response::HTTP_FORBIDDEN);
         }

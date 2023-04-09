@@ -194,7 +194,7 @@ class SupervisorController extends Controller
 
             $supervisor->delete();
 
-            return $this->getJsonResponse($supervisor, "Supervisor Deleted Successfully");
+            return $this->getJsonResponse(null, "Supervisor Deleted Successfully");
 
         } else {
 

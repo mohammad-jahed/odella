@@ -96,7 +96,7 @@ class AreaController extends Controller
 
             $area->delete();
 
-            return $this->getJsonResponse([], "Area Deleted Successfully");
+            return $this->getJsonResponse(null, "Area Deleted Successfully");
 
         } else {
 

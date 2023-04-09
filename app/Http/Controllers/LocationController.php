@@ -85,6 +85,6 @@ class LocationController extends Controller
 
         $location->delete();
 
-        return $this->getJsonResponse([], "Location Deleted Successfully");
+        return $this->getJsonResponse(null, "Location Deleted Successfully");
     }
 }

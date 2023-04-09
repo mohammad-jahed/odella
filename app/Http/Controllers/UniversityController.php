@@ -111,7 +111,7 @@ class UniversityController extends Controller
 
             $university->delete();
 
-            return $this->getJsonResponse([], 'University Deleted Successfully');
+            return $this->getJsonResponse(null, 'University Deleted Successfully');
 
         } else {
 

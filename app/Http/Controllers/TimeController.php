@@ -113,7 +113,7 @@ class TimeController extends Controller
 
             $time->delete();
 
-            return $this->getJsonResponse($time, "Time Deleted Successfully");
+            return $this->getJsonResponse(null, "Time Deleted Successfully");
 
         } else {
 

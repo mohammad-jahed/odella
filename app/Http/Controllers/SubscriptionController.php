@@ -98,7 +98,7 @@ class SubscriptionController extends Controller
 
             $subscription->delete();
 
-            return $this->getJsonResponse([], "Subscription Deleted Successfully");
+            return $this->getJsonResponse(null, "Subscription Deleted Successfully");
 
         } else {
 

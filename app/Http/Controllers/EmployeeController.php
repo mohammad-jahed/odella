@@ -204,7 +204,7 @@ class EmployeeController extends Controller
 
             $employee->delete();
 
-            return $this->getJsonResponse($employee, "Employee Deleted Successfully");
+            return $this->getJsonResponse(null, "Employee Deleted Successfully");
 
         } else {
 

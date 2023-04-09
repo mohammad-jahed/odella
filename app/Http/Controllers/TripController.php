@@ -207,7 +207,7 @@ class TripController extends Controller
 
             $trip->delete();
 
-            return $this->getJsonResponse($trip, "Trip Deleted Successfully");
+            return $this->getJsonResponse(null, "Trip Deleted Successfully");
 
         } else {
 

@@ -98,7 +98,7 @@ class TransportationLineController extends Controller
 
             $transportationLine->delete();
 
-            return $this->getJsonResponse([], "TransportationLine Deleted Successfully");
+            return $this->getJsonResponse(null, "TransportationLine Deleted Successfully");
 
         } else {
 

@@ -117,7 +117,7 @@ class BusController extends Controller
 
             $bus->delete();
 
-            return $this->getJsonResponse([], "Bus Deleted Successfully");
+            return $this->getJsonResponse(null, "Bus Deleted Successfully");
 
         } else {
 
