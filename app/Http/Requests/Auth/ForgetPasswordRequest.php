@@ -6,6 +6,9 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use JetBrains\PhpStorm\ArrayShape;
 
+/**
+ * @property mixed $email
+ */
 class ForgetPasswordRequest extends FormRequest
 {
     /**
@@ -20,7 +23,8 @@ class ForgetPasswordRequest extends FormRequest
      * Get the validation rules that apply to the request.
      *
      */
-    #[ArrayShape(['email' => "array"])] public function rules(): array
+    #[ArrayShape(['email' => "array"])]
+    public function rules(): array
     {
         return [
             'email' => ['required', 'string', 'email', Rule::exists('users', 'email')]

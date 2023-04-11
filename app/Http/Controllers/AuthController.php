@@ -124,6 +124,7 @@ class AuthController extends Controller
             /**
              * @var User $user ;
              */
+
             $user = User::query()->where('email', $request->email)->first();
 
             if (!$user) {
