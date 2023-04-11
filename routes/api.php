@@ -49,7 +49,9 @@ Route::group([
 
     Route::get('/profile', [AuthController::class, 'profile']);
 
-    Route::post('/forgetPassword',[AuthController::class,'forgetPassword']);
+    Route::post('/forgetPassword', [AuthController::class, 'forgetPassword']);
+
+    Route::post('/ResetPassword', [AuthController::class, 'resetPassword']);
 });
 
 
