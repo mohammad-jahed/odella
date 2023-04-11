@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\ConfirmationCodeStatus;
+use  App\Enums\ConfirmationCodeStatus;
 use App\Enums\ConfirmationCodeTypes;
 use App\Enums\Status;
 use App\Http\Requests\Auth\ForgetPasswordRequest;
@@ -85,7 +85,7 @@ class AuthController extends Controller
 
             DB::commit();
 
-            return $this->getJsonResponse([], "User Registered Successfully , Please visit the Company Office to Complete Registration Process");
+            return $this->getJsonResponse($user, "User Registered Successfully , Please visit the Company Office to Complete Registration Process");
 
         } catch (Exception $exception) {
 
@@ -130,16 +130,13 @@ class AuthController extends Controller
             $user = User::query()->where('email', $request->email)->first();
 
             if (!$user) {
-
                 return $this->getJsonResponse(null, "User Not Found");
-
             }
             $checkCode = ConfirmationCode::query()->where('user_id', $user->id)
                 ->where('is_confirmed', ConfirmationCodeStatus::NotConfirmed)
                 ->first();
 
             if ($checkCode) {
-
                 return $this->getJsonResponse(null, "Code Already Sent");
             }
 
@@ -157,7 +154,6 @@ class AuthController extends Controller
 
             if (!$confirmCode->save()) {
                 DB::rollBack();
-
                 return $this->getJsonResponse(null, "Code Not Save!");
             }
 
