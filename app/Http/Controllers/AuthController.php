@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ConfirmationCodeTypes;
 use App\Enums\Status;
+use App\Http\Requests\Auth\ForgetPasswordRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
+use App\Mail\ForgetPasswordMail;
+use App\Models\ConfirmationCode;
 use App\Models\Location;
 use App\Models\User;
 use Exception;
@@ -13,6 +17,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
@@ -20,7 +25,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'adminRegister']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'adminRegister', 'forgetPassword']]);
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -109,6 +114,58 @@ class AuthController extends Controller
         $user->assignRole($role);
         return $this->getJsonResponse($user, "Admin Registered Successfully");
     }
+
+
+    public function forgetPassword(ForgetPasswordRequest $request): JsonResponse
+    {
+
+        try {
+
+            /**
+             * @var User $user ;
+             */
+            $user = User::query()->where('email', $request->email)->first();
+
+            if (!$user) {
+
+                return $this->getJsonResponse(null, "User Not Found");
+
+            }
+
+            DB::beginTransaction();
+
+            $code = rand(10000, 99999);
+
+            $data = [
+                'user_id' => $user->id,
+                'confirm_code' => $code,
+                'type' => ConfirmationCodeTypes::ForgetPassword
+            ];
+
+            $confirmCode = ConfirmationCode::query()->create($data);
+
+            if (!$confirmCode->save()) {
+                DB::rollBack();
+
+                return $this->getJsonResponse(null, "Something Went Wrong!!");
+            }
+
+            Mail::to($user->email)->send((new ForgetPasswordMail($user, $code))->afterCommit());
+
+            DB::commit();
+
+            return $this->getJsonResponse(null, "We Send A Reset Password Code to your Email");
+
+        } catch (Exception $exception) {
+
+            DB::rollBack();
+
+            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+        }
+
+
+    }
+
 
     public function logout(): JsonResponse
     {
