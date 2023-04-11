@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ConfirmationCodeStatus;
 use App\Enums\ConfirmationCodeTypes;
 use App\Enums\Status;
 use App\Http\Requests\Auth\ForgetPasswordRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
 use App\Mail\ForgetPasswordMail;
 use App\Models\ConfirmationCode;
@@ -25,7 +27,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'adminRegister', 'forgetPassword']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'adminRegister', 'forgetPassword','resetPassword']]);
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -132,6 +134,14 @@ class AuthController extends Controller
                 return $this->getJsonResponse(null, "User Not Found");
 
             }
+            $checkCode = ConfirmationCode::query()->where('user_id', $user->id)
+                ->where('is_confirmed', ConfirmationCodeStatus::NotConfirmed)
+                ->first();
+
+            if ($checkCode) {
+
+                return $this->getJsonResponse(null, "Code Already Sent");
+            }
 
             DB::beginTransaction();
 
@@ -148,7 +158,7 @@ class AuthController extends Controller
             if (!$confirmCode->save()) {
                 DB::rollBack();
 
-                return $this->getJsonResponse(null, "Something Went Wrong!!");
+                return $this->getJsonResponse(null, "Code Not Save!");
             }
 
             Mail::to($user->email)->send((new ForgetPasswordMail($user, $code))->afterCommit());
@@ -164,6 +174,56 @@ class AuthController extends Controller
             return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
         }
 
+
+    }
+
+
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
+    {
+
+        try {
+            /**
+             * @var User $user ;
+             */
+
+            $user = User::query()->where('email', $request->email)->first();
+
+            if (!$user) {
+
+                return $this->getJsonResponse(null, "User Not Found");
+            }
+
+            $code = ConfirmationCode::query()->where('user_id', $user->id)
+                ->where('confirm_code', $request->code)
+                ->where('is_confirmed', ConfirmationCodeStatus::NotConfirmed)
+                ->where('type', ConfirmationCodeTypes::ForgetPassword)
+                ->first();
+
+            if (!$code) {
+
+                return $this->getJsonResponse(null, "Wrong Code!");
+            }
+
+            DB::beginTransaction();
+
+            $newPassword = Hash::make($request->newPassword);
+            $user->password = $newPassword;
+            $user->save();
+
+            $code->is_confirmed = ConfirmationCodeStatus::Confirmed;
+            $code->save();
+
+            DB::commit();
+
+            return $this->getJsonResponse(null , "Password Reset Successfully");
+
+        } catch (Exception $exception) {
+
+            DB::rollBack();
+
+            return $this->getJsonResponse($exception->getMessage(), "Some Thing Went Wrong!!");
+
+        }
 
     }
 
