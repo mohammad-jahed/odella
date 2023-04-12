@@ -23,7 +23,8 @@ class ForgetPasswordRequest extends FormRequest
      * Get the validation rules that apply to the request.
      *
      */
-    #[ArrayShape(['email' => "array"])] public function rules(): array
+    #[ArrayShape(['email' => "array"])]
+    public function rules(): array
     {
         return [
             'email' => ['required', 'string', 'email', Rule::exists('users', 'email')]
