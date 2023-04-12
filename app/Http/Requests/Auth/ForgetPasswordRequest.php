@@ -6,6 +6,9 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use JetBrains\PhpStorm\ArrayShape;
 
+/**
+ * @property mixed $email
+ */
 class ForgetPasswordRequest extends FormRequest
 {
     /**

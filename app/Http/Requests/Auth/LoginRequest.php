@@ -5,6 +5,10 @@ namespace App\Http\Requests\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 use JetBrains\PhpStorm\ArrayShape;
 
+/**
+ * @property mixed $email
+ * @property mixed $password
+ */
 class LoginRequest extends FormRequest
 {
     /**
@@ -20,13 +24,14 @@ class LoginRequest extends FormRequest
      *
      * @return array
      */
-    #[ArrayShape(['email' => "string[]", 'password' => "string[]"])]
+    #[ArrayShape(['email' => "string[]", 'password' => "string[]", 'fcm_token' => "string[]"])]
     public function rules(): array
     {
         return [
             //
             'email' => ['required', 'bail', 'string', 'email'],
-            'password' => ['required', 'bail', 'string', 'min:6', 'max:256']
+            'password' => ['required', 'bail', 'string', 'min:6', 'max:256'],
+            'fcm_token'=>['string']
         ];
     }
 }

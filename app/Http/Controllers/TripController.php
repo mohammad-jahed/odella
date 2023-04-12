@@ -15,6 +15,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Kutia\Larafirebase\Facades\Larafirebase;
 use Symfony\Component\HttpFoundation\Response;
 
 class TripController extends Controller
@@ -290,5 +291,19 @@ class TripController extends Controller
         } else {
             abort(Response::HTTP_FORBIDDEN);
         }
+    }
+
+
+        public function sendNotification()
+        {
+            return Larafirebase::withTitle('Test Title')
+                ->withBody('Test body')
+                ->withSound('default')
+                ->withPriority('high')
+                ->withAdditionalData([
+                    'color' => '#rrggbb',
+                    'badge' => 0,
+                ])
+                ->sendNotification('fw36VpKTIa9qWr6wuKzKSx:APA91bGEFLZw81g4tQ-BWrA3VueA3vrgF_VwsCLpCeozrGPTHB14G17sQKmIyw8p-4Zm66rhVkbEQcyZma1P4R-vZkujj9vKR21FHZcz_KKZNToJ188fq8G755oHKK8HdTr8PBfw7dDQ');
     }
 }
