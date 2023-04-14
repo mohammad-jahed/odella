@@ -19,3 +19,5 @@ Route::get('/', function () {
 });
 
 Route::get('/firebase', [TripController::class, 'sendNotification']);
+Route::get('/test',[TripController::class,'test_go_trips_notification']);
+Route::get('/test1',[TripController::class,'test_return_trips_notification']);

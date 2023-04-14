@@ -2,18 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TripStatus;
 use App\Http\Requests\Student\StoreTripStudentsRequest;
 use App\Http\Requests\Trip\StoreTripRequest;
 use App\Http\Requests\Trip\UpdateTripRequest;
 use App\Models\Program;
 use App\Models\Time;
+use App\Models\TransferPosition;
 use App\Models\TransportationLine;
 use App\Models\Trip;
 use App\Models\TripPositionsTimes;
 use App\Models\TripUser;
 use App\Models\User;
+use App\Notifications\Students\PositionTimeNotification;
+use App\Notifications\Students\ReturnTimeNotification;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Kutia\Larafirebase\Facades\Larafirebase;
 use Symfony\Component\HttpFoundation\Response;
@@ -306,4 +312,141 @@ class TripController extends Controller
                 ])
                 ->sendNotification('fw36VpKTIa9qWr6wuKzKSx:APA91bGEFLZw81g4tQ-BWrA3VueA3vrgF_VwsCLpCeozrGPTHB14G17sQKmIyw8p-4Zm66rhVkbEQcyZma1P4R-vZkujj9vKR21FHZcz_KKZNToJ188fq8G755oHKK8HdTr8PBfw7dDQ');
     }
+
+    public function test_go_trips_notification(){
+
+        /**
+         * @var array $trip_ids
+         */
+        /**
+         * @var array $user_ids
+         */
+        /**
+         * @var array $position_ids
+         */
+        /**
+         * @var User $user
+         */
+
+        $date = Date::now()->toDateString();
+        $trips = Trip::query()->where('status',TripStatus::GoTrip)
+            ->whereHas('time',
+            function (Builder $builder1) use ($date) {
+                $builder1->where('date', '=', $date);
+            })->get();
+
+        foreach ($trips as $trip)
+          $trip_ids[] = $trip->id;
+
+        $users = User::query()->whereHas('trips',
+            function (Builder $builder1) use ($trip_ids) {
+                $builder1->wherein('trip_id', $trip_ids);
+            })->get();
+
+        foreach ($users as $user)
+         $user_ids[] = $user->id;
+
+        $positions = TransferPosition::query()->whereHas('trips',function (Builder $builder) use ($trip_ids){
+            $builder->wherein('trip_id',$trip_ids);
+        })->get();
+
+        foreach ($positions as $position)
+            $position_ids[] = $position->id;
+
+
+        $day = Date::now()->dayOfWeek;
+
+        $programes = Program::query()->where('day_id', $day)
+            ->where(['confirmAttendance1'=> true])
+            ->wherein('user_id',$user_ids)
+            ->wherein('transfer_position_id',$position_ids)
+            ->get();
+
+        foreach ($programes as $programe){
+            $vv  = Date::now()->diffInMinutes($programe->start,false);
+            if ($vv <= 5 && $vv > 3){
+                $user = User::query()->where('id',$programe->user_id)->first();
+                //$user->notify(new PositionTimeNotification($user));
+                return $user;
+            }
+
+        }
+        return 'ok';
+    }
+
+
+    public function test_return_trips_notification(){
+
+        /**
+         * @var array $trip_ids
+         */
+        /**
+         * @var array $user_ids
+         */
+        /**
+         * @var array $position_ids
+         */
+        /**
+         * @var User $user
+         */
+        $date = Date::now()->toDateString();
+        $trips = Trip::query()->where('status',TripStatus::ReturnTrip)
+            ->whereHas('time',
+                function (Builder $builder1) use ($date) {
+                    $builder1->where('date', '=', $date);
+                })->get();
+
+        foreach ($trips as $trip)
+            $trip_ids[] = $trip->id;
+
+        $users = User::query()->whereHas('trips',
+            function (Builder $builder1) use ($trip_ids) {
+                $builder1->wherein('trip_id', $trip_ids);
+            })->get();
+
+        foreach ($users as $user)
+            $user_ids[] = $user->id;
+
+        $positions = TransferPosition::query()->whereHas('trips',function (Builder $builder) use ($trip_ids){
+            $builder->wherein('trip_id',$trip_ids);
+        })->get();
+
+        foreach ($positions as $position)
+            $position_ids[] = $position->id;
+
+
+        $day = Date::now()->dayOfWeek;
+
+        $programes = Program::query()->where('day_id', $day)
+            ->where(['confirmAttendance2'=> true])
+            ->wherein('user_id',$user_ids)
+            ->wherein('transfer_position_id',$position_ids)
+            ->get();
+
+        foreach ($programes as $programe){
+            $remainTime  = Date::now()->diffInMinutes($programe->end,false);
+            if ($remainTime <= 15 && $remainTime > 10){
+
+                $user = User::query()->where('id',$programe->user_id)->first();
+                //$user->notify(new ReturnTimeNotification($user,$remainTime));
+            }
+            if ($remainTime <= 10 && $remainTime > 5){
+
+                $user = User::query()->where('id',$programe->user_id)->first();
+                //$user->notify(new ReturnTimeNotification($user,$remainTime));
+            }
+            if ($remainTime <= 5 && $remainTime > 0){
+
+                $user = User::query()->where('id',$programe->user_id)->first();
+                //$user->notify(new ReturnTimeNotification($user,$remainTime));
+            }
+
+        }
+        return 'ok';
+    }
+
+
+
+
+
 }
