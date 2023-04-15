@@ -83,7 +83,7 @@ class PositionTimeCommand extends Command
 
         foreach ($programs as $program) {
             $remainTime = Date::now()->diffInMinutes($program->start, false);
-            if ($remainTime <= 5 && $remainTime > 3) {
+            if ($remainTime <= 5 && $remainTime > 1) {
 
                 $user = User::query()->where('id', $program->user_id)->first();
 
