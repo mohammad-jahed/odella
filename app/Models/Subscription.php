@@ -16,6 +16,7 @@ class Subscription extends Model
     protected $fillable = [
         'name_ar',
         'name_en',
+        'expiredDate',
         'daysNumber',
         'price'
     ];
