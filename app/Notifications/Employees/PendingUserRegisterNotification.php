@@ -12,15 +12,13 @@ class PendingUserRegisterNotification extends Notification
     use Queueable;
 
     private User $user;
-    private User $employees;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(User $user, User $employees)
+    public function __construct(User $user)
     {
         $this->user = $user;
-        $this->employees = $employees;
     }
 
     /**
@@ -28,7 +26,7 @@ class PendingUserRegisterNotification extends Notification
      *
      * @return array<int, string>
      */
-    public function via(object $notifiable): array
+    public function via(User $notifiable): array
     {
         return ['firebase'];
     }
@@ -36,12 +34,12 @@ class PendingUserRegisterNotification extends Notification
     /**
      * Get the mail representation of the notification.
      */
-    public function toFirebase(object $notifiable)
+    public function toFirebase(User $notifiable)
     {
         return (new FirebaseMessage)
             ->withTitle('New Student!')
             ->withBody($this->user->firstName . ' ' . $this->user->lastName . ' Want to Register')
-            ->withPriority('normal')->asNotification($this->employees->fcm_token);
+            ->withPriority('normal')->asNotification($notifiable->fcm_token);
     }
 
     /**
@@ -49,7 +47,7 @@ class PendingUserRegisterNotification extends Notification
      *
      * @return array<string, mixed>
      */
-    public function toArray(object $notifiable): array
+    public function toArray(User $notifiable): array
     {
         return [
             //
