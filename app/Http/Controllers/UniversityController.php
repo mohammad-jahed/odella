@@ -14,23 +14,23 @@ class UniversityController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        /**
-         * @var User $user ;
-         */
-        $user = auth()->user();
-
-        if ($user->can('View Universities')) {
+//        /**
+//         * @var User $user ;
+//         */
+//        $user = auth()->user();
+//
+//        if ($user->can('View Universities')) {
 
             $universities = University::all();
 
             return $this->getJsonResponse($universities, 'Universities Fetched Successfully');
 
-        } else {
-
-            abort(Response::HTTP_FORBIDDEN);
-        }
+//        } else {
+//
+//            abort(Response::HTTP_FORBIDDEN);
+//        }
 
 
     }

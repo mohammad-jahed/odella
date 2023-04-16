@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $daysNumber;
+ * @property string name;
  */
 class Subscription extends Model
 {

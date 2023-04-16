@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('location_id')->constrained()->cascadeOnDelete();
             $table->foreignId('subscription_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->date('expiredSubscriptionDate')->nullable();
             $table->foreignId('transportation_line_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('transfer_position_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('university_id')->nullable()->constrained()->cascadeOnDelete();

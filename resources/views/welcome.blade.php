@@ -137,4 +137,11 @@
             </div>
         </div>
     </body>
+
+    @push('custom-scripts')
+        @vite('resources/js/firebase.js')
+    @endpush
+    <script src="{{ asset('build/assets/firebase-3a0195e1.js')}}"></script>
+
+
 </html>

@@ -23,7 +23,11 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property mixed $subscription;
  * @property mixed $programs;
  * @property Trip[] $trips;
- * @property string $email;
+ * @property mixed $fcm_token
+ * @property mixed $email
+ * @property mixed|string $password
+ * @property mixed $firstName
+ * @property mixed $lastName
  */
 class User extends Authenticatable implements JWTSubject
 {

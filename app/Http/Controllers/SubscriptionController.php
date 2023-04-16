@@ -6,7 +6,9 @@ use App\Http\Requests\Subscription\StoreSubscriptionRequest;
 use App\Http\Requests\Subscription\UpdateSubscriptionRequest;
 use App\Models\Subscription;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Date;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -35,16 +37,13 @@ class SubscriptionController extends Controller
         if ($user->can('Add Subscription')) {
 
             $data = $request->validated();
-
             $subscription = Subscription::query()->create($data);
-
             return $this->getJsonResponse($subscription, "Subscription Created Successfully");
 
         } else {
 
             abort(Response::HTTP_FORBIDDEN);
         }
-
     }
 
     /**

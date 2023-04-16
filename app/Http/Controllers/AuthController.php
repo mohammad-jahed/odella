@@ -13,13 +13,17 @@ use App\Http\Requests\Employee\StoreEmployeeRequest;
 use App\Mail\ForgetPasswordMail;
 use App\Models\ConfirmationCode;
 use App\Models\Location;
+use App\Models\Subscription;
 use App\Models\User;
+use App\Notifications\Employees\PendingUserRegisterNotification;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
@@ -27,12 +31,14 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'adminRegister', 'forgetPassword','resetPassword']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'adminRegister', 'forgetPassword', 'resetPassword']]);
     }
 
     public function login(LoginRequest $request): JsonResponse
     {
-        $data = $request->validated();
+        //$data = $request->validated();
+        $data = ['email' => $request->email];
+        $data += ['password' => $request->password];
 
         if (!$token = auth('api')->attempt($data)) {
             return response()->json(['error' => 'Unauthorized'], 401);
@@ -47,6 +53,13 @@ class AuthController extends Controller
             return $this->getJsonResponse(null, "Un authorized, Please visit the Company Office to Complete Registration Process", 0);
         }
 
+        if (isset($request['fcm_token'])) {
+
+            $user->fcm_token = $request['fcm_token'];
+            $user->save();
+        }
+
+
         return $this->createNewToken($token);
     }
 
@@ -58,6 +71,7 @@ class AuthController extends Controller
             DB::beginTransaction();
             /**
              * @var User $user ;
+             * @var Subscription $subscription ;
              */
             $credentials = $request->validated();
 
@@ -84,6 +98,12 @@ class AuthController extends Controller
             $user->assignRole($role);
 
             DB::commit();
+
+            /**
+             * @var User $employees ;
+             */
+//            $employees = User::role('Employee')->get();
+//            Notification::send($employees, new PendingUserRegisterNotification($user));
 
             return $this->getJsonResponse($user, "User Registered Successfully , Please visit the Company Office to Complete Registration Process");
 
@@ -211,7 +231,7 @@ class AuthController extends Controller
 
             DB::commit();
 
-            return $this->getJsonResponse(null , "Password Reset Successfully");
+            return $this->getJsonResponse(null, "Password Reset Successfully");
 
         } catch (Exception $exception) {
 

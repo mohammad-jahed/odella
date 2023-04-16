@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
@@ -22,9 +21,9 @@ class ForgetPasswordMail extends Mailable
 
     private User $user;
 
-    private String $code;
+    private string $code;
 
-    public function __construct( User $user ,$code )
+    public function __construct(User $user, $code)
     {
         $this->user = $user;
         $this->code = $code;
@@ -49,7 +48,7 @@ class ForgetPasswordMail extends Mailable
             markdown: 'Emails.ForgetPassword',
             with: [
                 'code' => $this->code,
-                'name' => $this->user->firstName .' '.$this->user->lastName,
+                'name' => $this->user->firstName . ' ' . $this->user->lastName,
             ]
 
         );

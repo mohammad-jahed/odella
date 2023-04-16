@@ -230,7 +230,7 @@ class EmployeeController extends Controller
                  */
 
                 $credentials = $request->validated();
-
+                $user->update(['expiredSubscriptionDate' => $credentials['expiredSubscriptionDate']]);
                 $user->trips()->attach($credentials['trip_ids']);
                 /**
                  * @var Trip[] $trips ;
