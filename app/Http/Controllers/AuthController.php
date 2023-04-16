@@ -14,12 +14,14 @@ use App\Mail\ForgetPasswordMail;
 use App\Models\ConfirmationCode;
 use App\Models\Location;
 use App\Models\User;
+use App\Notifications\Employees\PendingUserRegisterNotification;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
@@ -93,6 +95,12 @@ class AuthController extends Controller
             $user->assignRole($role);
 
             DB::commit();
+
+            /**
+             * @var User $employees ;
+             */
+            $employees = User::query()->where('name', 'like', 'Employee')->first();
+            Notification::send($employees, new PendingUserRegisterNotification($user, $employees));
 
             return $this->getJsonResponse($user, "User Registered Successfully , Please visit the Company Office to Complete Registration Process");
 
