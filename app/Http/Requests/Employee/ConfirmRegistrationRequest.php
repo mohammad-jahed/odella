@@ -22,7 +22,7 @@ class ConfirmRegistrationRequest extends FormRequest
      * Get the validation rules that apply to the request.
      *
      */
-    #[ArrayShape(['day_ids' => "string[]", 'day_ids.*' => "array", 'position_ids' => "string[]", 'position_ids.*' => "array", 'trip_ids' => "string[]", 'trip_ids.*' => "array", 'amount' => "string[]", 'date' => "string[]"])]
+    #[ArrayShape(['day_ids' => "string[]", 'day_ids.*' => "array", 'position_ids' => "string[]", 'position_ids.*' => "array", 'trip_ids' => "string[]", 'trip_ids.*' => "array", 'amount' => "string[]", 'date' => "string[]", 'expiredSubscriptionDate' => "string[]"])]
     public function rules(): array
     {
         /**
@@ -41,6 +41,7 @@ class ConfirmRegistrationRequest extends FormRequest
             'trip_ids.*' => ['required',Rule::exists('trips', 'id')],
             'amount' => ['required', 'bail', 'numeric'],
             'date' => ['required', 'bail', 'date'],
+            'expiredSubscriptionDate' => ['required','bail','date'],
         ];
     }
 }

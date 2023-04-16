@@ -37,7 +37,6 @@ class SubscriptionController extends Controller
         if ($user->can('Add Subscription')) {
 
             $data = $request->validated();
-            $data['expiredDate'] = $data['name_en'] == "Month" ? Carbon::now()->addDays(30) : Carbon::now()->addDays(90);
             $subscription = Subscription::query()->create($data);
             return $this->getJsonResponse($subscription, "Subscription Created Successfully");
 

@@ -13,8 +13,10 @@ use App\Http\Requests\Employee\StoreEmployeeRequest;
 use App\Mail\ForgetPasswordMail;
 use App\Models\ConfirmationCode;
 use App\Models\Location;
+use App\Models\Subscription;
 use App\Models\User;
 use App\Notifications\Employees\PendingUserRegisterNotification;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -69,6 +71,7 @@ class AuthController extends Controller
             DB::beginTransaction();
             /**
              * @var User $user ;
+             * @var Subscription $subscription ;
              */
             $credentials = $request->validated();
 
@@ -99,7 +102,7 @@ class AuthController extends Controller
             /**
              * @var User $employees ;
              */
-            $employees = User::query()->where('name', 'like', 'Employee')->first();
+            $employees = User::role('Employee')->get();
             Notification::send($employees, new PendingUserRegisterNotification($user));
 
             return $this->getJsonResponse($user, "User Registered Successfully , Please visit the Company Office to Complete Registration Process");
