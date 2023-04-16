@@ -7,7 +7,6 @@ use App\Models\Trip;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Date;
 
 class GenerateTripsCommand extends Command
 {
@@ -32,17 +31,17 @@ class GenerateTripsCommand extends Command
     {
         //
         /**
-         * @var Trip $trip;
-         * @var Time $time;
+         * @var Trip $trip ;
+         * @var Time $time ;
          */
         $startOfWeek = now()->subWeek()->startOfWeek();
         $endOfWeek = now()->subWeek()->endOfWeek();
         $trips = Trip::query()->whereHas('time',
             function (Builder $builder) use ($endOfWeek, $startOfWeek) {
-                $builder->whereBetween('date',[$startOfWeek, $endOfWeek]);
+                $builder->whereBetween('date', [$startOfWeek, $endOfWeek]);
             }
         )->get();
-        foreach ($trips as $trip){
+        foreach ($trips as $trip) {
             $newTrip = $trip->replicate();
             $att = [
                 'date' => Carbon::make($trip->time->date)->addWeek(),
