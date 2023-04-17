@@ -4,12 +4,9 @@ namespace App\Console\Commands;
 
 use App\Enums\TripStatus;
 use App\Models\Program;
-use App\Models\TransferPosition;
-use App\Models\Trip;
 use App\Models\User;
 use App\Notifications\Students\PositionTimeNotification;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Date;
 
 class PositionTimeCommand extends Command
@@ -34,60 +31,34 @@ class PositionTimeCommand extends Command
     public function handle(): void
     {
         /**
-         * @var array $trip_ids
-         */
-        /**
-         * @var array $user_ids
-         */
-        /**
-         * @var array $position_ids
-         */
-        /**
          * @var User $user
          */
+
         $date = Date::now()->toDateString();
-
-        $trips = Trip::query()->where('status', TripStatus::GoTrip)
-            ->whereHas('time',
-                function (Builder $builder1) use ($date) {
-                    $builder1->where('date', '=', $date);
-                })->get();
-
-        foreach ($trips as $trip)
-            $trip_ids[] = $trip->id;
-
-        $users = User::query()->whereHas('trips',
-            function (Builder $builder1) use ($trip_ids) {
-                $builder1->wherein('trip_id', $trip_ids);
-            })->get();
-
-        foreach ($users as $user)
-            $user_ids[] = $user->id;
-
-        $positions = TransferPosition::query()->whereHas(
-            'trips', function (Builder $builder) use ($trip_ids) {
-            $builder->wherein('trip_id', $trip_ids);
-        })->get();
-
-        foreach ($positions as $position)
-            $position_ids[] = $position->id;
-
 
         $day = Date::now()->dayOfWeek;
 
-        $programs = Program::query()->where('day_id', $day)
+        $programs = Program::query()
+            ->where('day_id', $day)
             ->where(['confirmAttendance1' => true])
-            ->wherein('user_id', $user_ids)
-            ->wherein('transfer_position_id', $position_ids)
-            ->get();
+            ->whereHas('user', function ($query) use ($date) {
+                $query->whereHas('trips', function ($query) use ($date) {
+                    $query->where('status', TripStatus::GoTrip)
+                        ->whereHas('time', function ($query) use ($date) {
+                            $query->where('date', $date);
+                        });
+                });
+            })->get();
 
         foreach ($programs as $program) {
+
             $remainTime = Date::now()->diffInMinutes($program->start, false);
+
             if ($remainTime <= 5 && $remainTime > 1) {
 
-                $user = User::query()->where('id', $program->user_id)->first();
+                $user = $program->user_id;
 
-                $user->notify(new PositionTimeNotification($user));
+                $user->notify(new PositionTimeNotification());
             }
         }
     }
