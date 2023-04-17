@@ -2,7 +2,6 @@
 
 namespace App\Notifications\Students;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Kutia\Larafirebase\Messages\FirebaseMessage;
@@ -12,14 +11,11 @@ class PositionTimeNotification extends Notification
     use Queueable;
 
 
-    private User $user;
-
     /**
      * Create a new notification instance.
      */
-    public function __construct(User $user)
+    public function __construct()
     {
-        $this->user = $user;
     }
 
     /**
@@ -38,9 +34,9 @@ class PositionTimeNotification extends Notification
     public function toFirebase(object $notifiable)
     {
         return (new FirebaseMessage)
-                    ->withTitle('Get Ready!')
-                    ->withBody('Your Bus Will Be At the Position In 5 Minute')
-                    ->withPriority('high')->asNotification($this->user->fcm_token);
+            ->withTitle('Get Ready!')
+            ->withBody('Your Bus Will Be At the Position In 5 Minute')
+            ->withPriority('high')->asNotification($notifiable->fcm_token);
     }
 
     /**

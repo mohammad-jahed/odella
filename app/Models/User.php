@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Closure;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,7 +17,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 /**
  * @method static create(mixed $credentials)
  * @method static role(string $string)
- * @method whereHas(string $string, \Closure $param)
+ * @method whereHas(string $string, Closure $param)
  * @property integer $id;
  * @property integer $status;
  * @property mixed $location;
@@ -50,7 +51,8 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'phoneNumber',
         'status',
-        'image'
+        'image',
+        'fcm_token'
     ];
 
     /**
