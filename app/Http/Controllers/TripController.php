@@ -425,8 +425,8 @@ class TripController extends Controller
 //            //->each(fn($program) => $program->user->notify(new PositionTimeNotification($program->user)));
 
 
-
-        return 'ok';
+//        $date = Date::now()->diffInDays('2023-03-17',false)<=30;
+//        return $date;
 
     }
 
