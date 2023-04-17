@@ -26,6 +26,10 @@ class TransferPositionSeeder extends Seeder
                 'name_ar' => 'جرمانا',
                 'name_en' => 'Jaramanah',
             ],
+            [
+                'name_ar' => 'الميدان',
+                'name_en' => 'Al Midan',
+            ],
         ]);
 
         DB::table('shared_positions')->insert([
@@ -52,6 +56,10 @@ class TransferPositionSeeder extends Seeder
             [
                 'transportation_line_id' => '2',
                 'transfer_position_id' => '3'
+            ],
+            [
+                'transportation_line_id' => '2',
+                'transfer_position_id' => '4'
             ],
             [
                 'transportation_line_id' => '3',
