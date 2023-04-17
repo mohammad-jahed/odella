@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:position-time-command')->everyThreeMinutes()->between('07:00', '12:00');
         $schedule->command('app:return-time-command')->everyFiveMinutes()->between('12:00', '18:00');
         $schedule->command('app:generate-trips-command')->weekly();
+        $schedule->command('app:expired-subscription-command')->weekly();
     }
 
     /**
