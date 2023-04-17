@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Date;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -29,6 +30,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property mixed|string $password
  * @property mixed $firstName
  * @property mixed $lastName
+ * @property Date $expiredSubscriptionDate
  */
 class User extends Authenticatable implements JWTSubject
 {

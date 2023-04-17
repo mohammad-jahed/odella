@@ -11,6 +11,7 @@ use App\Models\Pay;
 use App\Models\Program;
 use App\Models\Subscription;
 use App\Models\Trip;
+use App\Models\TripPositionsTimes;
 use App\Models\User;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -230,12 +231,15 @@ class EmployeeController extends Controller
                  */
 
                 $credentials = $request->validated();
-                $user->update(['expiredSubscriptionDate' => $credentials['expiredSubscriptionDate']]);
+                $user->expiredSubscriptionDate = $credentials['expiredSubscriptionDate'];
+                $user->save();
                 $user->trips()->attach($credentials['trip_ids']);
                 /**
                  * @var Trip[] $trips ;
                  * @var Trip[] $goTrips ;
                  * @var Trip[] $returnTrips ;
+                 * @var TripPositionsTimes $goTime ;
+                 * @var TripPositionsTimes $returnTime ;
                  */
                 $trips = $user->trips;
                 $goTrips = [];
@@ -243,23 +247,20 @@ class EmployeeController extends Controller
                 for ($i = 0; $i < sizeof($trips); $i++) {
                     $trips[$i]->status == 1 ? $goTrips += [$trips[$i]] : $returnTrips += [$trips[$i]];
                 }
-
-                for ($i = 0; $i < sizeof($credentials['day_ids']); $i++) {
-                    for ($j = 0; $j < sizeof($credentials['position_ids']); $j++) {
-                        for ($k = 0; $k < sizeof($goTrips); $k++) {
-                            for ($l = 0; $l < sizeof($returnTrips); $l++) {
-                                if ($i == $j && $l == $k) {
-                                    $data = [
-                                        'day_id' => $credentials['day_ids'][$i],
-                                        'transfer_position_id' => $credentials['position_ids'][$j],
-                                        'start' => $goTrips[$k]->time->start,
-                                        'end' => $returnTrips[$l]->time->start,
-                                        'user_id' => $user->id
-                                    ];
-                                    Program::query()->create($data);
-                                }
-                            }
-                        }
+                foreach (array_intersect_key($credentials['day_ids'], $credentials['position_ids']) as $key => $value) {
+                    foreach (array_intersect_key($goTrips, $returnTrips) as $k => $v) {
+                        $firstPosition = $goTrips[$k]->transferPositions()->first();
+                        $lastPosition = $returnTrips[$k]->transferPositions()->orderBy('id', 'desc')->first();
+                        $goTime = TripPositionsTimes::query()->where('position_id', $firstPosition->id)->first();
+                        $returnTime = TripPositionsTimes::query()->where('position_id', $lastPosition->id)->first();
+                        $data = [
+                            'day_id' => $credentials['day_ids'][$key],
+                            'transfer_position_id' => $credentials['position_ids'][$key],
+                            'start' => $goTime->time,
+                            'end' => $returnTime->time,
+                            'user_id' => $user->id
+                        ];
+                        Program::query()->create($data);
                     }
                 }
                 $pay = Pay::query()->create($credentials);
