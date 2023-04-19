@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\Status;
 use App\Http\Requests\Student\ConfirmAttendanceRequest;
 use App\Http\Requests\Student\UpdateStudentRequest;
+use App\Http\Resources\UserResource;
 use App\Models\Location;
 use App\Models\Program;
 use App\Models\TransferPosition;
@@ -158,8 +159,9 @@ class StudentController extends Controller
         if ($user->can('View Student')) {
 
             $students = User::role('Student')->where('status', Status::UnActive)->get();
-
-            return $this->getJsonResponse($students, "Students Fetch Successfully");
+            $students->load(['location','subscription', 'line', 'position', 'university']);
+            $data = UserResource::collection($students);
+            return $this->getJsonResponse($data, "Students Fetch Successfully");
 
         } else {
 

@@ -111,12 +111,12 @@ class User extends Authenticatable implements JWTSubject
 
     public function line(): BelongsTo
     {
-        return $this->belongsTo(TransportationLine::class);
+        return $this->belongsTo(TransportationLine::class,'transportation_line_id');
     }
 
     public function position(): BelongsTo
     {
-        return $this->belongsTo(TransferPosition::class);
+        return $this->belongsTo(TransferPosition::class, 'transfer_position_id');
     }
 
     public function payments(): BelongsToMany
