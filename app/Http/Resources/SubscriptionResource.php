@@ -22,9 +22,9 @@ class SubscriptionResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'daysNumber'=> $this->daysNumber,
+            'daysNumber' => $this->daysNumber,
             'price' => $this->price,
-            'name'=> $this->name
+            'name' => $this->name
         ];
     }
 }

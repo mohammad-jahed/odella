@@ -17,6 +17,7 @@ use JetBrains\PhpStorm\Pure;
  * @property mixed $university
  * @property mixed $expiredSubscriptionDate
  * @property mixed $phoneNumber
+ * @property mixed $location
  */
 class UserResource extends JsonResource
 {
@@ -31,14 +32,15 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'firstName' => $this->firstName,
-            'lastName'=> $this->lastName,
-            'email'=> $this->email,
+            'lastName' => $this->lastName,
+            'email' => $this->email,
             "phoneNumber" => $this->phoneNumber,
             "expiredSubscriptionDate" => $this->expiredSubscriptionDate,
             'subscription' => new SubscriptionResource($this->subscription),
-            'line'=> new TransportationLineResource($this->line),
-            'position'=> new TransferPositionResource($this->position),
+            'line' => new TransportationLineResource($this->line),
+            'position' => new TransferPositionResource($this->position),
             'university' => new UniversityResource($this->university),
+            'location' => new LocationResource($this->location)
         ];
     }
 }

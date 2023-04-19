@@ -9,18 +9,18 @@ use JetBrains\PhpStorm\ArrayShape;
 /**
  * @property mixed $name
  */
-class UniversityResource extends JsonResource
+class CityResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
      * @return array<string, mixed>
      */
-    #[ArrayShape(['name' => "mixed"])]
+    #[ArrayShape(["name" => "mixed"])]
     public function toArray(Request $request): array
     {
         return [
-            'name' => $this->name
+            "name" => $this->name
         ];
     }
 }
