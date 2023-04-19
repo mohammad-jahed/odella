@@ -13,9 +13,18 @@ class Day extends Model
 {
     use HasFactory;
 
+    protected $appends = [
+        'name'
+    ];
+
+    public function getNameAttribute()
+    {
+        return $this->{'name_' . app()->getLocale()};
+    }
+
+
     public function programs(): HasMany
     {
-
         return $this->hasMany(Program::class);
     }
 }

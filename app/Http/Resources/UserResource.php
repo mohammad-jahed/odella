@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * @property mixed $id
@@ -18,6 +17,8 @@ use JetBrains\PhpStorm\Pure;
  * @property mixed $expiredSubscriptionDate
  * @property mixed $phoneNumber
  * @property mixed $location
+ * @property mixed $payments
+ * @property mixed $programs
  */
 class UserResource extends JsonResource
 {
@@ -26,7 +27,6 @@ class UserResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    #[Pure]
     public function toArray(Request $request): array
     {
         return [
@@ -40,7 +40,9 @@ class UserResource extends JsonResource
             'line' => new TransportationLineResource($this->line),
             'position' => new TransferPositionResource($this->position),
             'university' => new UniversityResource($this->university),
-            'location' => new LocationResource($this->location)
+            'location' => new LocationResource($this->location),
+            "payments" => $this->whenLoaded("payments", PayResource::collection($this->payments)),
+            "programs" => $this->whenLoaded("programs", ProgramResource::collection($this->programs)),
         ];
     }
 }

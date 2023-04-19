@@ -137,8 +137,9 @@ class StudentController extends Controller
         if ($user->can('View Student')) {
 
             $students = User::role('Student')->where('status', Status::Active)->get();
-
-            return $this->getJsonResponse($students, "Students Fetch Successfully");
+            $students->load(['location','subscription', 'line', 'position', 'university', 'payments', 'programs']);
+            $activeStudents = UserResource::collection($students);
+            return $this->getJsonResponse($activeStudents, "Students Fetch Successfully");
 
         } else {
 
