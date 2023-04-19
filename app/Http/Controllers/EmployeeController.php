@@ -250,14 +250,12 @@ class EmployeeController extends Controller
                 foreach (array_intersect_key($credentials['day_ids'], $credentials['position_ids']) as $key => $value) {
                     foreach (array_intersect_key($goTrips, $returnTrips) as $k => $v) {
                         $firstPosition = $goTrips[$k]->transferPositions()->first();
-                        $lastPosition = $returnTrips[$k]->transferPositions()->orderBy('id', 'desc')->first();
                         $goTime = TripPositionsTimes::query()->where('position_id', $firstPosition->id)->first();
-                        $returnTime = TripPositionsTimes::query()->where('position_id', $lastPosition->id)->first();
                         $data = [
                             'day_id' => $credentials['day_ids'][$key],
                             'transfer_position_id' => $credentials['position_ids'][$key],
                             'start' => $goTime->time,
-                            'end' => $returnTime->time,
+                            'end' => $returnTrips[$k]->time->start,
                             'user_id' => $user->id
                         ];
                         Program::query()->create($data);

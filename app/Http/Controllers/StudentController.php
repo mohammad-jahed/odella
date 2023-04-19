@@ -160,8 +160,8 @@ class StudentController extends Controller
 
             $students = User::role('Student')->where('status', Status::UnActive)->get();
             $students->load(['location','subscription', 'line', 'position', 'university']);
-            $data = UserResource::collection($students);
-            return $this->getJsonResponse($data, "Students Fetch Successfully");
+            $unActiveStudents = UserResource::collection($students);
+            return $this->getJsonResponse($unActiveStudents, "Students Fetch Successfully");
 
         } else {
 
