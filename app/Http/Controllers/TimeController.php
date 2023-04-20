@@ -22,13 +22,19 @@ class TimeController extends Controller
 
         if ($user->can('View Time')) {
 
-            $times = Time::all();
+            $times = Time::query()->paginate(10);
+
+            if ($times->isEmpty()) {
+
+                return $this->getJsonResponse(null, "There Are No Times Found!");
+            }
 
             return $this->getJsonResponse($times, "Times Fetched Successfully");
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -52,7 +58,8 @@ class TimeController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -71,7 +78,8 @@ class TimeController extends Controller
             return $this->getJsonResponse($time, "Time Fetched Successfully");
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -95,7 +103,8 @@ class TimeController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -117,7 +126,8 @@ class TimeController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 }

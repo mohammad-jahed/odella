@@ -19,8 +19,15 @@ class AreaController extends Controller
     public function index(): JsonResponse
     {
 
-        $areas = Area::all();
+        $areas = Area::query()->paginate(10);
+
+        if ($areas->isEmpty()) {
+
+            return $this->getJsonResponse(null, "There Are No Areas Found!");
+        }
+
         $areas = AreaResource::collection($areas);
+
         return $this->getJsonResponse($areas, "Areas Fetched Successfully");
     }
 
@@ -44,7 +51,8 @@ class AreaController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
 
     }
@@ -77,7 +85,8 @@ class AreaController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -101,7 +110,8 @@ class AreaController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 

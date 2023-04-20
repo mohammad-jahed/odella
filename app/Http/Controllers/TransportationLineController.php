@@ -13,16 +13,24 @@ use Symfony\Component\HttpFoundation\Response;
 class TransportationLineController extends Controller
 {
     /**
+     * @var TransportationLine[] $transportationLines ;
+     * @var TransportationLine $transportationLine ;
+     * @var TransferPosition[] $positions ;
+     */
+
+    /**
      * Display a listing of the resource.
      */
     public function index(): JsonResponse
     {
-        /**
-         * @var TransportationLine[] $transportationLines ;
-         * @var TransportationLine $transportationLine ;
-         * @var TransferPosition[] $positions ;
-         */
-        $transportationLines = TransportationLine::all();
+
+        $transportationLines = TransportationLine::query()->paginate(10);
+
+        if ($transportationLines->isEmpty()) {
+
+            return $this->getJsonResponse(null, "There Are No TransportationLines Found!");
+        }
+
         return $this->getJsonResponse($transportationLines, "TransportationLines Fetch Successfully");
     }
 
@@ -46,7 +54,8 @@ class TransportationLineController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -80,7 +89,8 @@ class TransportationLineController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -102,7 +112,8 @@ class TransportationLineController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 }

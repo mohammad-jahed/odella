@@ -22,9 +22,20 @@ class LocationController extends Controller
 
         Gate::forUser($user)->authorize('getAllLocations');
 
-        $locations = Location::all();
-        $locations->load(['city', 'area']);
-        $locations = LocationResource::collection($locations);
+        $locations = Location::query()
+            ->with('city')
+            ->with('area')
+            ->paginate(10);
+
+        if ($locations->isEmpty()) {
+
+            return $this->getJsonResponse(null, "There Are No Locations Found!");
+        }
+
+        //$locations->load(['city', 'area']);
+
+        $locations = LocationResource::collection($locations)->response()->getData(true);
+
         return $this->getJsonResponse($locations, "Locations Fetched Successfully");
 
     }

@@ -38,11 +38,17 @@ class EmployeeController extends Controller
 
             $employees = User::role('Employee')->get();
 
+            if ($employees->isEmpty()) {
+
+                return $this->getJsonResponse(null, "There Are No Employees Found!");
+            }
+
             return $this->getJsonResponse($employees, "Employees Fetched Successfully");
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -102,7 +108,8 @@ class EmployeeController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
 
     }
@@ -123,7 +130,8 @@ class EmployeeController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -209,7 +217,8 @@ class EmployeeController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -282,7 +291,8 @@ class EmployeeController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 

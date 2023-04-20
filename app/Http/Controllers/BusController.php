@@ -23,13 +23,19 @@ class BusController extends Controller
 
         if ($user->can('View Buses')) {
 
-            $buses = Bus::all();
+            $buses = Bus::query()->paginate(10);
+
+            if ($buses->isEmpty()) {
+
+                return $this->getJsonResponse(null, "There Are No Buses Found!");
+            }
 
             return $this->getJsonResponse($buses, "Buses Fetched Successfully");
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -60,7 +66,8 @@ class BusController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -98,7 +105,8 @@ class BusController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
 
     }
@@ -121,7 +129,8 @@ class BusController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 }

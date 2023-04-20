@@ -30,13 +30,19 @@ class SupervisorController extends Controller
 
         if ($user->can('View Supervisor')) {
 
-            $supervisors = User::role('Supervisor')->get();
+            $supervisors = User::role('Supervisor')->paginate(10);
+
+            if ($supervisors->isEmpty()) {
+
+                return $this->getJsonResponse(null, "There Are No Supervisors Found!");
+            }
 
             return $this->getJsonResponse($supervisors, "Supervisors Fetched Successfully");
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -96,7 +102,8 @@ class SupervisorController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -116,7 +123,8 @@ class SupervisorController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -198,7 +206,8 @@ class SupervisorController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 }

@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use function Symfony\Component\Translation\t;
 
 class ProgramController extends Controller
 {
@@ -23,13 +24,21 @@ class ProgramController extends Controller
 
         if ($user->can('View Programs')) {
 
-            $programs = Program::all();
-            $programs = ProgramResource::collection($programs);
+            $programs = Program::query()->paginate(10);
+
+            if ($programs->isEmpty()) {
+
+                return $this->getJsonResponse(null, "There Are No Programs Found!");
+            }
+
+            $programs = ProgramResource::collection($programs)->response()->getData(true);
+
             return $this->getJsonResponse($programs, 'Programs Fetched Successfully');
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -77,7 +86,13 @@ class ProgramController extends Controller
         $user = auth()->user();
 
         $programs = $user->programs()->with(['day', 'position'])->get();
+
+        if ($programs->isEmpty()) {
+
+            return $this->getJsonResponse(null, "There Are No Programs Found For This User!");
+        }
         $programs = ProgramResource::collection($programs);
+
         return $this->getJsonResponse($programs, 'Programs Fetched Successfully');
     }
 

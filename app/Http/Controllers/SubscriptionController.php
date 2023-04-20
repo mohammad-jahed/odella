@@ -19,6 +19,11 @@ class SubscriptionController extends Controller
     {
         $subscriptions = Subscription::all();
 
+        if ($subscriptions->isEmpty()) {
+
+            return $this->getJsonResponse(null, "There Are No Subscriptions Found!");
+        }
+
         return $this->getJsonResponse($subscriptions, "Subscriptions Fetched Successfully");
     }
 
@@ -35,12 +40,15 @@ class SubscriptionController extends Controller
         if ($user->can('Add Subscription')) {
 
             $data = $request->validated();
+
             $subscription = Subscription::query()->create($data);
+
             return $this->getJsonResponse($subscription, "Subscription Created Successfully");
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -75,7 +83,8 @@ class SubscriptionController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -99,7 +108,8 @@ class SubscriptionController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
 
     }

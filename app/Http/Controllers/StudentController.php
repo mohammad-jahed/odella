@@ -25,16 +25,25 @@ class StudentController extends Controller
      */
     public function index(): JsonResponse
     {
-        //
         /**
          * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('View Student')) {
-            $students = User::role('Student')->get();
+
+            $students = User::role('Student')->paginate(10);
+
+            if ($students->isEmpty()) {
+
+                return $this->getJsonResponse(null, "There Are No Students Found!");
+            }
+
             return $this->getJsonResponse($students, "Students Fetched Successfully");
+
         } else {
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
 
     }
@@ -52,15 +61,18 @@ class StudentController extends Controller
      */
     public function show(User $student): JsonResponse
     {
-        //
         /**
          * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('View Student')) {
+
             return $this->getJsonResponse($student, "Student Fetched Successfully");
+
         } else {
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -113,16 +125,20 @@ class StudentController extends Controller
      */
     public function destroy(User $student): JsonResponse
     {
-        //
         /**
          * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->can('Delete Student')) {
+
             $student->delete();
+
             return $this->getJsonResponse(null, 'Student Deleted Successfully');
+
         } else {
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
 
     }
@@ -136,14 +152,24 @@ class StudentController extends Controller
 
         if ($user->can('View Student')) {
 
-            $students = User::role('Student')->where('status', Status::Active)->get();
-            $students->load(['location','subscription', 'line', 'position', 'university', 'payments', 'programs']);
-            $activeStudents = UserResource::collection($students);
+            $students = User::role('Student')->where('status', Status::Active)->paginate(10);
+
+            if ($students->isEmpty()) {
+
+                return $this->getJsonResponse(null, "There Are No Active Students Found!");
+            }
+
+            $students->load(['location', 'subscription', 'line',
+                'position', 'university', 'payments', 'programs']);
+
+            $activeStudents = UserResource::collection($students)->response()->getData(true);
+
             return $this->getJsonResponse($activeStudents, "Students Fetch Successfully");
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -159,14 +185,23 @@ class StudentController extends Controller
 
         if ($user->can('View Student')) {
 
-            $students = User::role('Student')->where('status', Status::UnActive)->get();
-            $students->load(['location','subscription', 'line', 'position', 'university']);
-            $unActiveStudents = UserResource::collection($students);
+            $students = User::role('Student')->where('status', Status::UnActive)->paginate(10);
+
+            if ($students->isEmpty()) {
+
+                return $this->getJsonResponse(null, "There Are No UnActive Students Found!");
+            }
+
+            $students->load(['location', 'subscription', 'line', 'position', 'university']);
+
+            $unActiveStudents = UserResource::collection($students)->response()->getData(true);
+
             return $this->getJsonResponse($unActiveStudents, "Students Fetch Successfully");
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
 
     }
@@ -180,10 +215,14 @@ class StudentController extends Controller
          * @var User $user ;
          */
         $user = auth()->user();
+
         Gate::forUser($user)->authorize('confirmAttendance', $program);
+
         $data = $request->validated();
+
         $program->confirmAttendance1 = $data['confirmAttendance1'];
         $program->confirmAttendance2 = $data['confirmAttendance2'];
+
         return $this->getJsonResponse($program, "Your Attendance Is Confirmed Successfully");
     }
 
@@ -197,10 +236,15 @@ class StudentController extends Controller
          * @var User $auth ;
          */
         $auth = auth()->user();
+
         Gate::forUser($auth)->authorize('getStudentsInPosition', $trip);
+
         $students = $trip->users;
+
         $users = [];
+
         foreach ($students as $student) {
+
             $users += [
                 'students' => $student->whereHas(
                     "programs",
@@ -212,6 +256,7 @@ class StudentController extends Controller
                 )->get()
             ];
         }
+
         $users += ['studentsNumber' => sizeof($users) + 1];
 
         return $this->getJsonResponse($users, "Students Fetched Successfully");

@@ -39,13 +39,19 @@ class TripController extends Controller
 
         if ($user->can('View Trips')) {
 
-            $trips = Trip::all();
+            $trips = Trip::query()->paginate(10);
+
+            if ($trips->isEmpty()) {
+
+                return $this->getJsonResponse(null, "There Are No Trips Found!");
+            }
 
             return $this->getJsonResponse($trips, "Trips Fetched Successfully");
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -117,7 +123,8 @@ class TripController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -137,7 +144,8 @@ class TripController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -199,7 +207,8 @@ class TripController extends Controller
             return $this->getJsonResponse($trip, "Trip Updated Successfully");
 
         } else {
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -221,7 +230,8 @@ class TripController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -261,8 +271,8 @@ class TripController extends Controller
             $trip->load('users');
             return $this->getJsonResponse($trip, 'Students Added Successfully To This Trip');
         } else {
-            abort(Response::HTTP_FORBIDDEN);
-
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -298,7 +308,8 @@ class TripController extends Controller
             $trip->load('users');
             return $this->getJsonResponse($trip, "Student Deleted Successfully");
         } else {
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -387,7 +398,7 @@ class TripController extends Controller
 
         $date = Date::now()->toDateString();
 
-         $day = Date::now()->dayOfWeek;
+        $day = Date::now()->dayOfWeek;
 
         $programs = Program::query()
             ->where('day_id', $day)
@@ -405,7 +416,7 @@ class TripController extends Controller
             $remainTime = Date::now()->diffInMinutes($program->start, false);
             if ($remainTime <= 5 && $remainTime > 3) {
 
-                $user = $program->user_id   ;
+                $user = $program->user_id;
                 //$user->notify(new PositionTimeNotification($user));
             }
 

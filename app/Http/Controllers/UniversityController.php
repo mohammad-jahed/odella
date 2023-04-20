@@ -23,9 +23,14 @@ class UniversityController extends Controller
 //
 //        if ($user->can('View Universities')) {
 
-            $universities = University::all();
+        $universities = University::query()->paginate(10);
 
-            return $this->getJsonResponse($universities, 'Universities Fetched Successfully');
+        if ($universities->isEmpty()) {
+
+            return $this->getJsonResponse(null, "There Are No Universities Found!");
+        }
+
+        return $this->getJsonResponse($universities, 'Universities Fetched Successfully');
 
 //        } else {
 //
@@ -56,7 +61,8 @@ class UniversityController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -90,7 +96,8 @@ class UniversityController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
 
     }
@@ -115,7 +122,8 @@ class UniversityController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 }

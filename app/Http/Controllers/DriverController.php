@@ -16,7 +16,7 @@ class DriverController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index()//: JsonResponse
     {
         /**
          * @var User $user ;
@@ -25,14 +25,26 @@ class DriverController extends Controller
 
         if ($user->can('View Drivers')) {
 
-            $drivers = Driver::all();
-            $drivers->load('buses');
-            $drivers = DriverResource::collection($drivers);
+//            $drivers = Driver::query()->with('buses')
+//                ->paginate(10);
+            $drivers = Driver::query()->with('buses')
+                ->paginate(10);
+
+            if ($drivers->isEmpty()) {
+
+                return $this->getJsonResponse(null, "There Are No Drivers Found!");
+            }
+
+            //$drivers->load('buses');
+
+            $drivers = DriverResource::collection($drivers)->response()->getData(true);
+
             return $this->getJsonResponse($drivers, "Drivers Fetched Successfully");
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -60,7 +72,8 @@ class DriverController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -100,7 +113,8 @@ class DriverController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
 
     }
@@ -123,7 +137,8 @@ class DriverController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 }

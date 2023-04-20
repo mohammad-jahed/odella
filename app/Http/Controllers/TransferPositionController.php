@@ -18,7 +18,12 @@ class TransferPositionController extends Controller
      */
     public function index(): JsonResponse
     {
-        $transferPositions = TransferPosition::all();
+        $transferPositions = TransferPosition::query()->paginate(10);
+
+        if ($transferPositions->isEmpty()) {
+
+            return $this->getJsonResponse(null, "There Are No TransferPositions Found!");
+        }
 
         return $this->getJsonResponse($transferPositions, "TransferPositions Fetched Successfully");
     }
@@ -51,7 +56,8 @@ class TransferPositionController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -91,7 +97,8 @@ class TransferPositionController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -113,14 +120,17 @@ class TransferPositionController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
     public function positions(TransportationLine $line): JsonResponse
     {
         $positions = $line->positions;
+
         $positions = TransferPositionResource::collection($positions);
+
         return $this->getJsonResponse($positions, "Position Fetched Successfully");
     }
 }

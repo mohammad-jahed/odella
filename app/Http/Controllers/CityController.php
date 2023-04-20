@@ -16,7 +16,12 @@ class CityController extends Controller
      */
     public function index(): JsonResponse
     {
-        $cities = City::all();
+        $cities = City::query()->paginate(10);
+
+        if ($cities->isEmpty()) {
+
+            return $this->getJsonResponse(null, "There Are No Cities Found!");
+        }
         return $this->getJsonResponse($cities, "Cities Fetched Successfully");
     }
 
@@ -42,7 +47,8 @@ class CityController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -78,7 +84,8 @@ class CityController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
@@ -102,7 +109,8 @@ class CityController extends Controller
 
         } else {
 
-            abort(Response::HTTP_FORBIDDEN);
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
