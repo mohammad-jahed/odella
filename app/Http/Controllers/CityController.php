@@ -17,7 +17,6 @@ class CityController extends Controller
     public function index(): JsonResponse
     {
         $cities = City::all();
-
         return $this->getJsonResponse($cities, "Cities Fetched Successfully");
     }
 

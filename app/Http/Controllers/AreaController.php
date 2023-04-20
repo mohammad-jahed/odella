@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Area\StoreAreaRequest;
 use App\Http\Requests\Area\UpdateAreaRequest;
+use App\Http\Resources\AreaResource;
 use App\Models\Area;
 use App\Models\City;
 use App\Models\User;
@@ -19,7 +20,7 @@ class AreaController extends Controller
     {
 
         $areas = Area::all();
-
+        $areas = AreaResource::collection($areas);
         return $this->getJsonResponse($areas, "Areas Fetched Successfully");
     }
 
@@ -107,7 +108,7 @@ class AreaController extends Controller
     public function areas(City $city): JsonResponse
     {
         $areas = $city->areas;
-
+        $areas = AreaResource::collection($areas);
         return $this->getJsonResponse($areas, "Areas Fetched Successfully");
     }
 

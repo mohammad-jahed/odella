@@ -26,13 +26,14 @@ class LocationPolicy
          * @var User $currentUser ;
          * @var User[] $users;
          */
-        $users = $location->users;
-        foreach ($users as $currentUser) {
-            if ($user->id == $currentUser->id) {
-                return true;
-            }
-        }
-        return false;
+//        $users = $location->users;
+//        foreach ($users as $currentUser) {
+//            if ($user->id == $currentUser->id) {
+//                return true;
+//            }
+//        }
+//        return false;
+        return true;
     }
 
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Location\StoreLocationRequest;
 use App\Http\Requests\Location\UpdateLocationRequest;
+use App\Http\Resources\LocationResource;
 use App\Models\Location;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
@@ -22,7 +23,8 @@ class LocationController extends Controller
         Gate::forUser($user)->authorize('getAllLocations');
 
         $locations = Location::all();
-
+        $locations->load(['city', 'area']);
+        $locations = LocationResource::collection($locations);
         return $this->getJsonResponse($locations, "Locations Fetched Successfully");
 
     }
@@ -50,7 +52,8 @@ class LocationController extends Controller
         $user = auth()->user();
 
         Gate::forUser($user)->authorize('getLocation', $location);
-
+        $location->load(['city', 'area']);
+        $location = new LocationResource($location);
         return $this->getJsonResponse($location, "Location Fetched Successfully");
 
     }

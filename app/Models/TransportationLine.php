@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Resources\TransferPositionResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -39,14 +40,16 @@ class TransportationLine extends Model
         return $this->{'name_' . app()->getLocale()};
     }
 
-    public function getFromAttribute()
+    public function getFromAttribute(): TransferPositionResource
     {
-        return $this->positions()->first();
+        $position = $this->positions()->first();
+        return new TransferPositionResource($position);
     }
 
-    public function getToAttribute()
+    public function getToAttribute(): TransferPositionResource
     {
-        return $this->positions()->orderBy('id', 'desc')->first();
+        $position = $this->positions()->orderBy('id', 'desc')->first();
+        return new TransferPositionResource($position);
     }
 
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Driver\StoreDriverRequest;
 use App\Http\Requests\Driver\UpdateDriverRequest;
+use App\Http\Resources\DriverResource;
 use App\Models\Bus;
 use App\Models\Driver;
 use App\Models\User;
@@ -25,7 +26,8 @@ class DriverController extends Controller
         if ($user->can('View Drivers')) {
 
             $drivers = Driver::all();
-
+            $drivers->load('buses');
+            $drivers = DriverResource::collection($drivers);
             return $this->getJsonResponse($drivers, "Drivers Fetched Successfully");
 
         } else {
@@ -67,6 +69,8 @@ class DriverController extends Controller
      */
     public function show(Driver $driver): JsonResponse
     {
+        $driver->load("buses");
+        $driver = new DriverResource($driver);
         return $this->getJsonResponse($driver, "Driver Fetched Successfully");
     }
 

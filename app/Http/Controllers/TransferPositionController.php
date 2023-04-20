@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TransferPosition\StoreTransferPositionRequest;
 use App\Http\Requests\TransferPosition\UpdateTransferPositionRequest;
+use App\Http\Resources\TransferPositionResource;
 use App\Models\TransferPosition;
 use App\Models\TransportationLine;
 use App\Models\User;
@@ -119,7 +120,7 @@ class TransferPositionController extends Controller
     public function positions(TransportationLine $line): JsonResponse
     {
         $positions = $line->positions;
-
+        $positions = TransferPositionResource::collection($positions);
         return $this->getJsonResponse($positions, "Position Fetched Successfully");
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProgramResource;
 use App\Models\Program;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -23,7 +24,7 @@ class ProgramController extends Controller
         if ($user->can('View Programs')) {
 
             $programs = Program::all();
-
+            $programs = ProgramResource::collection($programs);
             return $this->getJsonResponse($programs, 'Programs Fetched Successfully');
 
         } else {
@@ -76,7 +77,7 @@ class ProgramController extends Controller
         $user = auth()->user();
 
         $programs = $user->programs()->with(['day', 'position'])->get();
-
+        $programs = ProgramResource::collection($programs);
         return $this->getJsonResponse($programs, 'Programs Fetched Successfully');
     }
 
