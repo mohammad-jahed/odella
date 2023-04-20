@@ -8,6 +8,7 @@ use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @property mixed $name
+ * @property int $id;
  */
 class TransferPositionResource extends JsonResource
 {
@@ -16,10 +17,11 @@ class TransferPositionResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    #[ArrayShape(["name" => "mixed"])]
+    #[ArrayShape(["id" => "int", "name" => "mixed"])]
     public function toArray(Request $request): array
     {
         return [
+            "id" => $this->id,
             "name" => $this->name
         ];
     }
