@@ -30,7 +30,7 @@ class StudentController extends Controller
          */
         $user = auth()->user();
 
-        if ($user->can('View Student')) {
+//        if ($user->can('View Student')) {
 
             $students = User::role('Student')->paginate(10);
 
@@ -41,10 +41,10 @@ class StudentController extends Controller
 
             return $this->getJsonResponse($students, "Students Fetched Successfully");
 
-        } else {
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
-        }
+//        } else {
+//            abort(Response::HTTP_UNAUTHORIZED
+//                , "Unauthorized , You Dont Have Permission To Access This Action");
+//        }
 
     }
 
@@ -148,9 +148,9 @@ class StudentController extends Controller
         /**
          * @var User $user ;
          */
-        $user = auth()->user();
-
-        if ($user->can('View Student')) {
+//        $user = auth()->user();
+//
+//        if ($user->can('View Student')) {
 
             $students = User::role('Student')->where('status', Status::Active)->paginate(10);
 
@@ -166,11 +166,11 @@ class StudentController extends Controller
 
             return $this->getJsonResponse($activeStudents, "Students Fetch Successfully");
 
-        } else {
-
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
-        }
+//        } else {
+//
+//            abort(Response::HTTP_UNAUTHORIZED
+//                , "Unauthorized , You Dont Have Permission To Access This Action");
+//        }
     }
 
     /**
@@ -183,7 +183,7 @@ class StudentController extends Controller
          */
         $user = auth()->user();
 
-        if ($user->can('View Student')) {
+//        if ($user->can('View Student')) {
 
             $students = User::role('Student')->where('status', Status::UnActive)->paginate(10);
 
@@ -198,11 +198,11 @@ class StudentController extends Controller
 
             return $this->getJsonResponse($unActiveStudents, "Students Fetch Successfully");
 
-        } else {
-
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
-        }
+//        } else {
+//
+//            abort(Response::HTTP_UNAUTHORIZED
+//                , "Unauthorized , You Dont Have Permission To Access This Action");
+//        }
 
     }
 

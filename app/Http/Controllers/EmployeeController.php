@@ -229,9 +229,9 @@ class EmployeeController extends Controller
         /**
          * @var User $auth ;
          */
-        $auth = auth()->user();
-
-        if ($auth->can('Confirm registration')) {
+//        $auth = auth()->user();
+//
+//        if ($auth->can('Confirm registration')) {
 
             try {
                 /**
@@ -289,11 +289,11 @@ class EmployeeController extends Controller
                 return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
             }
 
-        } else {
-
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
-        }
+//        } else {
+//
+//            abort(Response::HTTP_UNAUTHORIZED
+//                , "Unauthorized , You Dont Have Permission To Access This Action");
+//        }
     }
 
 }

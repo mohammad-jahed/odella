@@ -77,6 +77,16 @@ Route::group([
 
     Route::apiResource('/universities', UniversityController::class);
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Route::post('/employees/confirmRegistration/{user}', [EmployeeController::class, 'confirmRegistration']);
+    Route::apiResource('/students', StudentController::class);
+    Route::get('/student/active', [StudentController::class, 'activeStudentsList']);
+    Route::get('/student/unActive', [StudentController::class, 'unActiveStudentsList']);
+    Route::get('/student/trips/{trip}/positions/{position}', [StudentController::class, 'getAllStudentsInThePosition']);
+
+
+    /// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     Route::group([
         'middleware' => ['auth:api']
@@ -84,17 +94,17 @@ Route::group([
 
         Route::apiResource('/employees', EmployeeController::class);
 
-        Route::post('/employees/confirmRegistration/{user}', [EmployeeController::class, 'confirmRegistration']);
+        //Route::post('/employees/confirmRegistration/{user}', [EmployeeController::class, 'confirmRegistration']);
 
-        Route::apiResource('/students', StudentController::class);
+        //Route::apiResource('/students', StudentController::class);
 
-        Route::get('/student/active', [StudentController::class, 'activeStudentsList']);
+        //Route::get('/student/active', [StudentController::class, 'activeStudentsList']);
 
-        Route::get('/student/unActive', [StudentController::class, 'unActiveStudentsList']);
+        //Route::get('/student/unActive', [StudentController::class, 'unActiveStudentsList']);
 
         Route::put('/student/programs/{program}', [StudentController::class, 'confirmAttendance']);
 
-        Route::get('/student/trips/{trip}/positions/{position}', [StudentController::class, 'getAllStudentsInThePosition']);
+        //Route::get('/student/trips/{trip}/positions/{position}', [StudentController::class, 'getAllStudentsInThePosition']);
 
         Route::apiResource('/supervisors', SupervisorController::class);
 
