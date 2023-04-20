@@ -60,13 +60,21 @@ Route::group([
 ], function () {
 
     Route::apiResource('/cities', CityController::class);
+
     Route::apiResource('/areas', AreaController::class);
+
     Route::get('/areas/cities/{city}', [AreaController::class, 'areas']);
+
     Route::apiResource('/locations', LocationController::class);
+
     Route::apiResource('/subscriptions', SubscriptionController::class);
+
     Route::apiResource('/transportationLines', TransportationLineController::class);
+
     Route::apiResource('/transferPositions', TransferPositionController::class);
+
     Route::get('/transferPositions/transportationLines/{line}', [TransferPositionController::class, 'positions']);
+
     Route::apiResource('/universities', UniversityController::class);
 
 
@@ -75,20 +83,35 @@ Route::group([
     ], function () {
 
         Route::apiResource('/employees', EmployeeController::class);
+
         Route::post('/employees/confirmRegistration/{user}', [EmployeeController::class, 'confirmRegistration']);
+
         Route::apiResource('/students', StudentController::class);
+
         Route::get('/student/active', [StudentController::class, 'activeStudentsList']);
+
         Route::get('/student/unActive', [StudentController::class, 'unActiveStudentsList']);
+
         Route::put('/student/programs/{program}', [StudentController::class, 'confirmAttendance']);
+
         Route::get('/student/trips/{trip}/positions/{position}', [StudentController::class, 'getAllStudentsInThePosition']);
+
         Route::apiResource('/supervisors', SupervisorController::class);
+
         Route::apiResource('/buses', BusController::class);
+
         Route::apiResource('/drivers', DriverController::class);
+
         Route::apiResource('/times', TimeController::class);
+
         Route::apiResource('/programs', ProgramController::class);
+
         Route::get('/programs', [ProgramController::class, 'userPrograms']);
+
         Route::apiResource('/trips', TripController::class);
+
         Route::post('/trips/{trip}/students', [TripController::class, 'addStudents']);
+
         Route::get('/trips/{trip}/students/{student}', [TripController::class, 'deleteStudent']);
 
     });
