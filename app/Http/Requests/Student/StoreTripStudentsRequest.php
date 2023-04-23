@@ -26,16 +26,16 @@ class StoreTripStudentsRequest extends FormRequest
     public function rules(): array
     {
         /**
-         * @var Trip $trip;
+         * @var Trip $trip ;
          */
         $trip = $this->route('trip');
-        $busCapacity =  $trip->busDriver->bus->capacity;
+        $busCapacity = $trip->busDriver->bus->capacity;
         $arraySize = $busCapacity - $trip->users()->count();
 
         return [
             //
-            'student_ids'=>['required','array',"max:$arraySize"],
-            'student_ids.*' =>['required', 'bail','min:1',Rule::exists('users','id')]
+            'student_ids' => ['required', 'array', "max:$arraySize"],
+            'student_ids.*' => ['required', 'bail', 'min:1', Rule::exists('users', 'id')]
         ];
     }
 }

@@ -249,15 +249,18 @@ class TripController extends Controller
             foreach ($data['student_ids'] as $student_id) {
                 /**
                  * @var User $student ;
-                 * @var Program $program
+                 * @var Program $program ;
+                 * @var TripPositionsTimes $goTime ;
                  */
                 $student = User::query()->where('id', $student_id)->first();
                 $programs = $student->programs;
                 foreach ($programs as $program) {
                     if ($program->day->name_en == $day) {
+                        $firstPosition = $trip->transferPositions()->first();
+                        $goTime = TripPositionsTimes::query()->where('position_id', $firstPosition->id)->first();
                         if ($trip->status == 1) {
                             $attributes = [
-                                'start' => $trip->time->start
+                                'start' => $goTime->time
                             ];
                         } else {
                             $attributes = [

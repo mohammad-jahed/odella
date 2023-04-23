@@ -53,6 +53,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'phoneNumber',
         'status',
+        'guestRequestStatus',
         'image',
         'fcm_token'
     ];

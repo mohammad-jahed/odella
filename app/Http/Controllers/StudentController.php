@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\GuestStatus;
 use App\Enums\Status;
+use App\Http\Requests\Guest\DailyReservationRequest;
 use App\Http\Requests\Student\ConfirmAttendanceRequest;
 use App\Http\Requests\Student\UpdateStudentRequest;
 use App\Http\Resources\UserResource;
@@ -32,18 +34,18 @@ class StudentController extends Controller
 
 //        if ($user->can('View Student')) {
 
-            $students = User::role('Student')->paginate(10);
+        $students = User::role('Student')->paginate(10);
 
-            if ($students->isEmpty()) {
+        if ($students->isEmpty()) {
 
-                return $this->getJsonResponse(null, "There Are No Students Found!");
-            }
+            return $this->getJsonResponse(null, "There Are No Students Found!");
+        }
 
-            return $this->getJsonResponse($students, "Students Fetched Successfully");
+        return $this->getJsonResponse($students, "Students Fetched Successfully");
 
 //        } else {
 //            abort(Response::HTTP_UNAUTHORIZED
-//                , "Unauthorized , You Dont Have Permission To Access This Action");
+//                , "Unauthorized , You Don't Have Permission To Access This Action");
 //        }
 
     }
@@ -152,19 +154,19 @@ class StudentController extends Controller
 //
 //        if ($user->can('View Student')) {
 
-            $students = User::role('Student')->where('status', Status::Active)->paginate(10);
+        $students = User::role('Student')->where('status', Status::Active)->paginate(10);
 
-            if ($students->isEmpty()) {
+        if ($students->isEmpty()) {
 
-                return $this->getJsonResponse(null, "There Are No Active Students Found!");
-            }
+            return $this->getJsonResponse(null, "There Are No Active Students Found!");
+        }
 
-            $students->load(['location', 'subscription', 'line',
-                'position', 'university', 'payments', 'programs']);
+        $students->load(['location', 'subscription', 'line',
+            'position', 'university', 'payments', 'programs']);
 
-            $activeStudents = UserResource::collection($students)->response()->getData(true);
+        $activeStudents = UserResource::collection($students)->response()->getData(true);
 
-            return $this->getJsonResponse($activeStudents, "Students Fetch Successfully");
+        return $this->getJsonResponse($activeStudents, "Students Fetch Successfully");
 
 //        } else {
 //
@@ -185,23 +187,23 @@ class StudentController extends Controller
 
 //        if ($user->can('View Student')) {
 
-            $students = User::role('Student')->where('status', Status::UnActive)->paginate(10);
+        $students = User::role('Student')->where('status', Status::UnActive)->paginate(10);
 
-            if ($students->isEmpty()) {
+        if ($students->isEmpty()) {
 
-                return $this->getJsonResponse(null, "There Are No UnActive Students Found!");
-            }
+            return $this->getJsonResponse(null, "There Are No UnActive Students Found!");
+        }
 
-            $students->load(['location', 'subscription', 'line', 'position', 'university']);
+        $students->load(['location', 'subscription', 'line', 'position', 'university']);
 
-            $unActiveStudents = UserResource::collection($students)->response()->getData(true);
+        $unActiveStudents = UserResource::collection($students)->response()->getData(true);
 
-            return $this->getJsonResponse($unActiveStudents, "Students Fetch Successfully");
+        return $this->getJsonResponse($unActiveStudents, "Students Fetch Successfully");
 
 //        } else {
 //
 //            abort(Response::HTTP_UNAUTHORIZED
-//                , "Unauthorized , You Dont Have Permission To Access This Action");
+//                , "Unauthorized , You Don't Have Permission To Access This Action");
 //        }
 
     }
@@ -260,5 +262,29 @@ class StudentController extends Controller
         $users += ['studentsNumber' => sizeof($users) + 1];
 
         return $this->getJsonResponse($users, "Students Fetched Successfully");
+    }
+
+    public function dailyReservation(DailyReservationRequest $request, Trip $trip)
+    {
+        /**
+         * @var User $guest ;
+         */
+        $credentials = $request->validated();
+        $credentials['status'] = Status::Guest;
+        $credentials['guestRequestStatus'] = GuestStatus::Pending;
+
+        $guest = User::create($credentials);
+        $student_ids = [$guest->id];
+        $seatsNumber = $credentials['seatsNumber'];
+        while ($seatsNumber > 0) {
+            $newGuest = $guest->replicate();
+            $newGuest->save();
+            $student_ids[] = $newGuest->id;
+            $seatsNumber--;
+        }
+
+        $trip->users()->attach($student_ids);
+        return $this->getJsonResponse(null, "Your request was sent successfully ");
+
     }
 }

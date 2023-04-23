@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
             'email' => 'admin33@admin.com',
             'password' => Hash::make('00000000'),
             'phoneNumber' => '12345678',
-            'status' => Status::NonStudents
+            'status' => Status::Guest
         ];
 
         $user = User::query()->create($data);
@@ -46,7 +46,7 @@ class UserSeeder extends Seeder
             'email' => 'supervisor@supervisor.com',
             'password' => Hash::make('00000000'),
             'phoneNumber' => '12345678',
-            'status' => Status::NonStudents
+            'status' => Status::Guest
         ];
 
         $user = User::query()->create($data);
@@ -68,7 +68,7 @@ class UserSeeder extends Seeder
             'email' => 'employee@employee.com',
             'password' => Hash::make('00000000'),
             'phoneNumber' => '12345678',
-            'status' => Status::NonStudents
+            'status' => Status::Guest
         ];
 
         $user = User::query()->create($data);

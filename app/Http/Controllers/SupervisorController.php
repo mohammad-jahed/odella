@@ -81,7 +81,7 @@ class SupervisorController extends Controller
 
                 $credentials['location_id'] = $location->id;
 
-                $credentials['status'] = Status::NonStudents;
+                $credentials['status'] = Status::Guest;
 
                 $user = User::query()->create($credentials);
 

@@ -83,6 +83,7 @@ Route::group([
     Route::get('/student/active', [StudentController::class, 'activeStudentsList']);
     Route::get('/student/unActive', [StudentController::class, 'unActiveStudentsList']);
     Route::get('/student/trips/{trip}/positions/{position}', [StudentController::class, 'getAllStudentsInThePosition']);
+    Route::post('/student/trips/{trip}/dailyReservation', [StudentController::class, 'dailyReservation']);
 
 
     /// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,7 +104,6 @@ Route::group([
         //Route::get('/student/unActive', [StudentController::class, 'unActiveStudentsList']);
 
         Route::put('/student/programs/{program}', [StudentController::class, 'confirmAttendance']);
-
         //Route::get('/student/trips/{trip}/positions/{position}', [StudentController::class, 'getAllStudentsInThePosition']);
 
         Route::apiResource('/supervisors', SupervisorController::class);
