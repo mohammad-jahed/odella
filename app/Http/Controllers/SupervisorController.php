@@ -9,6 +9,7 @@ use App\Http\Requests\Supervisor\UpdateSupervisorRequest;
 use App\Http\Resources\DailyReservationResource;
 use App\Models\DailyReservation;
 use App\Models\Location;
+use App\Models\TripPositionsTimes;
 use App\Models\User;
 use App\Notifications\Guests\DailyReservationNotification;
 use Exception;
@@ -85,7 +86,7 @@ class SupervisorController extends Controller
 
                 $credentials['location_id'] = $location->id;
 
-                $credentials['status'] = Status::Guest;
+                $credentials['status'] = Status::NonStudent;
 
                 $user = User::query()->create($credentials);
 
@@ -222,12 +223,20 @@ class SupervisorController extends Controller
          */
         $auth = auth()->user();
         if ($auth->hasRole('Supervisor') && $auth->id === $reservation->trip->supervisor->id) {
-            $reservation->guestRequestStatus = GuestStatus::Confirmed;
+
+            $reservation->guestRequestStatus = GuestStatus::Approved;
+
             $reservation->save();
-            $reservation->notify(new DailyReservationNotification(true));
+
+            $time = TripPositionsTimes::query()->where('trip_id', $reservation->trip_id)
+                ->where('position_id', $reservation->transfer_position_id)
+                ->get(['time']);
+
+            $reservation->notify(new DailyReservationNotification(true, $time));
+
             return $this->getJsonResponse(
                 new DailyReservationResource($reservation),
-                "Your reservation has been confirmed successfully"
+                "Reservation has been Approved successfully"
             );
         } else {
             abort(Response::HTTP_UNAUTHORIZED
@@ -243,12 +252,16 @@ class SupervisorController extends Controller
          */
         $auth = auth()->user();
         if ($auth->hasRole('Supervisor') && $auth->id === $reservation->trip->supervisor->id) {
-            $reservation->guestRequestStatus = GuestStatus::NotConfirmed;
+
+            $reservation->guestRequestStatus = GuestStatus::Rejected;
+
             $reservation->save();
+
             $reservation->notify(new DailyReservationNotification(false));
+
             return $this->getJsonResponse(
                 new DailyReservationResource($reservation),
-                "Sorry, There are no enough seats"
+                "Reservation has been Rejected successfully"
             );
         } else {
             abort(Response::HTTP_UNAUTHORIZED
