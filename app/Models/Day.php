@@ -16,6 +16,12 @@ class Day extends Model
     protected $appends = [
         'name'
     ];
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'name_ar',
+        'name_en'
+    ];
 
     public function getNameAttribute()
     {
