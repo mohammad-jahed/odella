@@ -128,7 +128,7 @@ class AuthController extends Controller
          */
         $location = Location::query()->create($credentials);
         $credentials['location_id'] = $location->id;
-        $credentials['status'] = Status::Guest;
+        $credentials['status'] = Status::NonStudent;
         $user = User::query()->create($credentials);
 
         $role = Role::query()->where('name', 'like', 'Admin')->first();

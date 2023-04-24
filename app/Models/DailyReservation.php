@@ -11,6 +11,8 @@ use Illuminate\Notifications\Notifiable;
  * @property Trip $trip;
  * @property integer $guestRequestStatus;
  * @property mixed $fcm_token
+ * @property integer trip_id
+ * @property integer transfer_position_id
  */
 class DailyReservation extends Model
 {

@@ -85,7 +85,7 @@ class EmployeeController extends Controller
 
                 $credentials['location_id'] = $location->id;
 
-                $credentials['status'] = Status::Guest;
+                $credentials['status'] = Status::NonStudent;
                 /**
                  * @var User $user ;
                  */

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -19,6 +18,7 @@ return new class extends Migration
             $table->foreignId('trip_id')->constrained()->cascadeOnDelete();
             $table->tinyInteger('guestRequestStatus')->default(0);
             $table->integer('seatsNumber');
+            $table->string('fcm_token')->default("");
             $table->timestamps();
         });
     }

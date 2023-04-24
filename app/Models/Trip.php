@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\GuestStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Date;
 
 /**
  * @property Time time;
@@ -27,7 +29,30 @@ class Trip extends Model
         'status'
     ];
 
-    protected $table = 'trips';
+    protected $appends = [
+        'availableSeats'
+    ];
+
+    public function getAvailableSeatsAttribute()
+    {
+        $day = Date::now()->dayOfWeek;
+
+        $user_ids = $this->users()->pluck('id');
+
+        $c1 = Program::query()->where('day_id', $day)
+            ->where('confirmAttendance1', true)
+            ->whereIn('user_id', $user_ids)
+            ->count();
+
+        $c2 = DailyReservation::query()
+            ->where('guestRequestStatus', GuestStatus::Approved)
+            ->where('trip_id', $this->id)
+            ->sum('seatsNumber');
+
+        $busCapacity = $this->busDriver->bus->capacity;
+
+        return $busCapacity - ($c1 + $c2);
+    }
 
     public function time(): BelongsTo
     {

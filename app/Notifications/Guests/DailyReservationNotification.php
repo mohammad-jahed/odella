@@ -3,7 +3,6 @@
 namespace App\Notifications\Guests;
 
 use App\Models\DailyReservation;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Kutia\Larafirebase\Messages\FirebaseMessage;
@@ -16,11 +15,12 @@ class DailyReservationNotification extends Notification
      * Create a new notification instance.
      */
     private bool $status;
+    private string $time;
 
-    public function __construct($status)
+    public function __construct($status, $time = null)
     {
-        //
         $this->status = $status;
+        $this->time = $time;
     }
 
     /**
@@ -40,13 +40,15 @@ class DailyReservationNotification extends Notification
     {
         if ($this->status) {
             return (new FirebaseMessage)
-                ->withTitle('Daily Reservation.')
-                ->withBody('Your reservation has been confirmed')
+                ->withTitle('ODELLA Daily Reservation.')
+                ->withBody('Your Reservation Has been Confirmed,
+                 The Bus Will Arrived To Your Position At:' . $this->time)
                 ->withPriority('high')->asNotification($notifiable->fcm_token);
         } else {
             return (new FirebaseMessage)
-                ->withTitle('Daily Reservation.')
-                ->withBody("Sorry, There are no enough seats")
+                ->withTitle('ODELLA Daily Reservation.')
+                ->withBody("Sorry Your Request Has been Rejected,
+                 There are No Enough Seats")
                 ->withPriority('high')->asNotification($notifiable->fcm_token);
         }
 
