@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Date;
  * @property int $id;
  * @property int $status;
  * @property BusDriver $busDriver;
+ * @method isEmpty()
  */
 class Trip extends Model
 {
@@ -29,30 +30,30 @@ class Trip extends Model
         'status'
     ];
 
-    protected $appends = [
-        'availableSeats'
-    ];
+//    protected $appends = [
+//        'availableSeats'
+//    ];
 
-    public function getAvailableSeatsAttribute()
-    {
-        $day = Date::now()->dayOfWeek;
-
-        $user_ids = $this->users()->pluck('id');
-
-        $c1 = Program::query()->where('day_id', $day)
-            ->where('confirmAttendance1', true)
-            ->whereIn('user_id', $user_ids)
-            ->count();
-
-        $c2 = DailyReservation::query()
-            ->where('guestRequestStatus', GuestStatus::Approved)
-            ->where('trip_id', $this->id)
-            ->sum('seatsNumber');
-
-        $busCapacity = $this->busDriver->bus->capacity;
-
-        return $busCapacity - ($c1 + $c2);
-    }
+//    public function getAvailableSeatsAttribute()
+//    {
+//        $day = Date::now()->dayOfWeek;
+//
+//        $user_ids = $this->users()->pluck('id');
+//
+//        $c1 = Program::query()->where('day_id', $day)
+//            ->where('confirmAttendance1', true)
+//            ->whereIn('user_id', $user_ids)
+//            ->count();
+//
+//        $c2 = DailyReservation::query()
+//            ->where('guestRequestStatus', GuestStatus::Approved)
+//            ->where('trip_id', $this->id)
+//            ->sum('seatsNumber');
+//
+//        $busCapacity = $this->busDriver->bus->capacity;
+//
+//        return $busCapacity - ($c1 + $c2);
+//    }
 
     public function time(): BelongsTo
     {

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property integer $id;
  * @property mixed $positions
+ * @property Trip $trips
  * @method static where(string $string, mixed $line_id)
  */
 class TransportationLine extends Model

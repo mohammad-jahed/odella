@@ -22,7 +22,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Kutia\Larafirebase\Facades\Larafirebase;
-use PhpParser\Node\Expr\Array_;
 use Symfony\Component\HttpFoundation\Response;
 
 class TripController extends Controller
@@ -314,6 +313,32 @@ class TripController extends Controller
             abort(Response::HTTP_UNAUTHORIZED
                 , "Unauthorized , You Dont Have Permission To Access This Action");
         }
+    }
+
+    public function tripsLine(TransportationLine $transportationLine): JsonResponse
+    {
+        /**
+         * @var User $user ;
+         */
+        $user = auth()->user();
+
+        if ($user->can('View Trips')) {
+
+            $trips = $transportationLine->trips;
+
+            if ($trips->isEmpty()) {
+
+                return $this->getJsonResponse(null, "There Are No Trips Found!");
+            }
+
+            return $this->getJsonResponse($trips, "Trips Fetched Successfully");
+
+        } else {
+
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
+        }
+
     }
 
 
