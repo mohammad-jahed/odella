@@ -47,6 +47,11 @@ class TransferPosition extends Model
         return $this->hasMany(User::class);
     }
 
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(DailyReservation::class, "daily_reservation_id");
+    }
+
     public function programs(): HasMany
     {
         return $this->hasMany(Program::class);

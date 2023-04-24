@@ -21,16 +21,16 @@ class DailyReservationRequest extends FormRequest
      *
      * @return array
      */
-    #[ArrayShape(['firstName' => "string[]", 'lastName' => "string[]", 'phoneNumber' => "string[]", 'transfer_position_id' => "array", 'seatsNumber' => "string[]"])]
+    #[ArrayShape(['name' => "string[]", 'phoneNumber' => "string[]", 'transfer_position_id' => "array", 'seatsNumber' => "string[]", 'fcm_token' => "string[]"])]
     public function rules(): array
     {
         return [
             //
-            'firstName' => ['required', 'bail', 'string', 'max:255'],
-            'lastName' => ['required', 'bail', 'string', 'max:255'],
+            'name' => ['required', 'bail', 'string', 'max:255'],
             'phoneNumber' => ['required', 'bail', 'numeric', 'min:10'],
             'transfer_position_id' => ['required', Rule::exists('transfer_positions', 'id')],
-            'seatsNumber' => ['required', 'bail', 'numeric', 'min:1', 'max:3']
+            'seatsNumber' => ['required', 'bail', 'numeric', 'min:1', 'max:3'],
+            'fcm_token' => ['required', 'string']
         ];
     }
 }

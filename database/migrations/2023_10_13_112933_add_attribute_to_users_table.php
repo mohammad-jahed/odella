@@ -13,6 +13,11 @@ return new class extends Migration {
         Schema::table('users', function (Blueprint $table) {
             $table->string('fcm_token')->default("");
         });
+
+        Schema::table('daily_reservations', function (Blueprint $table) {
+            $table->string('fcm_token')->default("");
+        });
+
     }
 
     /**
@@ -21,6 +26,10 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
+            //
+        });
+
+        Schema::table('daily_reservations', function (Blueprint $table) {
             //
         });
     }

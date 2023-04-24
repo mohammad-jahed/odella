@@ -20,13 +20,12 @@ return new class extends Migration {
             $table->foreignId('university_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('firstName');
             $table->string('lastName');
-            $table->string('email')->nullable()->unique();
+            $table->string('email')->unique();
             $table->string('phoneNumber');
             $table->string('image')->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password')->nullable();
+            $table->string('password');
             $table->tinyInteger('status')->default(0);
-            $table->tinyInteger('guestRequestStatus')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

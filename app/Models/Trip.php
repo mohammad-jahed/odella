@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property Time time;
@@ -60,5 +61,10 @@ class Trip extends Model
         return $this->belongsToMany(TransferPosition::class,
             'trip_positions_times', 'trip_id', 'position_id');
 
+    }
+
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(DailyReservation::class, "daily_reservation_id");
     }
 }

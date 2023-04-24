@@ -4,6 +4,7 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BusController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\DailyReservationController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LocationController;
@@ -77,13 +78,15 @@ Route::group([
 
     Route::apiResource('/universities', UniversityController::class);
 
+    Route::post('/dailyReservations/trips/{trip}', [DailyReservationController::class, 'dailyReservation']);
+
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Route::post('/employees/confirmRegistration/{user}', [EmployeeController::class, 'confirmRegistration']);
     Route::apiResource('/students', StudentController::class);
     Route::get('/student/active', [StudentController::class, 'activeStudentsList']);
     Route::get('/student/unActive', [StudentController::class, 'unActiveStudentsList']);
     Route::get('/student/trips/{trip}/positions/{position}', [StudentController::class, 'getAllStudentsInThePosition']);
-    Route::post('/student/trips/{trip}/dailyReservation', [StudentController::class, 'dailyReservation']);
 
 
     /// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,6 +110,10 @@ Route::group([
         //Route::get('/student/trips/{trip}/positions/{position}', [StudentController::class, 'getAllStudentsInThePosition']);
 
         Route::apiResource('/supervisors', SupervisorController::class);
+        Route::get('/supervisor/approve/{reservation}',[SupervisorController::class,'approveReservation']);
+        Route::get('/supervisor/deny/{reservation}',[SupervisorController::class,'denyReservation']);
+
+        Route::get('/dailyReservations/trips/{trip}', [DailyReservationController::class, 'getDailyReservation']);
 
         Route::apiResource('/buses', BusController::class);
 
@@ -119,9 +126,7 @@ Route::group([
         Route::get('/programs', [ProgramController::class, 'userPrograms']);
 
         Route::apiResource('/trips', TripController::class);
-
         Route::post('/trips/{trip}/students', [TripController::class, 'addStudents']);
-
         Route::get('/trips/{trip}/students/{student}', [TripController::class, 'deleteStudent']);
 
     });

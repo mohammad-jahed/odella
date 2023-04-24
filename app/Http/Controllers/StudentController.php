@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\GuestStatus;
 use App\Enums\Status;
-use App\Http\Requests\Guest\DailyReservationRequest;
 use App\Http\Requests\Student\ConfirmAttendanceRequest;
 use App\Http\Requests\Student\UpdateStudentRequest;
 use App\Http\Resources\UserResource;
@@ -262,29 +260,5 @@ class StudentController extends Controller
         $users += ['studentsNumber' => sizeof($users) + 1];
 
         return $this->getJsonResponse($users, "Students Fetched Successfully");
-    }
-
-    public function dailyReservation(DailyReservationRequest $request, Trip $trip)
-    {
-        /**
-         * @var User $guest ;
-         */
-        $credentials = $request->validated();
-        $credentials['status'] = Status::Guest;
-        $credentials['guestRequestStatus'] = GuestStatus::Pending;
-
-        $guest = User::create($credentials);
-        $student_ids = [$guest->id];
-        $seatsNumber = $credentials['seatsNumber'];
-        while ($seatsNumber > 0) {
-            $newGuest = $guest->replicate();
-            $newGuest->save();
-            $student_ids[] = $newGuest->id;
-            $seatsNumber--;
-        }
-
-        $trip->users()->attach($student_ids);
-        return $this->getJsonResponse(null, "Your request was sent successfully ");
-
     }
 }

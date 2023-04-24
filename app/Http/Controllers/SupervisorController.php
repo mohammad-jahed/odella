@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\GuestStatus;
 use App\Enums\Status;
 use App\Http\Requests\Supervisor\StoreSupervisorRequest;
 use App\Http\Requests\Supervisor\UpdateSupervisorRequest;
+use App\Http\Resources\DailyReservationResource;
+use App\Models\DailyReservation;
 use App\Models\Location;
 use App\Models\User;
+use App\Notifications\Guests\DailyReservationNotification;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
@@ -207,7 +211,50 @@ class SupervisorController extends Controller
         } else {
 
             abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Don't Have Permission To Access This Action");
+        }
+    }
+
+    public function approveReservation(DailyReservation $reservation): JsonResponse
+    {
+        /**
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+        if ($auth->hasRole('Supervisor') && $auth->id === $reservation->trip->supervisor->id) {
+            $reservation->guestRequestStatus = GuestStatus::Confirmed;
+            $reservation->save();
+            $reservation->notify(new DailyReservationNotification(true));
+            return $this->getJsonResponse(
+                new DailyReservationResource($reservation),
+                "Your reservation has been confirmed successfully"
+            );
+        } else {
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
+        }
+
+    }
+
+    public function denyReservation(DailyReservation $reservation): JsonResponse
+    {
+        /**
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+        if ($auth->hasRole('Supervisor') && $auth->id === $reservation->trip->supervisor->id) {
+            $reservation->guestRequestStatus = GuestStatus::NotConfirmed;
+            $reservation->save();
+            $reservation->notify(new DailyReservationNotification(false));
+            return $this->getJsonResponse(
+                new DailyReservationResource($reservation),
+                "Sorry, There are no enough seats"
+            );
+        } else {
+            abort(Response::HTTP_UNAUTHORIZED
                 , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
+
+
 }
