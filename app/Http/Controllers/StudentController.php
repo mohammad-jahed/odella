@@ -6,7 +6,6 @@ use App\Enums\Status;
 use App\Http\Requests\Student\ConfirmAttendanceRequest;
 use App\Http\Requests\Student\UpdateStudentRequest;
 use App\Http\Resources\UserResource;
-use App\Models\Location;
 use App\Models\Program;
 use App\Models\TransferPosition;
 use App\Models\Trip;
@@ -30,7 +29,7 @@ class StudentController extends Controller
          */
         $user = auth()->user();
 
-//        if ($user->can('View Student')) {
+        if ($user->can('View Student')) {
 
         $students = User::role('Student')->paginate(10);
 
@@ -41,10 +40,10 @@ class StudentController extends Controller
 
         return $this->getJsonResponse($students, "Students Fetched Successfully");
 
-//        } else {
-//            abort(Response::HTTP_UNAUTHORIZED
-//                , "Unauthorized , You Don't Have Permission To Access This Action");
-//        }
+        } else {
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Don't Have Permission To Access This Action");
+        }
 
     }
 
@@ -88,31 +87,21 @@ class StudentController extends Controller
 
         $credentials = $request->validated();
 
-        if (isset($credentials['newPassword'])) {
-            $credentials['password'] = Hash::make($credentials['newPassword']);
-        }
         if ($request->hasFile('image')) {
 
             $path = $request->file('image')->store('images/users');
 
             $credentials['image'] = $path;
         }
-        /**
-         * @var Location $location ;
-         */
-        $data = [];
-        if (isset($credentials['city_id'])) {
-            $data += ['city_id' => $credentials['city_id']];
-        }
-        if (isset($credentials['area_id'])) {
-            $data += ['area_id' => $credentials['area_id']];
-        }
-        if (isset($credentials['street'])) {
-            $data += ['street' => $credentials['street']];
-        }
-        $location = $student->location;
 
-        $location->update($data);
+        if (isset($credentials['newPassword'])) {
+
+            $credentials['password'] = Hash::make($credentials['newPassword']);
+        }
+
+        $locationData = array_intersect_key($credentials, array_flip(['city_id', 'area_id', 'street']));
+
+        $student->location->update($locationData);
 
         $student->update($credentials);
 
@@ -148,9 +137,9 @@ class StudentController extends Controller
         /**
          * @var User $user ;
          */
-//        $user = auth()->user();
-//
-//        if ($user->can('View Student')) {
+        $user = auth()->user();
+
+        if ($user->can('View Student')) {
 
         $students = User::role('Student')->where('status', Status::Active)->paginate(10);
 
@@ -166,11 +155,11 @@ class StudentController extends Controller
 
         return $this->getJsonResponse($activeStudents, "Students Fetch Successfully");
 
-//        } else {
-//
-//            abort(Response::HTTP_UNAUTHORIZED
-//                , "Unauthorized , You Dont Have Permission To Access This Action");
-//        }
+        } else {
+
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
+        }
     }
 
 
@@ -189,7 +178,7 @@ class StudentController extends Controller
          */
         $user = auth()->user();
 
-//        if ($user->can('View Student')) {
+        if ($user->can('View Student')) {
 
         $students = User::role('Student')->where('status', Status::UnActive)->paginate(10);
 
@@ -204,11 +193,11 @@ class StudentController extends Controller
 
         return $this->getJsonResponse($unActiveStudents, "Students Fetch Successfully");
 
-//        } else {
-//
-//            abort(Response::HTTP_UNAUTHORIZED
-//                , "Unauthorized , You Don't Have Permission To Access This Action");
-//        }
+        } else {
+
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Don't Have Permission To Access This Action");
+        }
 
     }
 
