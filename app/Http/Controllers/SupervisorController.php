@@ -152,32 +152,21 @@ class SupervisorController extends Controller
 
             $credentials = $request->validated();
 
-            if (isset($credentials['newPassword'])) {
-
-                $credentials['password'] = Hash::make($credentials['newPassword']);
-            }
             if ($request->hasFile('image')) {
 
                 $path = $request->file('image')->store('images/supervisor');
 
                 $credentials['image'] = $path;
             }
-            /**
-             * @var Location $location ;
-             */
-            $data = [];
-            if (isset($credentials['city_id'])) {
-                $data += ['city_id' => $credentials['city_id']];
-            }
-            if (isset($credentials['area_id'])) {
-                $data += ['area_id' => $credentials['area_id']];
-            }
-            if (isset($credentials['street'])) {
-                $data += ['street' => $credentials['street']];
-            }
-            $location = $supervisor->location;
 
-            $location->update($data);
+            if (isset($credentials['newPassword'])) {
+
+                $credentials['password'] = Hash::make($credentials['newPassword']);
+            }
+
+            $locationData = array_intersect_key($credentials, array_flip(['city_id', 'area_id', 'street']));
+
+            $supervisor->location->update($locationData);
 
             $supervisor->update($credentials);
 
