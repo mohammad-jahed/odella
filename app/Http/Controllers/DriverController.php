@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Driver\StoreDriverRequest;
 use App\Http\Requests\Driver\UpdateDriverRequest;
+use App\Http\Resources\BusDriverResource;
 use App\Http\Resources\DriverResource;
 use App\Models\Bus;
+use App\Models\BusDriver;
 use App\Models\Driver;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -137,6 +139,22 @@ class DriverController extends Controller
 
         } else {
 
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
+        }
+    }
+
+
+    public function getBusDrivers() {
+        /**
+         * @var User $auth;
+         */
+        $auth = auth()->user();
+        if($auth->hasRole('Student') || $auth->hasRole('Employee') || $auth->hasRole('Admin')){
+            $busDrivers = BusDriver::all()->load(['bus','driver']);
+            $busDrivers = BusDriverResource::collection($busDrivers);
+            return $this->getJsonResponse($busDrivers, "Bus Drivers Fetched Successfully");
+        } else{
             abort(Response::HTTP_UNAUTHORIZED
                 , "Unauthorized , You Dont Have Permission To Access This Action");
         }

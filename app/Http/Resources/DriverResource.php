@@ -8,8 +8,8 @@ use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @property mixed $id
- * @property mixed $firstName
- * @property mixed $lastName
+ * @property mixed $firstname
+ * @property mixed $lastname
  * @property mixed $number
  * @property mixed $buses
  */
@@ -20,13 +20,13 @@ class DriverResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    #[ArrayShape(["id" => "mixed", "firstName" => "mixed", "lastName" => "mixed", "number" => "mixed", "buses" => "\Illuminate\Http\Resources\MissingValue|mixed"])]
+    #[ArrayShape(["id" => "mixed", "firstname" => "mixed", "lastname" => "mixed", "number" => "mixed", "buses" => "\Illuminate\Http\Resources\MissingValue|mixed"])]
     public function toArray(Request $request): array
     {
         return [
             "id" => $this->id,
-            "firstName" => $this->firstName,
-            "lastName" => $this->lastName,
+            "firstname" => $this->firstname,
+            "lastname" => $this->lastname,
             "number" => $this->number,
             "buses" => $this->whenLoaded("buses", BusResource::collection($this->buses))
         ];

@@ -124,6 +124,7 @@ Route::group([
         Route::apiResource('/buses', BusController::class);
 
         Route::apiResource('/drivers', DriverController::class);
+        Route::get('/busDrivers', [DriverController::class, 'getBusDrivers']);
 
         Route::apiResource('/times', TimeController::class);
 
