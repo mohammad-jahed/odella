@@ -21,13 +21,13 @@ class StoreTripRequest extends FormRequest
      *
      */
 
-    #[ArrayShape(['supervisor_id' => "array", 'bus_driver_id' => "array", 'line_id' => "array", 'start' => "string[]", 'date' => "string[]", 'position_ids' => "string[]", 'position_ids.*' => "array", 'time' => "string[]", 'time.*' => "string[]"])]
     public function rules(): array
     {
         return [
             'supervisor_id' => ['required', Rule::exists('users', 'id')],
             'bus_driver_id' => ['required', Rule::exists('bus_drivers', 'id')],
-            'line_id' => ['required', Rule::exists('transportation_lines', 'id')],
+            'line_ids' => ['required', 'array'],
+            'line_ids.*' => ['required', Rule::exists('transportation_lines', 'id')],
             'start' => ['required', 'string', 'min:3', 'max:255'],
             'date' => ['required', 'bail', 'string', 'max:255'],
             'position_ids' => ['required', 'array'],

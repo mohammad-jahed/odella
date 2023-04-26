@@ -14,8 +14,6 @@ use App\Models\Trip;
 use App\Models\TripPositionsTimes;
 use App\Models\TripUser;
 use App\Models\User;
-use App\Notifications\Students\PositionTimeNotification;
-use App\Notifications\Students\ReturnTimeNotification;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -75,41 +73,31 @@ class TripController extends Controller
                 /**
                  * @var Time $time ;
                  * @var Trip $trip ;
+                 * @var TransportationLine $line ;
                  */
                 $time = Time::query()->create($credentials);
                 $credentials['time_id'] = $time->id;
 
                 $trip = Trip::query()->create($credentials);
 
-                /**
-                 *
-                 */
-                /**
-                 * @var TransportationLine $line ;
-                 */
-
-                $line = TransportationLine::query()->where('id', $credentials['line_id'])->first();
-
-                $trip->lines()->attach($line);
+                $trip->lines()->attach($credentials['line_ids']);
 
                 $trip = $trip->load('lines', 'time', 'busDriver');
 
-                $positionsNumber = $line->positions()->count();
 
-                for ($i = 0; $i < $positionsNumber; $i++) {
-                    for ($j = 0; $j < $positionsNumber; $j++) {
-                        if ($i == $j) {
-                            $data = [
-                                'position_id' => $credentials['position_ids'][$i],
-                                'time' => $credentials['time'][$j],
-                                'trip_id' => $trip->id
-                            ];
-                            TripPositionsTimes::query()->create($data);
-                        }
+                foreach ($credentials['line_ids'] as $line_id) {
+                    $line = TransportationLine::query()->where('id', $line_id)->first();
+                    $positionsNumber = $line->positions()->count();
+                    for ($i = 0; $i < $positionsNumber; $i++) {
+                        $data = [
+                            'position_id' => $credentials['position_ids'][$i],
+                            'time' => $credentials['time'][$i],
+                            'trip_id' => $trip->id
+                        ];
+                        TripPositionsTimes::query()->create($data);
                     }
                 }
                 DB::commit();
-
                 return $this->getJsonResponse($trip, "Trip Created Successfully");
 
             } catch (Exception $exception) {
