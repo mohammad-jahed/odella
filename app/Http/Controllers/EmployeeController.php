@@ -156,34 +156,21 @@ class EmployeeController extends Controller
 
             $credentials = $request->validated();
 
-            if (isset($credentials['newPassword'])) {
-                $credentials['password'] = Hash::make($credentials['newPassword']);
-            }
             if ($request->hasFile('image')) {
 
                 $path = $request->file('image')->store('images/employee');
 
                 $credentials['image'] = $path;
             }
-            /**
-             * @var Location $location ;
-             */
-            $data = [];
 
-            if (isset($credentials['city_id'])) {
-                $data += ['city_id' => $credentials['city_id']];
-            }
-            if (isset($credentials['area_id'])) {
-                $data += ['area_id' => $credentials['area_id']];
-            }
-            if (isset($credentials['street'])) {
-                $data += ['street' => $credentials['street']];
-            }
-//            $locationData = array_intersect_key($credentials, array_flip(['city_id', 'area_id', 'street']));
-//            return $locationData;
-            $location = $employee->location;
+            if (isset($credentials['newPassword'])) {
 
-            $location->update($data);
+                $credentials['password'] = Hash::make($credentials['newPassword']);
+            }
+
+            $locationData = array_intersect_key($credentials, array_flip(['city_id', 'area_id', 'street']));
+
+            $employee->location->update($locationData);
 
             $employee->update($credentials);
 
@@ -232,9 +219,9 @@ class EmployeeController extends Controller
         /**
          * @var User $auth ;
          */
-//        $auth = auth()->user();
-//
-//        if ($auth->can('Confirm registration')) {
+        $auth = auth()->user();
+
+        if ($auth->can('Confirm registration')) {
 
         try {
             /**
@@ -300,11 +287,11 @@ class EmployeeController extends Controller
             return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
         }
 
-//        } else {
-//
-//            abort(Response::HTTP_UNAUTHORIZED
-//                , "Unauthorized , You Dont Have Permission To Access This Action");
-//        }
+        } else {
+
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
+        }
     }
 
 }
