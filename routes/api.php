@@ -142,15 +142,6 @@ Route::group([
     Route::apiResource('/days', DaysController::class);
 
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Route::post('/employees/confirmRegistration/{user}', [EmployeeController::class, 'confirmRegistration']);
-    Route::apiResource('/students', StudentController::class);
-    Route::get('/student/active', [StudentController::class, 'activeStudentsList']);
-    Route::get('/student/unActive', [StudentController::class, 'unActiveStudentsList']);
-    Route::get('/student/trips/{trip}/positions/{position}', [StudentController::class, 'getAllStudentsInThePosition']);
-
-
-    /// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Authenticated routes
     Route::group([
@@ -164,22 +155,22 @@ Route::group([
         /**
          * Confirms the registration of a new student.
          */
-        //Route::post('/employees/confirmRegistration/{user}', [EmployeeController::class, 'confirmRegistration']);
+        Route::post('/employees/confirmRegistration/{user}', [EmployeeController::class, 'confirmRegistration']);
 
         /**
          * Resource routes for students.
          */
-        //Route::apiResource('/students', StudentController::class);
+        Route::apiResource('/students', StudentController::class);
 
         /**
          * Retrieves a list of all active students.
          */
-        //Route::get('/student/active', [StudentController::class, 'activeStudentsList']);
+        Route::get('/student/active', [StudentController::class, 'activeStudentsList']);
 
         /**
          * Retrieves a list of all inactive students.
          */
-        //Route::get('/student/unActive', [StudentController::class, 'unActiveStudentsList']);
+        Route::get('/student/unActive', [StudentController::class, 'unActiveStudentsList']);
 
         /**
          * Confirms the attendance of a student for a specific program.
@@ -189,7 +180,7 @@ Route::group([
         /**
          * Retrieves a list of all students in a specific position for a specific trip.
          */
-        //Route::get('/student/trips/{trip}/positions/{position}', [StudentController::class, 'getAllStudentsInThePosition']);
+        Route::get('/student/trips/{trip}/positions/{position}', [StudentController::class, 'getAllStudentsInThePosition']);
 
         /**
          * Resource routes for supervisors.
