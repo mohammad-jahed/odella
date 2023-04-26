@@ -125,6 +125,9 @@ class TransferPositionController extends Controller
         }
     }
 
+    /**
+     * Get all transfer positions for a specific transportation line.
+     */
     public function positions(TransportationLine $line): JsonResponse
     {
         $positions = $line->positions;

@@ -216,6 +216,9 @@ class SupervisorController extends Controller
         }
     }
 
+    /**
+     * Approves a daily reservation made by a supervisor.
+     */
     public function approveReservation(DailyReservation $reservation): JsonResponse
     {
         /**
@@ -245,6 +248,9 @@ class SupervisorController extends Controller
 
     }
 
+    /**
+     * Denies a daily reservation made by a supervisor.
+     */
     public function denyReservation(DailyReservation $reservation): JsonResponse
     {
         /**

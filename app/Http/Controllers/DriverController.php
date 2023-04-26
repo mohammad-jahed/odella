@@ -144,17 +144,26 @@ class DriverController extends Controller
         }
     }
 
-
-    public function getBusDrivers() {
+    /**
+     * Retrieves a list of all drivers who are also bus drivers.
+     */
+    public function getBusDrivers()
+    {
         /**
-         * @var User $auth;
+         * @var User $auth ;
          */
         $auth = auth()->user();
-        if($auth->hasRole('Student') || $auth->hasRole('Employee') || $auth->hasRole('Admin')){
-            $busDrivers = BusDriver::all()->load(['bus','driver']);
+
+        if ($auth->hasRole('Student') || $auth->hasRole('Employee') || $auth->hasRole('Admin')) {
+
+            $busDrivers = BusDriver::all()->load(['bus', 'driver']);
+
             $busDrivers = BusDriverResource::collection($busDrivers);
+
             return $this->getJsonResponse($busDrivers, "Bus Drivers Fetched Successfully");
-        } else{
+
+        } else {
+
             abort(Response::HTTP_UNAUTHORIZED
                 , "Unauthorized , You Dont Have Permission To Access This Action");
         }

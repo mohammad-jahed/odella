@@ -91,8 +91,8 @@ class TripController extends Controller
                     for ($i = 0; $i < $positionsNumber; $i++) {
                         $data = [
                             'position_id' => $credentials['position_ids'][$i],
-                            'time' => $credentials['time'][$i],
-                            'trip_id' => $trip->id
+                            'time'        => $credentials['time'][$i],
+                            'trip_id'     => $trip->id
                         ];
                         TripPositionsTimes::query()->create($data);
                     }
@@ -180,8 +180,8 @@ class TripController extends Controller
                         if ($i == $j) {
                             $data = [
                                 'position_id' => $credentials['position_ids'][$i],
-                                'time' => $credentials['time'][$j],
-                                'trip_id' => $trip->id
+                                'time'        => $credentials['time'][$j],
+                                'trip_id'     => $trip->id
                             ];
                             $transportationTimes[$i]->update($data);
                         }
@@ -221,17 +221,24 @@ class TripController extends Controller
         }
     }
 
-
+    /**
+     * Adds one or more students to a specific trip.
+     */
     public function addStudents(StoreTripStudentsRequest $request, Trip $trip): JsonResponse
     {
         /**
          * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->hasRole('Employee')) {
+
             $data = $request->validated();
+
             $trip->users()->attach($data['student_ids']);
+
             $day = $trip->time->date->format('l');
+
             foreach ($data['student_ids'] as $student_id) {
                 /**
                  * @var User $student ;
@@ -239,33 +246,47 @@ class TripController extends Controller
                  * @var TripPositionsTimes $goTime ;
                  */
                 $student = User::query()->where('id', $student_id)->first();
+
                 $programs = $student->programs;
+
                 foreach ($programs as $program) {
+
                     if ($program->day->name_en == $day) {
+
                         $firstPosition = $trip->transferPositions()->first();
+
                         $goTime = TripPositionsTimes::query()->where('position_id', $firstPosition->id)->first();
+
                         if ($trip->status == 1) {
+
                             $attributes = [
                                 'start' => $goTime->time
                             ];
                         } else {
+
                             $attributes = [
                                 'end' => $trip->time->start
                             ];
                         }
+
                         $program->update($attributes);
                     }
                 }
             }
             $trip->load('users');
+
             return $this->getJsonResponse($trip, 'Students Added Successfully To This Trip');
+
         } else {
+
             abort(Response::HTTP_UNAUTHORIZED
                 , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
-
+    /**
+     * Deletes a specific student from a specific trip.
+     */
     public function deleteStudent(Trip $trip, User $student): JsonResponse
     {
         /**
@@ -273,35 +294,54 @@ class TripController extends Controller
          * @var User $user ;
          */
         $user = auth()->user();
+
         if ($user->hasRole('Employee')) {
+
             $day = $trip->time->date->format('l');
+
             $programs = $student->programs;
+
             foreach ($programs as $program) {
+
                 if ($program->day->name_en == $day) {
+
                     if ($trip->status == 0) {
+
                         $attributes = [
                             'start' => '00:00:00'
                         ];
                     } else {
+
                         $attributes = [
                             'end' => '00:00:00'
                         ];
                     }
+
                     $program->update($attributes);
+
                     if ($program->start == '00:00:00' && $program->end == '00:00:00') {
+
                         $program->delete();
                     }
                 }
             }
+
             TripUser::query()->where('user_id', $student->id)->delete();
+
             $trip->load('users');
+
             return $this->getJsonResponse($trip, "Student Deleted Successfully");
+
         } else {
+
             abort(Response::HTTP_UNAUTHORIZED
                 , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
 
+    /**
+     * Get all trips for a specific transportation line.
+     */
     public function tripsLine(TransportationLine $transportationLine): JsonResponse
     {
         /**

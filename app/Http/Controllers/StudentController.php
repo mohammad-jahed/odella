@@ -173,9 +173,15 @@ class StudentController extends Controller
 //        }
     }
 
+
+    /**
+     * Retrieves a list of all inactive students.
+     */
+
     /**
      * @throws AuthorizationException
      */
+
     public function unActiveStudentsList(): JsonResponse
     {
         /**
@@ -207,6 +213,10 @@ class StudentController extends Controller
     }
 
     /**
+     * Confirms the attendance of a student for a specific program.
+     */
+
+    /**
      * @throws AuthorizationException
      */
     public function confirmAttendance(Program $program, ConfirmAttendanceRequest $request): JsonResponse
@@ -225,6 +235,10 @@ class StudentController extends Controller
 
         return $this->getJsonResponse($program, "Your Attendance Is Confirmed Successfully");
     }
+
+    /**
+     * Retrieves a list of all students in a specific position for a specific trip.
+     */
 
     /**
      * @throws AuthorizationException

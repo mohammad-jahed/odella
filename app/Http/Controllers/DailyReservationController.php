@@ -55,6 +55,9 @@ class DailyReservationController extends Controller
         //
     }
 
+    /**
+     * Creates a new daily reservation for a specific trip.
+     */
     public function dailyReservation(DailyReservationRequest $request, Trip $trip): JsonResponse
     {
         $credentials = $request->validated();
@@ -72,7 +75,9 @@ class DailyReservationController extends Controller
         return $this->getJsonResponse($reservation, "Your Request Was Sent Successfully ");
     }
 
-
+    /**
+     * Retrieves the daily reservation for a specific trip.
+     */
     public function getDailyReservation(Trip $trip)
     {
         /**

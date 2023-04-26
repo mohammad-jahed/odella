@@ -179,6 +179,8 @@ class EmployeeController extends Controller
             if (isset($credentials['street'])) {
                 $data += ['street' => $credentials['street']];
             }
+//            $locationData = array_intersect_key($credentials, array_flip(['city_id', 'area_id', 'street']));
+//            return $locationData;
             $location = $employee->location;
 
             $location->update($data);
@@ -223,6 +225,7 @@ class EmployeeController extends Controller
     }
 
     /**
+     * Confirms the registration of a new student.
      */
     public function confirmRegistration(User $user, ConfirmRegistrationRequest $request)
     {
@@ -233,61 +236,69 @@ class EmployeeController extends Controller
 //
 //        if ($auth->can('Confirm registration')) {
 
-            try {
-                /**
-                 * @var User $auth ;
-                 * @var Subscription $subscription ;
-                 */
+        try {
+            /**
+             * @var User $auth ;
+             * @var Subscription $subscription ;
+             */
 
-                $credentials = $request->validated();
-                $user->expiredSubscriptionDate = $credentials['expiredSubscriptionDate'];
-                $user->save();
-                $user->trips()->attach($credentials['trip_ids']);
-                /**
-                 * @var Trip[] $trips ;
-                 * @var Trip[] $goTrips ;
-                 * @var Trip[] $returnTrips ;
-                 * @var TripPositionsTimes $goTime ;
-                 * @var TripPositionsTimes $returnTime ;
-                 */
-                $trips = $user->trips;
-                $goTrips = [];
-                $returnTrips = [];
-                for ($i = 0; $i < sizeof($trips); $i++) {
-                    $trips[$i]->status == 1 ? $goTrips += [$trips[$i]] : $returnTrips += [$trips[$i]];
-                }
-                foreach (array_intersect_key($credentials['day_ids'], $credentials['position_ids']) as $key => $value) {
-                    foreach (array_intersect_key($goTrips, $returnTrips) as $k => $v) {
-                        $firstPosition = $goTrips[$k]->transferPositions()->first();
-                        $goTime = TripPositionsTimes::query()->where('position_id', $firstPosition->id)->first();
-                        $data = [
-                            'day_id' => $credentials['day_ids'][$key],
-                            'transfer_position_id' => $credentials['position_ids'][$key],
-                            'start' => $goTime->time,
-                            'end' => $returnTrips[$k]->time->start,
-                            'user_id' => $user->id
-                        ];
-                        Program::query()->create($data);
-                    }
-                }
-                $pay = Pay::query()->create($credentials);
+            $credentials = $request->validated();
 
-                $user->payments()->attach($pay);
+            $user->expiredSubscriptionDate = $credentials['expiredSubscriptionDate'];
+            $user->save();
 
-                $user->update(['status' => Status::Active]);
+            $user->trips()->attach($credentials['trip_ids']);
+            /**
+             * @var Trip[] $trips ;
+             * @var Trip[] $goTrips ;
+             * @var Trip[] $returnTrips ;
+             * @var TripPositionsTimes $goTime ;
+             * @var TripPositionsTimes $returnTime ;
+             */
+            $trips = $user->trips;
+            $goTrips = [];
+            $returnTrips = [];
 
-                $user->load('payments');
-
-                DB::commit();
-
-                return $this->getJsonResponse($user, "Your Register Is Confirmed Successfully");
-
-            } catch (Exception $exception) {
-
-                DB::rollBack();
-
-                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+            for ($i = 0; $i < sizeof($trips); $i++) {
+                $trips[$i]->status == 1 ? $goTrips += [$trips[$i]] : $returnTrips += [$trips[$i]];
             }
+
+            foreach (array_intersect_key($credentials['day_ids'], $credentials['position_ids']) as $key => $value) {
+
+                foreach (array_intersect_key($goTrips, $returnTrips) as $k => $v) {
+
+                    $firstPosition = $goTrips[$k]->transferPositions()->first();
+
+                    $goTime = TripPositionsTimes::query()->where('position_id', $firstPosition->id)->first();
+
+                    $data = [
+                        'day_id'               => $credentials['day_ids'][$key],
+                        'transfer_position_id' => $credentials['position_ids'][$key],
+                        'start'                => $goTime->time,
+                        'end'                  => $returnTrips[$k]->time->start,
+                        'user_id'              => $user->id
+                    ];
+                    Program::query()->create($data);
+                }
+            }
+            $pay = Pay::query()->create($credentials);
+
+            $user->payments()->attach($pay);
+
+            $user->update(['status' => Status::Active]);
+
+            $user->load('payments');
+
+            DB::commit();
+
+            return $this->getJsonResponse($user, "Your Register Is Confirmed Successfully");
+
+        } catch (Exception $exception) {
+
+            DB::rollBack();
+
+            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+        }
 
 //        } else {
 //

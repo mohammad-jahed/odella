@@ -115,6 +115,9 @@ class AreaController extends Controller
         }
     }
 
+    /**
+     * Get all areas for a specific city.
+     */
     public function areas(City $city): JsonResponse
     {
         $areas = $city->areas;

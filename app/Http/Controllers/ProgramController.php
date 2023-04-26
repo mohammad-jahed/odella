@@ -76,6 +76,7 @@ class ProgramController extends Controller
     }
 
     /**
+     * Retrieves a list of programs associated with the current user.
      */
     public function userPrograms(): JsonResponse
     {
