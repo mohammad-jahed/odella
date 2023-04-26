@@ -77,7 +77,6 @@ class TripController extends Controller
                  * @var Trip $trip ;
                  */
                 $time = Time::query()->create($credentials);
-
                 $credentials['time_id'] = $time->id;
 
                 $trip = Trip::query()->create($credentials);
