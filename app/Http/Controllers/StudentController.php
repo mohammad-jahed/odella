@@ -31,14 +31,14 @@ class StudentController extends Controller
 
         if ($user->can('View Student')) {
 
-        $students = User::role('Student')->paginate(10);
+            $students = User::role('Student')->paginate(10);
 
-        if ($students->isEmpty()) {
+            if ($students->isEmpty()) {
 
-            return $this->getJsonResponse(null, "There Are No Students Found!");
-        }
+                return $this->getJsonResponse(null, "There Are No Students Found!");
+            }
 
-        return $this->getJsonResponse($students, "Students Fetched Successfully");
+            return $this->getJsonResponse($students, "Students Fetched Successfully");
 
         } else {
             abort(Response::HTTP_UNAUTHORIZED
@@ -141,19 +141,19 @@ class StudentController extends Controller
 
         if ($user->can('View Student')) {
 
-        $students = User::role('Student')->where('status', Status::Active)->paginate(10);
+            $students = User::role('Student')->where('status', Status::Active)
+                ->with(['location', 'subscription', 'line', 'position',
+                    'university', 'payments', 'programs'])
+                ->paginate(10);
 
-        if ($students->isEmpty()) {
+            if ($students->isEmpty()) {
 
-            return $this->getJsonResponse(null, "There Are No Active Students Found!");
-        }
+                return $this->getJsonResponse(null, "There Are No Active Students Found!");
+            }
 
-        $students->load(['location', 'subscription', 'line',
-            'position', 'university', 'payments', 'programs']);
+            $activeStudents = UserResource::collection($students)->response()->getData(true);
 
-        $activeStudents = UserResource::collection($students)->response()->getData(true);
-
-        return $this->getJsonResponse($activeStudents, "Students Fetch Successfully");
+            return $this->getJsonResponse($activeStudents, "Students Fetch Successfully");
 
         } else {
 
@@ -180,18 +180,18 @@ class StudentController extends Controller
 
         if ($user->can('View Student')) {
 
-        $students = User::role('Student')->where('status', Status::UnActive)->paginate(10);
+            $students = User::role('Student')->where('status', Status::UnActive)
+                ->with(['location', 'subscription', 'line', 'position', 'university'])
+                ->paginate(10);
 
-        if ($students->isEmpty()) {
+            if ($students->isEmpty()) {
 
-            return $this->getJsonResponse(null, "There Are No UnActive Students Found!");
-        }
+                return $this->getJsonResponse(null, "There Are No UnActive Students Found!");
+            }
 
-        $students->load(['location', 'subscription', 'line', 'position', 'university']);
+            $unActiveStudents = UserResource::collection($students)->response()->getData(true);
 
-        $unActiveStudents = UserResource::collection($students)->response()->getData(true);
-
-        return $this->getJsonResponse($unActiveStudents, "Students Fetch Successfully");
+            return $this->getJsonResponse($unActiveStudents, "Students Fetch Successfully");
 
         } else {
 
@@ -242,26 +242,39 @@ class StudentController extends Controller
 
         Gate::forUser($auth)->authorize('getStudentsInPosition', $trip);
 
-        $students = $trip->users;
+//        $students = $trip->users;
+//
+//        $users = [];
+//
+//        foreach ($students as $student) {
+//
+//            $users += [
+//                'students' => $student->whereHas(
+//                    "programs",
+//                    function ($query) use ($position) {
+//                        $query
+//                            ->where("transfer_position_id", $position->id)
+//                            ->where('confirmAttendance1', true);
+//                    }
+//                )->get()
+//            ];
+//        }
+//
+//        $users += ['studentsNumber' => sizeof($users) + 1];
+//
+//        return $this->getJsonResponse($users, "Students Fetched Successfully");
+//    }
+        $users = $trip->users()->whereHas('programs', function ($query) use ($position) {
+            $query->where('transfer_position_id', $position->id)->where('confirmAttendance1', true);
+        })->with(['university'])->get();
 
-        $users = [];
-
-        foreach ($students as $student) {
-
-            $users += [
-                'students' => $student->whereHas(
-                    "programs",
-                    function ($query) use ($position) {
-                        $query
-                            ->where("transfer_position_id", $position->id)
-                            ->where('confirmAttendance1', true);
-                    }
-                )->get()
-            ];
+        if ($users->isEmpty()) {
+            return $this->getJsonResponse(null, "There are no students in this position!");
         }
 
-        $users += ['studentsNumber' => sizeof($users) + 1];
+        $usersArray = $users->toArray();
+        $usersArray['studentsNumber'] = $users->count();
 
-        return $this->getJsonResponse($users, "Students Fetched Successfully");
+        return $this->getJsonResponse($usersArray, "Students fetched successfully");
     }
 }
