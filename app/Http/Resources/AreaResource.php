@@ -5,10 +5,10 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * @property mixed $name
+ * @property mixed $id
  */
 class AreaResource extends JsonResource
 {
@@ -17,10 +17,11 @@ class AreaResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    #[ArrayShape(["name" => "mixed", "city" => "\App\Http\Resources\CityResource"])] #[Pure]
+    #[ArrayShape(["id" => "mixed", "name" => "mixed"])]
     public function toArray(Request $request): array
     {
         return [
+            "id" => $this->id,
             "name" => $this->name,
         ];
     }
