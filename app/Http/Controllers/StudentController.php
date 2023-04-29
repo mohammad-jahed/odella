@@ -66,7 +66,7 @@ class StudentController extends Controller
         $user = auth()->user();
 
         if ($user->can('View Student')) {
-
+            $student = new UserResource($student);
             return $this->getJsonResponse($student, "Student Fetched Successfully");
 
         } else {
