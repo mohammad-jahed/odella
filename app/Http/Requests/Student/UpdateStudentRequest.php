@@ -30,7 +30,6 @@ class UpdateStudentRequest extends FormRequest
             'street' => ['string', 'min:3', 'max:255'],
             'firstName' => ['bail', 'string', 'max:255'],
             'lastName' => ['bail', 'string', 'max:255'],
-            'email' => ['bail', 'string', 'email', 'max:255', 'unique:users'],
             'oldPassword' => [
                 'bail',
                 'string',

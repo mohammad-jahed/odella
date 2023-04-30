@@ -7,6 +7,7 @@ use App\Enums\Status;
 use App\Http\Requests\Supervisor\StoreSupervisorRequest;
 use App\Http\Requests\Supervisor\UpdateSupervisorRequest;
 use App\Http\Resources\DailyReservationResource;
+use App\Http\Resources\UserResource;
 use App\Models\DailyReservation;
 use App\Models\Location;
 use App\Models\TripPositionsTimes;
@@ -169,7 +170,7 @@ class SupervisorController extends Controller
             $supervisor->location->update($locationData);
 
             $supervisor->update($credentials);
-
+            $supervisor = new UserResource($supervisor);
             DB::commit();
 
             return $this->getJsonResponse($supervisor, "Supervisor Updated Successfully");

@@ -6,6 +6,7 @@ use App\Enums\Status;
 use App\Http\Requests\Employee\ConfirmRegistrationRequest;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
 use App\Http\Requests\Employee\UpdateEmployeeRequest;
+use App\Http\Resources\UserResource;
 use App\Models\Location;
 use App\Models\Pay;
 use App\Models\Program;
@@ -173,7 +174,7 @@ class EmployeeController extends Controller
             $employee->location->update($locationData);
 
             $employee->update($credentials);
-
+            $employee = new UserResource($employee);
             DB::commit();
 
             return $this->getJsonResponse($employee, "Employee Updated Successfully");

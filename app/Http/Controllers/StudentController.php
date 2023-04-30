@@ -105,6 +105,9 @@ class StudentController extends Controller
 
         $student->update($credentials);
 
+        $student = new UserResource($student);
+
+
         return $this->getJsonResponse($student, "Student Updated Successfully");
 
     }

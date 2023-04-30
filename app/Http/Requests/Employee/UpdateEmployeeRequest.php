@@ -5,6 +5,7 @@ namespace App\Http\Requests\Employee;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use JetBrains\PhpStorm\ArrayShape;
 
 class UpdateEmployeeRequest extends FormRequest
 {
@@ -21,6 +22,7 @@ class UpdateEmployeeRequest extends FormRequest
      *
      * @return array
      */
+    #[ArrayShape(['city_id' => "array", 'area_id' => "array", 'street' => "string[]", 'firstName' => "string[]", 'lastName' => "string[]", 'oldPassword' => "array", 'newPassword' => "string[]", 'phoneNumber' => "string[]", 'image' => "string[]"])]
     public function rules(): array
     {
         $user = auth()->user();
@@ -31,7 +33,6 @@ class UpdateEmployeeRequest extends FormRequest
             'street' => ['string', 'min:3', 'max:255'],
             'firstName' => ['bail', 'string', 'max:255'],
             'lastName' => ['bail', 'string', 'max:255'],
-            'email' => ['bail', 'string', 'email', 'max:255', 'unique:users'],
             'oldPassword' => [
                 'bail',
                 'string',
