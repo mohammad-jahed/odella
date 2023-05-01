@@ -66,7 +66,7 @@ class ClaimController extends Controller
          * @var User $auth;
          */
         $auth = auth()->user();
-        Gate::forUser($auth)->authorize('viewClaim', $claim);
+        Gate::forUser($auth)->authorize('updateClaim', $claim);
         $claim = new ClaimResource($claim);
         return $this->getJsonResponse($claim, "Claim Fetched Successfully");
     }
