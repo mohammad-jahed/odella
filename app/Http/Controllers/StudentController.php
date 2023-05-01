@@ -221,9 +221,12 @@ class StudentController extends Controller
         Gate::forUser($user)->authorize('confirmAttendance', $program);
 
         $data = $request->validated();
-
-        $program->confirmAttendance1 = $data['confirmAttendance1'];
-        $program->confirmAttendance2 = $data['confirmAttendance2'];
+        if(isset($data['confirmAttendance1'])){
+            $program->confirmAttendance1 = $data['confirmAttendance1'];
+        }
+        if(isset($data['confirmAttendance2'])){
+            $program->confirmAttendance2 = $data['confirmAttendance2'];
+        }
 
         return $this->getJsonResponse($program, "Your Attendance Is Confirmed Successfully");
     }

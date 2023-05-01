@@ -26,8 +26,8 @@ class ConfirmAttendanceRequest extends FormRequest
     {
         return [
             //
-            'confirmAttendance1'=>['required','boolean',Rule::in([true,false])],
-            'confirmAttendance2'=>['required','boolean',Rule::in([true,false])],
+            'confirmAttendance1'=>['boolean',Rule::in([true,false])],
+            'confirmAttendance2'=>['boolean',Rule::in([true,false])],
         ];
     }
 }
