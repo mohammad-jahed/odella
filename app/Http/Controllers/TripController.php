@@ -369,6 +369,18 @@ class TripController extends Controller
     }
 
 
+    public function getStudentTrips(): JsonResponse
+    {
+        /**
+         * @var User $auth;
+         */
+        $auth = auth()->user();
+        $trips = $auth->trips;
+        return $this->getJsonResponse($trips, "Trips Fetched Successfully");
+
+    }
+
+
     public function sendNotification()
     {
         return Larafirebase::withTitle('Test Title')

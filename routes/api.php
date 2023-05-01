@@ -253,7 +253,10 @@ Route::group([
          */
         Route::get('/trips/{trip}/students/{student}', [TripController::class, 'deleteStudent']);
 
-        /*******/
+        Route::get('/trips/students/student' , [TripController::class, 'getStudentTrips']);
+
+
+
         Route::apiResource('/claims', ClaimController::class);
 
     });
