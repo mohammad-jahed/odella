@@ -4,6 +4,7 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BusController;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\ClaimController;
 use App\Http\Controllers\DailyReservationController;
 use App\Http\Controllers\DaysController;
 use App\Http\Controllers\DriverController;
@@ -251,6 +252,9 @@ Route::group([
          * Deletes a specific student from a specific trip.
          */
         Route::get('/trips/{trip}/students/{student}', [TripController::class, 'deleteStudent']);
+
+        /*******/
+        Route::apiResource('/claims', ClaimController::class);
 
     });
 

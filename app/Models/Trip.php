@@ -91,4 +91,16 @@ class Trip extends Model
     {
         return $this->hasMany(DailyReservation::class, "daily_reservation_id");
     }
+
+
+    public function claims(): HasMany
+    {
+        return $this->hasMany(Claim::class);
+    }
+
+
+    public function lostAndFounds(): HasMany
+    {
+        return $this->hasMany(Lost_Found::class);
+    }
 }

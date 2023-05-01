@@ -61,6 +61,7 @@ class RolHasPermissionSeeder extends Seeder
             ['permission_id' => 63, 'role_id' => 1],
             ['permission_id' => 64, 'role_id' => 1],
             ['permission_id' => 65, 'role_id' => 1],
+            ['permission_id' => 67, 'role_id' => 1],
 
             //Employee
 
@@ -82,6 +83,8 @@ class RolHasPermissionSeeder extends Seeder
             ['permission_id' => 62, 'role_id' => 2],
             ['permission_id' => 63, 'role_id' => 2],
             ['permission_id' => 64, 'role_id' => 2],
+            ['permission_id' => 67, 'role_id' => 2],
+
 
             //Supervisor
 
@@ -94,6 +97,8 @@ class RolHasPermissionSeeder extends Seeder
             ['permission_id' => 40, 'role_id' => 4],
             ['permission_id' => 41, 'role_id' => 4],
             ['permission_id' => 42, 'role_id' => 4],
+            ['permission_id' => 66, 'role_id' => 4],
+
             //['permission_id' => 43, 'role_id' => 4],
             ['permission_id' => 44, 'role_id' => 4],
             ['permission_id' => 45, 'role_id' => 4],

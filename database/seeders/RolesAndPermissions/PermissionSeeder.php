@@ -50,6 +50,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'Delete Notification', 'guard_name' => 'api'],
             ['name' => 'View Complain', 'guard_name' => 'api'],
 
+
             //Supervisor
 
             ['name' => 'Confirm Student Attendance', 'guard_name' => 'api'],
@@ -89,6 +90,9 @@ class PermissionSeeder extends Seeder
             ['name' => 'Update Time', 'guard_name' => 'api'],
             ['name' => 'Delete Time', 'guard_name' => 'api'],
             ['name' => 'View Programs', 'guard_name' => 'api'],
+            ['name' => 'Add Claim', 'guard_name' => 'api'],
+            ['name' => 'View Claims', 'guard_name' => 'api'],
+
         ]);
     }
 }

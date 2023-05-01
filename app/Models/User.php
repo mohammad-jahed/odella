@@ -112,7 +112,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function line(): BelongsTo
     {
-        return $this->belongsTo(TransportationLine::class,'transportation_line_id');
+        return $this->belongsTo(TransportationLine::class, 'transportation_line_id');
     }
 
     public function position(): BelongsTo
@@ -141,5 +141,13 @@ class User extends Authenticatable implements JWTSubject
             'trip_users', 'user_id', 'trip_id');
     }
 
+    public function claims(): HasMany
+    {
+        return $this->hasMany(Claim::class);
+    }
 
+    public function lostAndFounds(): HasMany
+    {
+        return $this->hasMany(Lost_Found::class);
+    }
 }
