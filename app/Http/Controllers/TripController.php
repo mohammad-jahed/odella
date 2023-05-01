@@ -6,6 +6,7 @@ use App\Enums\TripStatus;
 use App\Http\Requests\Student\StoreTripStudentsRequest;
 use App\Http\Requests\Trip\StoreTripRequest;
 use App\Http\Requests\Trip\UpdateTripRequest;
+use App\Http\Resources\TripResource;
 use App\Models\Program;
 use App\Models\Time;
 use App\Models\TransferPosition;
@@ -42,7 +43,7 @@ class TripController extends Controller
 
                 return $this->getJsonResponse(null, "There Are No Trips Found!");
             }
-
+            $trips = TripResource::collection($trips);
             return $this->getJsonResponse($trips, "Trips Fetched Successfully");
 
         } else {
@@ -98,6 +99,7 @@ class TripController extends Controller
                     }
                 }
                 DB::commit();
+                $trip = new TripResource($trip);
                 return $this->getJsonResponse($trip, "Trip Created Successfully");
 
             } catch (Exception $exception) {
@@ -125,6 +127,7 @@ class TripController extends Controller
         $user = auth()->user();
 
         if ($user->can('View Trips')) {
+            $trip = new TripResource($trip);
 
             return $this->getJsonResponse($trip, "Trip Fetched Successfully");
 
@@ -189,6 +192,7 @@ class TripController extends Controller
                 }
 
             }
+            $trip = new TripResource($trip);
 
             return $this->getJsonResponse($trip, "Trip Updated Successfully");
 
@@ -274,7 +278,7 @@ class TripController extends Controller
                 }
             }
             $trip->load('users');
-
+            $trip = new TripResource($trip);
             return $this->getJsonResponse($trip, 'Students Added Successfully To This Trip');
 
         } else {
@@ -329,7 +333,7 @@ class TripController extends Controller
             TripUser::query()->where('user_id', $student->id)->delete();
 
             $trip->load('users');
-
+            $trip = new TripResource($trip);
             return $this->getJsonResponse($trip, "Student Deleted Successfully");
 
         } else {
@@ -357,6 +361,7 @@ class TripController extends Controller
 
                 return $this->getJsonResponse(null, "There Are No Trips Found!");
             }
+            $trips = TripResource::collection($trips);
 
             return $this->getJsonResponse($trips, "Trips Fetched Successfully");
 
@@ -376,6 +381,7 @@ class TripController extends Controller
          */
         $auth = auth()->user();
         $trips = $auth->trips;
+        $trips = TripResource::collection($trips);
         return $this->getJsonResponse($trips, "Trips Fetched Successfully");
 
     }
