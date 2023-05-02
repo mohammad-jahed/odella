@@ -20,14 +20,25 @@ class ClaimController extends Controller
     public function index(): JsonResponse
     {
         /**
-         * @var User $auth;
+         * @var User $auth ;
          */
         $auth = auth()->user();
-        if($auth->can('View Claims')){
-            $claims = Claim::all()->load(['user', 'trip']);
-            $claims = ClaimResource::collection($claims);
+
+        if ($auth->can('View Claims')) {
+
+            $claims = Claim::with('user', 'trip')->paginate(10);
+
+            if ($claims->isEmpty()) {
+
+                return $this->getJsonResponse(null, "There Are No Claims Found!");
+            }
+
+            $claims = ClaimResource::collection($claims)->response()->getData(true);
+
             return $this->getJsonResponse($claims, "Claims Fetched Successfully");
+
         } else {
+
             abort(Response::HTTP_UNAUTHORIZED
                 , "Unauthorized , You Dont Have Permission To Access This Action");
         }
@@ -43,13 +54,21 @@ class ClaimController extends Controller
          * @var User $auth
          */
         $auth = auth()->user();
-        if($auth->can('Add Claim')){
+
+        if ($auth->can('Add Claim')) {
+
             $data = $request->validated();
+
             $data['user_id'] = $auth->id;
+
             $claim = Claim::query()->create($data);
+
             $claim = new ClaimResource($claim);
-            return $this->getJsonResponse($claim,'Claim Created Successfully');
-        } else{
+
+            return $this->getJsonResponse($claim, 'Claim Created Successfully');
+
+        } else {
+
             abort(Response::HTTP_UNAUTHORIZED
                 , "Unauthorized , You Dont Have Permission To Access This Action");
         }
@@ -63,11 +82,14 @@ class ClaimController extends Controller
     {
         //
         /**
-         * @var User $auth;
+         * @var User $auth ;
          */
         $auth = auth()->user();
+
         Gate::forUser($auth)->authorize('updateClaim', $claim);
+
         $claim = new ClaimResource($claim);
+
         return $this->getJsonResponse($claim, "Claim Fetched Successfully");
     }
 
@@ -79,13 +101,18 @@ class ClaimController extends Controller
     {
         //
         /**
-         * @var User $auth;
+         * @var User $auth ;
          */
         $auth = auth()->user();
+
         Gate::forUser($auth)->authorize('updateClaim', $claim);
+
         $data = $request->validated();
+
         $claim->update($data);
+
         $claim = new ClaimResource($claim);
+
         return $this->getJsonResponse($claim, "Claim Updated Successfully");
     }
 
@@ -97,11 +124,14 @@ class ClaimController extends Controller
     {
         //
         /**
-         * @var User $auth;
+         * @var User $auth ;
          */
         $auth = auth()->user();
+
         Gate::forUser($auth)->authorize('deleteClaim', $claim);
+
         $claim->delete();
+
         return $this->getJsonResponse(null, "Claim Deleted Successfully");
 
     }
