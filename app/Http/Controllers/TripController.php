@@ -43,7 +43,9 @@ class TripController extends Controller
 
                 return $this->getJsonResponse(null, "There Are No Trips Found!");
             }
-            $trips = TripResource::collection($trips);
+
+            $trips = TripResource::collection($trips)->response()->getData(true);
+
             return $this->getJsonResponse($trips, "Trips Fetched Successfully");
 
         } else {
