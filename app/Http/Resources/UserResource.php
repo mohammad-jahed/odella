@@ -19,6 +19,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $location
  * @property mixed $payments
  * @property mixed $programs
+ * @property mixed $image
  */
 class UserResource extends JsonResource
 {
@@ -35,6 +36,7 @@ class UserResource extends JsonResource
             'lastName' => $this->lastName,
             'email' => $this->email,
             "phoneNumber" => $this->phoneNumber,
+            "image" => $this->image,
             "expiredSubscriptionDate" => $this->expiredSubscriptionDate,
             'subscription' => $this->whenLoaded('subscription', new SubscriptionResource($this->subscription)),
             'line' => $this->whenLoaded('line', new TransportationLineResource($this->line)),
