@@ -94,8 +94,8 @@ class TripController extends Controller
                     for ($i = 0; $i < $positionsNumber; $i++) {
                         $data = [
                             'position_id' => $credentials['position_ids'][$i],
-                            'time'        => $credentials['time'][$i],
-                            'trip_id'     => $trip->id
+                            'time' => $credentials['time'][$i],
+                            'trip_id' => $trip->id
                         ];
                         TripPositionsTimes::query()->create($data);
                     }
@@ -185,8 +185,8 @@ class TripController extends Controller
                         if ($i == $j) {
                             $data = [
                                 'position_id' => $credentials['position_ids'][$i],
-                                'time'        => $credentials['time'][$j],
-                                'trip_id'     => $trip->id
+                                'time' => $credentials['time'][$j],
+                                'trip_id' => $trip->id
                             ];
                             $transportationTimes[$i]->update($data);
                         }
@@ -379,13 +379,51 @@ class TripController extends Controller
     public function getStudentTrips(): JsonResponse
     {
         /**
-         * @var User $auth;
+         * @var User $auth ;
          */
         $auth = auth()->user();
         $trips = $auth->trips;
         $trips = TripResource::collection($trips);
         return $this->getJsonResponse($trips, "Trips Fetched Successfully");
 
+    }
+
+    public function getGoTrips(): JsonResponse
+    {
+        /**
+         * @var User $auth;
+         */
+        $auth = auth()->user();
+        if($auth->can('View Trips')){
+            $trips = Trip::query()->where('status', 1)->paginate(10);
+            if ($trips->isEmpty()) {
+                return $this->getJsonResponse(null, "There Are No Trips Found!");
+            }
+            $trips = TripResource::collection($trips)->response()->getData(true);
+            return $this->getJsonResponse($trips, "Go Trips Fetched Successfully!!");
+        } else {
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
+        }
+    }
+
+    public function getReturnTrips(): JsonResponse
+    {
+        /**
+         * @var User $auth;
+         */
+        $auth = auth()->user();
+        if($auth->can('View Trips')){
+            $trips = Trip::query()->where('status', 2)->paginate(10);
+            if ($trips->isEmpty()) {
+                return $this->getJsonResponse(null, "There Are No Trips Found!");
+            }
+            $trips = TripResource::collection($trips)->response()->getData(true);
+            return $this->getJsonResponse($trips, "Return Trips Fetched Successfully!!");
+        } else {
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
+        }
     }
 
 

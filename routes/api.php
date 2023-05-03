@@ -255,8 +255,20 @@ Route::group([
 
         Route::get('/trips/students/student' , [TripController::class, 'getStudentTrips']);
 
+        /**
+         * Get all go trips
+         */
+        Route::get('/trip/goTrips', [TripController::class, 'getGoTrips']);
+
+        /**
+         * Get all return trips
+         */
+        Route::get('/trip/returnTrips', [TripController::class, 'getReturnTrips']);
 
 
+        /**
+         * Resource routes for claims
+         */
         Route::apiResource('/claims', ClaimController::class);
 
     });
