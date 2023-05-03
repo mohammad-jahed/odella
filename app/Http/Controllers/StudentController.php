@@ -10,9 +10,11 @@ use App\Models\Program;
 use App\Models\TransferPosition;
 use App\Models\Trip;
 use App\Models\User;
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
@@ -85,30 +87,40 @@ class StudentController extends Controller
 
         Gate::forUser($user)->authorize('updateProfile', $student);
 
-        $credentials = $request->validated();
+        try {
 
-        if ($request->hasFile('image')) {
+            $credentials = $request->validated();
 
-            $path = $request->file('image')->store('images/users');
+            if ($request->hasFile('image')) {
 
-            $credentials['image'] = $path;
+                $path = $request->file('image')->store('images/users');
+
+                $credentials['image'] = $path;
+            }
+
+            if (isset($credentials['newPassword'])) {
+
+                $credentials['password'] = Hash::make($credentials['newPassword']);
+            }
+
+            $locationData = array_intersect_key($credentials, array_flip(['city_id', 'area_id', 'street']));
+
+            $student->location->update($locationData);
+
+            $student->update($credentials);
+
+            $student = new UserResource($student);
+
+
+            return $this->getJsonResponse($student, "Student Updated Successfully");
+
+        } catch (Exception $exception) {
+
+            DB::rollBack();
+
+            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+
         }
-
-        if (isset($credentials['newPassword'])) {
-
-            $credentials['password'] = Hash::make($credentials['newPassword']);
-        }
-
-        $locationData = array_intersect_key($credentials, array_flip(['city_id', 'area_id', 'street']));
-
-        $student->location->update($locationData);
-
-        $student->update($credentials);
-
-        $student = new UserResource($student);
-
-
-        return $this->getJsonResponse($student, "Student Updated Successfully");
 
     }
 
@@ -221,10 +233,10 @@ class StudentController extends Controller
         Gate::forUser($user)->authorize('confirmAttendance', $program);
 
         $data = $request->validated();
-        if(isset($data['confirmAttendance1'])){
+        if (isset($data['confirmAttendance1'])) {
             $program->confirmAttendance1 = $data['confirmAttendance1'];
         }
-        if(isset($data['confirmAttendance2'])){
+        if (isset($data['confirmAttendance2'])) {
             $program->confirmAttendance2 = $data['confirmAttendance2'];
         }
 
