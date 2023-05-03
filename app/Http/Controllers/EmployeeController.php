@@ -67,11 +67,7 @@ class EmployeeController extends Controller
 
             try {
 
-                DB::beginTransaction();
-
                 $credentials = $request->validated();
-
-                $credentials['password'] = Hash::make($credentials['password']);
 
                 if ($request->hasFile('image')) {
 
@@ -79,6 +75,11 @@ class EmployeeController extends Controller
 
                     $credentials['image'] = $path;
                 }
+
+                DB::beginTransaction();
+
+                $credentials['password'] = Hash::make($credentials['password']);
+
                 /**
                  * @var Location $location ;
                  */
@@ -153,8 +154,6 @@ class EmployeeController extends Controller
 
         try {
 
-            DB::beginTransaction();
-
             $credentials = $request->validated();
 
             if ($request->hasFile('image')) {
@@ -163,6 +162,8 @@ class EmployeeController extends Controller
 
                 $credentials['image'] = $path;
             }
+
+            DB::beginTransaction();
 
             if (isset($credentials['newPassword'])) {
 
@@ -174,7 +175,9 @@ class EmployeeController extends Controller
             $employee->location->update($locationData);
 
             $employee->update($credentials);
+
             $employee = new UserResource($employee);
+
             DB::commit();
 
             return $this->getJsonResponse($employee, "Employee Updated Successfully");
@@ -224,69 +227,69 @@ class EmployeeController extends Controller
 
         if ($auth->can('Confirm registration')) {
 
-        try {
-            /**
-             * @var User $auth ;
-             * @var Subscription $subscription ;
-             */
+            try {
+                /**
+                 * @var User $auth ;
+                 * @var Subscription $subscription ;
+                 */
 
-            $credentials = $request->validated();
+                $credentials = $request->validated();
 
-            $user->expiredSubscriptionDate = $credentials['expiredSubscriptionDate'];
-            $user->save();
+                $user->expiredSubscriptionDate = $credentials['expiredSubscriptionDate'];
+                $user->save();
 
-            $user->trips()->attach($credentials['trip_ids']);
-            /**
-             * @var Trip[] $trips ;
-             * @var Trip[] $goTrips ;
-             * @var Trip[] $returnTrips ;
-             * @var TripPositionsTimes $goTime ;
-             * @var TripPositionsTimes $returnTime ;
-             */
-            $trips = $user->trips;
-            $goTrips = [];
-            $returnTrips = [];
+                $user->trips()->attach($credentials['trip_ids']);
+                /**
+                 * @var Trip[] $trips ;
+                 * @var Trip[] $goTrips ;
+                 * @var Trip[] $returnTrips ;
+                 * @var TripPositionsTimes $goTime ;
+                 * @var TripPositionsTimes $returnTime ;
+                 */
+                $trips = $user->trips;
+                $goTrips = [];
+                $returnTrips = [];
 
-            for ($i = 0; $i < sizeof($trips); $i++) {
-                $trips[$i]->status == 1 ? $goTrips += [$trips[$i]] : $returnTrips += [$trips[$i]];
-            }
-
-            foreach (array_intersect_key($credentials['day_ids'], $credentials['position_ids']) as $key => $value) {
-
-                foreach (array_intersect_key($goTrips, $returnTrips) as $k => $v) {
-
-                    $firstPosition = $goTrips[$k]->transferPositions()->first();
-
-                    $goTime = TripPositionsTimes::query()->where('position_id', $firstPosition->id)->first();
-
-                    $data = [
-                        'day_id'               => $credentials['day_ids'][$key],
-                        'transfer_position_id' => $credentials['position_ids'][$key],
-                        'start'                => $goTime->time,
-                        'end'                  => $returnTrips[$k]->time->start,
-                        'user_id'              => $user->id
-                    ];
-                    Program::query()->create($data);
+                for ($i = 0; $i < sizeof($trips); $i++) {
+                    $trips[$i]->status == 1 ? $goTrips += [$trips[$i]] : $returnTrips += [$trips[$i]];
                 }
+
+                foreach (array_intersect_key($credentials['day_ids'], $credentials['position_ids']) as $key => $value) {
+
+                    foreach (array_intersect_key($goTrips, $returnTrips) as $k => $v) {
+
+                        $firstPosition = $goTrips[$k]->transferPositions()->first();
+
+                        $goTime = TripPositionsTimes::query()->where('position_id', $firstPosition->id)->first();
+
+                        $data = [
+                            'day_id' => $credentials['day_ids'][$key],
+                            'transfer_position_id' => $credentials['position_ids'][$key],
+                            'start' => $goTime->time,
+                            'end' => $returnTrips[$k]->time->start,
+                            'user_id' => $user->id
+                        ];
+                        Program::query()->create($data);
+                    }
+                }
+                $pay = Pay::query()->create($credentials);
+
+                $user->payments()->attach($pay);
+
+                $user->update(['status' => Status::Active]);
+
+                $user->load('payments');
+
+                DB::commit();
+
+                return $this->getJsonResponse($user, "Your Register Is Confirmed Successfully");
+
+            } catch (Exception $exception) {
+
+                DB::rollBack();
+
+                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
             }
-            $pay = Pay::query()->create($credentials);
-
-            $user->payments()->attach($pay);
-
-            $user->update(['status' => Status::Active]);
-
-            $user->load('payments');
-
-            DB::commit();
-
-            return $this->getJsonResponse($user, "Your Register Is Confirmed Successfully");
-
-        } catch (Exception $exception) {
-
-            DB::rollBack();
-
-            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
-        }
 
         } else {
 

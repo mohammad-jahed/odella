@@ -67,14 +67,7 @@ class AuthController extends Controller
     {
 
         try {
-            DB::beginTransaction();
-            /**
-             * @var User $user ;
-             * @var Subscription $subscription ;
-             */
             $credentials = $request->validated();
-
-            $credentials['password'] = Hash::make($credentials['password']);
 
             if ($request->hasFile('image')) {
 
@@ -82,6 +75,13 @@ class AuthController extends Controller
 
                 $credentials['image'] = $path;
             }
+
+            DB::beginTransaction();
+            /**
+             * @var User $user ;
+             * @var Subscription $subscription ;
+             */
+            $credentials['password'] = Hash::make($credentials['password']);
 
             /**
              * @var Location $location ;
@@ -104,6 +104,7 @@ class AuthController extends Controller
             $employees = User::role('Employee')->get();
 
             Notification::send($employees, new PendingUserRegisterNotification($user));
+
             return $this->getJsonResponse($user, "User Registered Successfully , Please visit the Company Office to Complete Registration Process");
 
         } catch (Exception $exception) {

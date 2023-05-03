@@ -66,13 +66,7 @@ class SupervisorController extends Controller
 
             try {
 
-                DB::beginTransaction();
-                /**
-                 * @var User $user ;
-                 */
                 $credentials = $request->validated();
-
-                $credentials['password'] = Hash::make($credentials['password']);
 
                 if ($request->hasFile('image')) {
 
@@ -80,6 +74,14 @@ class SupervisorController extends Controller
 
                     $credentials['image'] = $path;
                 }
+
+                DB::beginTransaction();
+                /**
+                 * @var User $user ;
+                 */
+
+                $credentials['password'] = Hash::make($credentials['password']);
+
                 /**
                  * @var Location $location ;
                  */
@@ -149,8 +151,6 @@ class SupervisorController extends Controller
 
         try {
 
-            DB::beginTransaction();
-
             $credentials = $request->validated();
 
             if ($request->hasFile('image')) {
@@ -159,6 +159,8 @@ class SupervisorController extends Controller
 
                 $credentials['image'] = $path;
             }
+
+            DB::beginTransaction();
 
             if (isset($credentials['newPassword'])) {
 
@@ -170,7 +172,9 @@ class SupervisorController extends Controller
             $supervisor->location->update($locationData);
 
             $supervisor->update($credentials);
+
             $supervisor = new UserResource($supervisor);
+
             DB::commit();
 
             return $this->getJsonResponse($supervisor, "Supervisor Updated Successfully");
