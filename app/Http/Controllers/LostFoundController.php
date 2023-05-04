@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Lost_Founds\StoreLost_FoundsRequest;
 use App\Http\Requests\Lost_Founds\UpdateLost_FoundsRequest;
+use App\Http\Resources\Lost_FoundResource;
 use App\Models\Lost_Found;
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class LostFoundController extends Controller
@@ -23,13 +26,13 @@ class LostFoundController extends Controller
 
         if ($user->can('View Lost&Found')) {
 
-            $lost_founds = Lost_Found::query()->paginate(10);
+            $lost_founds = Lost_Found::query()->with(['user','trip'])->paginate(10);
 
             if ($lost_founds->isEmpty()) {
 
                 return $this->getJsonResponse(null, "There Are No Lost&Founds Found!");
             }
-
+            $lost_founds = Lost_FoundResource::collection($lost_founds)->response()->getData(true);
             return $this->getJsonResponse($lost_founds, "Lost&Founds Fetched Successfully");
 
 
@@ -64,6 +67,7 @@ class LostFoundController extends Controller
             $data['user_id'] = $user->id;
 
             $lost_found = Lost_Found::query()->create($data);
+            $lost_found = new Lost_FoundResource($lost_found);
 
             return $this->getJsonResponse($lost_found, "Lost&Founds Created Successfully");
 
@@ -77,30 +81,33 @@ class LostFoundController extends Controller
 
     /**
      * Display the specified resource.
+     * @throws AuthorizationException
      */
-    public function show(Lost_Found $lost_Found)
+    public function show(Lost_Found $lost_found): JsonResponse
     {
         /**
-         * @var User $user ;
+         * @var User $auth ;
          */
-        $user = auth()->user();
+        $auth = auth()->user();
 
-        if ($user->can('View Lost&Found')) {
-
-            return $this->getJsonResponse($lost_Found, "Lost&Found Fetched Successfully");
-
-        } else {
-
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
-        }
+        Gate::forUser($auth)->authorize('viewLost&Found', $lost_found);
+        $lost_found = new Lost_FoundResource($lost_found);
+        return $this->getJsonResponse($lost_found, "Lost&Found Fetched Successfully");
     }
 
     /**
      * Update the specified resource in storage.
+     * @throws AuthorizationException
      */
-    public function update(UpdateLost_FoundsRequest $request, Lost_Found $lost_Found): JsonResponse
+    public function update(UpdateLost_FoundsRequest $request, Lost_Found $lost_found): JsonResponse
     {
+        //
+        /**
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+
+        Gate::forUser($auth)->authorize('updateLost&Found', $lost_found);
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
@@ -110,17 +117,28 @@ class LostFoundController extends Controller
             $data['image'] = $path;
         }
 
-        $lost_Found->update($data);
+        $lost_found->update($data);
+        $lost_found = new Lost_FoundResource($lost_found);
 
-        return $this->getJsonResponse($lost_Found, "Lost&Found Updated Successfully");
+
+        return $this->getJsonResponse($lost_found, "Lost&Found Updated Successfully");
     }
 
     /**
      * Remove the specified resource from storage.
+     * @throws AuthorizationException
      */
-    public function destroy(Lost_Found $lost_Found): JsonResponse
+    public function destroy(Lost_Found $lost_found): JsonResponse
     {
-        $lost_Found->delete();
+        //
+        /**
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+
+        Gate::forUser($auth)->authorize('deleteLost&Found', $lost_found);
+
+        $lost_found->delete();
 
         return $this->getJsonResponse(null, "Lost&Found Deleted Successfully");
     }

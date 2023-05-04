@@ -5,6 +5,7 @@ use App\Models\Area;
 use App\Models\City;
 use App\Models\Claim;
 use App\Models\Location;
+use App\Models\Lost_Found;
 use App\Models\Program;
 use App\Models\Subscription;
 use App\Models\TransferPosition;
@@ -15,6 +16,7 @@ use App\Policies\CityPolicy;
 use App\Policies\ClaimPolicy;
 use App\Policies\EmployeeAndSupervisorPolicy;
 use App\Policies\LocationPolicy;
+use App\Policies\Lost_FoundPolicy;
 use App\Policies\ProgramPolicy;
 use App\Policies\SubscriptionPolicy;
 use App\Policies\TransferPositionPolicy;
@@ -39,6 +41,7 @@ class AuthServiceProvider extends ServiceProvider
         User::class => EmployeeAndSupervisorPolicy::class,
         Program::class => ProgramPolicy::class,
         Claim::class => ClaimPolicy::class,
+        Lost_Found::class => Lost_FoundPolicy::class,
     ];
 
     /**
@@ -64,5 +67,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('viewClaim', [ClaimPolicy::class,'view']);
         Gate::define('updateClaim', [ClaimPolicy::class,'update']);
         Gate::define('deleteClaim', [ClaimPolicy::class,'delete']);
+        //Lost&Found
+        Gate::define('viewLost&Found', [Lost_FoundPolicy::class,'view']);
+        Gate::define('updateLost&Found', [Lost_FoundPolicy::class,'update']);
+        Gate::define('deleteLost&Found', [Lost_FoundPolicy::class,'delete']);
     }
 }
