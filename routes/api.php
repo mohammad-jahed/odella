@@ -10,6 +10,7 @@ use App\Http\Controllers\DaysController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\LostFoundController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubscriptionController;
@@ -265,12 +266,15 @@ Route::group([
          */
         Route::get('/trip/returnTrips', [TripController::class, 'getReturnTrips']);
 
-
         /**
          * Resource routes for claims
          */
         Route::apiResource('/claims', ClaimController::class);
 
+        /**
+         * Resource routes for lost&founds
+         */
+        Route::apiResource('/lost_found', LostFoundController::class);
     });
 
 
