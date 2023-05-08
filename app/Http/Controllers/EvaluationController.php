@@ -7,7 +7,9 @@ use App\Http\Requests\Evaluations\UpdateEvaluationRequest;
 use App\Models\Evaluation;
 use App\Models\Trip;
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class EvaluationController extends Controller
@@ -70,46 +72,48 @@ class EvaluationController extends Controller
 
     /**
      * Display the specified resource.
+     * @throws AuthorizationException
      */
     public function show(Evaluation $evaluation): JsonResponse
     {
+        /**
+         * @var User $auth;
+         */
+        $auth = auth()->user();
+        Gate::forUser($auth)->authorize('viewEvaluation', $evaluation);
         return $this->getJsonResponse($evaluation, "Evaluation Fetched Successfully");
     }
 
     /**
      * Update the specified resource in storage.
+     * @throws AuthorizationException
      */
-    public function update(UpdateEvaluationRequest $request, Evaluation $evaluation)
+    public function update(UpdateEvaluationRequest $request, Evaluation $evaluation): JsonResponse
     {
+        /**
+         * @var User $auth;
+         */
+        $auth = auth()->user();
         $data = $request->validated();
-
+        Gate::forUser($auth)->authorize('updateEvaluation', $evaluation);
         $evaluation->update($data);
-
         return $this->getJsonResponse($evaluation, "Evaluations Updated Successfully");
 
     }
 
     /**
      * Remove the specified resource from storage.
+     * @throws AuthorizationException
      */
-    public function destroy(Evaluation $evaluation)
+    public function destroy(Evaluation $evaluation): JsonResponse
     {
         /**
          * @var User $user
          */
         $user = auth()->user();
-
-        if ($user->can('Delete Ratting')) {
-
-            $evaluation->delete();
-
-            return $this->getJsonResponse(null, "Evaluations Deleted Successfully");
-
-        } else {
-
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
-        }
+        Gate::forUser($user)->authorize('deleteEvaluation', $evaluation);
+        $evaluation->delete();
+        return $this->getJsonResponse(null, "Evaluations Deleted Successfully");
     }
 
     /**
