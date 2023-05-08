@@ -103,4 +103,9 @@ class Trip extends Model
     {
         return $this->hasMany(Lost_Found::class);
     }
+
+    public function evaluations(): HasMany
+    {
+        return $this->hasMany(Evaluation::class);
+    }
 }

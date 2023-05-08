@@ -9,6 +9,7 @@ use App\Http\Controllers\DailyReservationController;
 use App\Http\Controllers\DaysController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\LostFoundController;
 use App\Http\Controllers\ProgramController;
@@ -275,6 +276,11 @@ Route::group([
          * Resource routes for lost&founds
          */
         Route::apiResource('/lost_found', LostFoundController::class);
+
+        /**
+         * Resource routes for Evaluations
+         */
+        Route::apiResource('/evaluation', EvaluationController::class);
     });
 
 

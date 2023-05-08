@@ -150,4 +150,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Lost_Found::class);
     }
+    public function evaluations(): HasMany
+    {
+        return $this->hasMany(Evaluation::class);
+    }
 }
