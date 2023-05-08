@@ -277,6 +277,7 @@ Route::group([
          */
         Route::apiResource('/lost_found', LostFoundController::class);
 
+        Route::post('/evaluation/trip/{trip}',[EvaluationController::class,'store']);
         /**
          * Resource routes for Evaluations
          */
