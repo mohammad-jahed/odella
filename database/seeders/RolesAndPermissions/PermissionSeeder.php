@@ -92,6 +92,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'View Programs', 'guard_name' => 'api'],
             ['name' => 'Add Claim', 'guard_name' => 'api'],
             ['name' => 'View Claims', 'guard_name' => 'api'],
+            ['name' => 'Delete Ratting', 'guard_name' => 'api'],
 
         ]);
     }
