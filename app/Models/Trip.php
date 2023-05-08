@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\GuestStatus;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -35,23 +36,34 @@ class Trip extends Model
         'availableSeats'
     ];
 
-    public function getAvailableSeatsAttribute()
+    public function availableSeats(): Attribute
     {
-        $day = Date::now()->dayOfWeek;
+        return Attribute::make(
+            get: function () {
+                $day = Date::now()->dayOfWeek;
+                $user_ids = $this->users()->pluck('user_id');
+                $busCapacity = $this->busDriver->bus->capacity;
+                return
+                    $busCapacity -
+                    ($this->getManifest($day, $user_ids) + $this->getAcceptedDailyReservations());
+            },
+        );
+    }
 
-        $user_ids = $this->users()->pluck('user_id');
-
-        $c1 = Program::query()->where('day_id', $day)
+    public function getManifest($day, $user_ids): int
+    {
+        return Program::query()->where('day_id', $day)
             ->where('confirmAttendance1', 1)
             ->whereIn('user_id', $user_ids)
             ->count();
+    }
 
-        $c2 = DailyReservation::query()
+    public function getAcceptedDailyReservations(): int
+    {
+        return DailyReservation::query()
             ->where('guestRequestStatus', GuestStatus::Approved)
             ->where('trip_id', $this->id)
             ->sum('seatsNumber');
-        $busCapacity = $this->busDriver->bus->capacity;
-        return $busCapacity - ($c1 + $c2);
     }
 
     public function time(): BelongsTo
