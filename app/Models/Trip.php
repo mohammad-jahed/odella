@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Date;
  * @property int $id;
  * @property int $status;
  * @property BusDriver $busDriver;
+ * @property mixed $evaluations
  * @method isEmpty()
  */
 class Trip extends Model

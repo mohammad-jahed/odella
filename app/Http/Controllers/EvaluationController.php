@@ -111,4 +111,27 @@ class EvaluationController extends Controller
                 , "Unauthorized , You Dont Have Permission To Access This Action");
         }
     }
+
+    /**
+     * Get all Evaluations for a specific trip.
+     */
+    public function trip_evaluations(Trip $trip)
+    {
+        /**
+         * @var User $user
+         */
+        $user = auth()->user();
+
+        if ($user->can('View SupervisorEvaluation')) {
+
+            $evaluations = $trip->evaluations;
+
+            return $this->getJsonResponse($evaluations, "Evaluations Fetched Successfully");
+
+        } else {
+
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
+        }
+    }
 }

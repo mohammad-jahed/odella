@@ -258,28 +258,37 @@ Route::group([
         Route::get('/trips/students/student' , [TripController::class, 'getStudentTrips']);
 
         /**
-         * Get all go trips
+         * Get all go trips.
          */
         Route::get('/trip/goTrips', [TripController::class, 'getGoTrips']);
 
         /**
-         * Get all return trips
+         * Get all return trips.
          */
         Route::get('/trip/returnTrips', [TripController::class, 'getReturnTrips']);
 
         /**
-         * Resource routes for claims
+         * Resource routes for claims.
          */
         Route::apiResource('/claims', ClaimController::class);
 
         /**
-         * Resource routes for lost&founds
+         * Resource routes for lost&founds.
          */
         Route::apiResource('/lost_found', LostFoundController::class);
 
-        Route::post('/evaluation/trip/{trip}',[EvaluationController::class,'store']);
         /**
-         * Resource routes for Evaluations
+         * Adds Evaluation to a specific trip.
+         */
+        Route::post('/evaluation/trip/{trip}',[EvaluationController::class,'store']);
+
+        /**
+         * Get all Evaluations for a specific trip.
+         */
+        Route::get('/evaluation/trip/{trip}',[EvaluationController::class , 'trip_evaluations']);
+
+        /**
+         * Resource routes for Evaluations.
          */
         Route::apiResource('/evaluation', EvaluationController::class);
     });
