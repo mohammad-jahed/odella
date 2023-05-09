@@ -33,6 +33,14 @@ class Trip extends Model
         'status'
     ];
 
+    protected $hidden = [
+        'supervisor_id',
+        'bus_driver_id',
+        'time_id',
+        'created_at',
+        'updated_at'
+    ];
+
     protected $appends = [
         'availableSeats'
     ];
@@ -43,8 +51,11 @@ class Trip extends Model
 
         $user_ids = $this->users()->pluck('user_id');
 
-        $busCapacity = $this->busDriver->bus->capacity;
-
+        /**
+         * @var BusDriver $busDriver;
+         */
+        $busDriver = $this->busDriver()->first();
+        $busCapacity = $busDriver->bus->capacity;
         return $busCapacity - ($this->getManifest($day, $user_ids) + $this->getAcceptedDailyReservations());
 
     }
@@ -52,16 +63,7 @@ class Trip extends Model
 
     public function getManifest($day, $user_ids): int
     {
-
-        if ($this->status == TripStatus::GoTrip) {
-
-            $confirmAttendance = 'confirmAttendance1';
-
-        } else {
-
-            $confirmAttendance = 'confirmAttendance2';
-        }
-
+        $confirmAttendance = $this->status == TripStatus::GoTrip ? 'confirmAttendance1' : 'confirmAttendance2';
         return Program::query()->where('day_id', $day)
             ->where($confirmAttendance, 1)
             ->whereIn('user_id', $user_ids)

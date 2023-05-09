@@ -391,15 +391,15 @@ class TripController extends Controller
     public function getGoTrips(): JsonResponse
     {
         /**
-         * @var User $auth;
+         * @var User $auth ;
          */
         $auth = auth()->user();
-        if($auth->can('View Trips')){
-            $trips = Trip::query()->where('status', 1)->paginate(10);
+        if ($auth->can('View Trips')) {
+            $trips = Trip::query()->where('status', 1)->with('time')->paginate(10);
             if ($trips->isEmpty()) {
                 return $this->getJsonResponse(null, "There Are No Trips Found!");
             }
-            $trips = TripResource::collection($trips)->response()->getData(true);
+            $trips = TripResource::collection($trips);
             return $this->getJsonResponse($trips, "Go Trips Fetched Successfully!!");
         } else {
             abort(Response::HTTP_UNAUTHORIZED
@@ -410,15 +410,15 @@ class TripController extends Controller
     public function getReturnTrips(): JsonResponse
     {
         /**
-         * @var User $auth;
+         * @var User $auth ;
          */
         $auth = auth()->user();
-        if($auth->can('View Trips')){
-            $trips = Trip::query()->where('status', 2)->paginate(10);
+        if ($auth->can('View Trips')) {
+            $trips = Trip::query()->where('status', 2)->with('time')->paginate(10);
             if ($trips->isEmpty()) {
                 return $this->getJsonResponse(null, "There Are No Trips Found!");
             }
-            $trips = TripResource::collection($trips)->response()->getData(true);
+            $trips = TripResource::collection($trips);
             return $this->getJsonResponse($trips, "Return Trips Fetched Successfully!!");
         } else {
             abort(Response::HTTP_UNAUTHORIZED
