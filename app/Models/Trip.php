@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\GuestStatus;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -72,10 +71,10 @@ class Trip extends Model
         return $this->belongsTo(User::class, 'supervisor_id', 'id');
     }
 
-    public function busDriver(): BelongsTo
-    {
-        return $this->belongsTo(BusDriver::class);
-    }
+//    public function busDriver(): BelongsTo
+//    {
+//        return $this->belongsTo(BusDriver::class);
+//    }
 
     public function users(): BelongsToMany
     {
@@ -96,10 +95,10 @@ class Trip extends Model
 
     }
 
-    public function reservations(): HasMany
-    {
-        return $this->hasMany(DailyReservation::class, "daily_reservation_id");
-    }
+//    public function reservations(): HasMany
+//    {
+//        return $this->hasMany(DailyReservation::class, "daily_reservation_id");
+//    }
 
 
     public function claims(): HasMany
@@ -108,13 +107,13 @@ class Trip extends Model
     }
 
 
-    public function lostAndFounds(): HasMany
-    {
-        return $this->hasMany(Lost_Found::class);
-    }
+//    public function lostAndFounds(): HasMany
+//    {
+//        return $this->hasMany(Lost_Found::class);
+//    }
 
-    public function evaluations(): HasMany
-    {
-        return $this->hasMany(Evaluation::class);
-    }
+//    public function evaluations(): HasMany
+//    {
+//        return $this->hasMany(Evaluation::class);
+//    }
 }
