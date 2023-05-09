@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\GuestStatus;
+use App\Enums\TripStatus;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -39,8 +40,11 @@ class Trip extends Model
     public function getAvailableSeatsAttribute(): int
     {
         $day = Date::now()->dayOfWeek;
+
         $user_ids = $this->users()->pluck('user_id');
+
         $busCapacity = $this->busDriver->bus->capacity;
+
         return $busCapacity - ($this->getManifest($day, $user_ids) + $this->getAcceptedDailyReservations());
 
     }
@@ -48,8 +52,18 @@ class Trip extends Model
 
     public function getManifest($day, $user_ids): int
     {
+
+        if ($this->status == TripStatus::GoTrip) {
+
+            $confirmAttendance = 'confirmAttendance1';
+
+        } else {
+
+            $confirmAttendance = 'confirmAttendance2';
+        }
+
         return Program::query()->where('day_id', $day)
-            ->where('confirmAttendance1', 1)
+            ->where($confirmAttendance, 1)
             ->whereIn('user_id', $user_ids)
             ->count();
     }
