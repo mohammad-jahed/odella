@@ -12,6 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $end
  * @property mixed $confirmAttendance1
  * @property mixed $confirmAttendance2
+ * @property mixed $id
  */
 class ProgramResource extends JsonResource
 {
@@ -23,6 +24,7 @@ class ProgramResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             "day" => $this->whenLoaded("day", new DayResource($this->day)),
             "transfer_position" => $this->whenLoaded("position", new TransferPositionResource($this->position)),
             "start" => $this->start,
