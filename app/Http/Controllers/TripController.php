@@ -129,6 +129,7 @@ class TripController extends Controller
         $user = auth()->user();
 
         if ($user->can('View Trips')) {
+            $trip->load(['supervisor','time','lines','transferPositions','users']);
             $trip = new TripResource($trip);
 
             return $this->getJsonResponse($trip, "Trip Fetched Successfully");
@@ -166,6 +167,7 @@ class TripController extends Controller
             }
 
             $time = $trip->time;
+            $trip->load(['supervisor','lines','transferPositions','users']);
             $time->update($data);
 
             $trip->update($credentials);
@@ -399,7 +401,7 @@ class TripController extends Controller
             if ($trips->isEmpty()) {
                 return $this->getJsonResponse(null, "There Are No Trips Found!");
             }
-            $trips = TripResource::collection($trips);
+            $trips = TripResource::collection($trips)->response()->getData(true);
             return $this->getJsonResponse($trips, "Go Trips Fetched Successfully!!");
         } else {
             abort(Response::HTTP_UNAUTHORIZED
@@ -418,7 +420,7 @@ class TripController extends Controller
             if ($trips->isEmpty()) {
                 return $this->getJsonResponse(null, "There Are No Trips Found!");
             }
-            $trips = TripResource::collection($trips);
+            $trips = TripResource::collection($trips)->response()->getData(true);
             return $this->getJsonResponse($trips, "Return Trips Fetched Successfully!!");
         } else {
             abort(Response::HTTP_UNAUTHORIZED
