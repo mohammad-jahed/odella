@@ -37,7 +37,7 @@ class TripController extends Controller
 
         if ($user->can('View Trips')) {
 
-            $trips = Trip::query()->paginate(10);
+            $trips = Trip::query()->with(['supervisor','time','lines','transferPositions','users'])->paginate(10);
 
             if ($trips->isEmpty()) {
 
