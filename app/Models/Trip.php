@@ -36,19 +36,15 @@ class Trip extends Model
         'availableSeats'
     ];
 
-    public function availableSeats(): Attribute
+    public function getAvailableSeatsAttribute(): int
     {
-        return Attribute::make(
-            get: function () {
-                $day = Date::now()->dayOfWeek;
-                $user_ids = $this->users()->pluck('user_id');
-                $busCapacity = $this->busDriver->bus->capacity;
-                return
-                    $busCapacity -
-                    ($this->getManifest($day, $user_ids) + $this->getAcceptedDailyReservations());
-            },
-        );
+        $day = Date::now()->dayOfWeek;
+        $user_ids = $this->users()->pluck('user_id');
+        $busCapacity = $this->busDriver->bus->capacity;
+        return $busCapacity - ($this->getManifest($day, $user_ids) + $this->getAcceptedDailyReservations());
+
     }
+
 
     public function getManifest($day, $user_ids): int
     {
