@@ -37,7 +37,8 @@ class TripController extends Controller
 
         if ($user->can('View Trips')) {
 
-            $trips = Trip::query()->with(['supervisor','time','lines','transferPositions','users'])->paginate(10);
+            $trips = Trip::query()->with(['supervisor', 'time', 'lines', 'transferPositions',
+                'users', 'busDriver'])->paginate(10);
 
             if ($trips->isEmpty()) {
 
@@ -72,6 +73,7 @@ class TripController extends Controller
                 DB::beginTransaction();
 
                 $credentials = $request->validated();
+
                 $credentials['status'] = ($credentials['start'] > "07:00" && $credentials['start'] < "11:00") ? 1 : 2;
                 /**
                  * @var Time $time ;
@@ -79,6 +81,7 @@ class TripController extends Controller
                  * @var TransportationLine $line ;
                  */
                 $time = Time::query()->create($credentials);
+
                 $credentials['time_id'] = $time->id;
 
                 $trip = Trip::query()->create($credentials);
@@ -89,19 +92,27 @@ class TripController extends Controller
 
 
                 foreach ($credentials['line_ids'] as $line_id) {
+
                     $line = TransportationLine::query()->where('id', $line_id)->first();
+
                     $positionsNumber = $line->positions()->count();
+
                     for ($i = 0; $i < $positionsNumber; $i++) {
+
                         $data = [
                             'position_id' => $credentials['position_ids'][$i],
                             'time' => $credentials['time'][$i],
                             'trip_id' => $trip->id
                         ];
+
                         TripPositionsTimes::query()->create($data);
                     }
                 }
+
                 DB::commit();
+
                 $trip = new TripResource($trip);
+
                 return $this->getJsonResponse($trip, "Trip Created Successfully");
 
             } catch (Exception $exception) {
@@ -129,7 +140,9 @@ class TripController extends Controller
         $user = auth()->user();
 
         if ($user->can('View Trips')) {
-            $trip->load(['supervisor','time','lines','transferPositions','users']);
+
+            $trip->load(['supervisor', 'time', 'lines', 'transferPositions', 'users', 'busDriver']);
+
             $trip = new TripResource($trip);
 
             return $this->getJsonResponse($trip, "Trip Fetched Successfully");
@@ -158,21 +171,28 @@ class TripController extends Controller
             $data = [];
 
             if (isset($credentials['start'])) {
+
                 $data += ['start' => $credentials['start']];
+
                 $credentials['status'] = ($credentials['start'] > "07:00" && $credentials['start'] < "11:00") ? 1 : 2;
 
             }
+
             if (isset($credentials['date'])) {
+
                 $data += ['date' => $credentials['date']];
             }
 
             $time = $trip->time;
-            $trip->load(['supervisor','lines','transferPositions','users']);
+
+            $trip->load(['supervisor', 'lines', 'transferPositions', 'users', 'busDriver']);
+
             $time->update($data);
 
             $trip->update($credentials);
 
             if (isset($credentials['line_id'])) {
+
                 $line = TransportationLine::query()->where('id', $credentials['line_id'])->first();
 
                 $trip->lines()->sync($line);
@@ -183,13 +203,17 @@ class TripController extends Controller
                 $transportationTimes = TripPositionsTimes::query()->where('trip_id', $trip->id)->get();
 
                 for ($i = 0; $i < sizeof($credentials['position_ids']); $i++) {
+
                     for ($j = 0; $j < sizeof($credentials['time']); $j++) {
+
                         if ($i == $j) {
+
                             $data = [
                                 'position_id' => $credentials['position_ids'][$i],
                                 'time' => $credentials['time'][$j],
                                 'trip_id' => $trip->id
                             ];
+
                             $transportationTimes[$i]->update($data);
                         }
                     }
@@ -201,6 +225,7 @@ class TripController extends Controller
             return $this->getJsonResponse($trip, "Trip Updated Successfully");
 
         } else {
+
             abort(Response::HTTP_UNAUTHORIZED
                 , "Unauthorized , You Dont Have Permission To Access This Action");
         }
@@ -282,7 +307,9 @@ class TripController extends Controller
                 }
             }
             $trip->load('users');
+
             $trip = new TripResource($trip);
+
             return $this->getJsonResponse($trip, 'Students Added Successfully To This Trip');
 
         } else {
@@ -337,7 +364,9 @@ class TripController extends Controller
             TripUser::query()->where('user_id', $student->id)->delete();
 
             $trip->load('users');
+
             $trip = new TripResource($trip);
+
             return $this->getJsonResponse($trip, "Student Deleted Successfully");
 
         } else {
@@ -384,8 +413,11 @@ class TripController extends Controller
          * @var User $auth ;
          */
         $auth = auth()->user();
+
         $trips = $auth->trips;
+
         $trips = TripResource::collection($trips);
+
         return $this->getJsonResponse($trips, "Trips Fetched Successfully");
 
     }
@@ -396,12 +428,18 @@ class TripController extends Controller
          * @var User $auth ;
          */
         $auth = auth()->user();
+
         if ($auth->can('View Trips')) {
+
             $trips = Trip::query()->where('status', 1)->with('time')->paginate(10);
+
             if ($trips->isEmpty()) {
+
                 return $this->getJsonResponse(null, "There Are No Trips Found!");
             }
+
             $trips = TripResource::collection($trips)->response()->getData(true);
+
             return $this->getJsonResponse($trips, "Go Trips Fetched Successfully!!");
         } else {
             abort(Response::HTTP_UNAUTHORIZED
@@ -415,13 +453,20 @@ class TripController extends Controller
          * @var User $auth ;
          */
         $auth = auth()->user();
+
         if ($auth->can('View Trips')) {
+
             $trips = Trip::query()->where('status', 2)->with('time')->paginate(10);
+
             if ($trips->isEmpty()) {
+
                 return $this->getJsonResponse(null, "There Are No Trips Found!");
             }
+
             $trips = TripResource::collection($trips)->response()->getData(true);
+
             return $this->getJsonResponse($trips, "Return Trips Fetched Successfully!!");
+
         } else {
             abort(Response::HTTP_UNAUTHORIZED
                 , "Unauthorized , You Dont Have Permission To Access This Action");
