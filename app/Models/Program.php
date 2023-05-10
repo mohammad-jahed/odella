@@ -33,6 +33,10 @@ class Program extends Model
         'updated_at',
     ];
 
+    protected $casts = [
+        'confirmAttendance1' => 'boolean',
+        'confirmAttendance2' => 'boolean',
+    ];
 
     public function user(): BelongsTo
     {
