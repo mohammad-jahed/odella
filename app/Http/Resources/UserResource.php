@@ -20,6 +20,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $payments
  * @property mixed $programs
  * @property mixed $image
+ * @method subscription()
+ * @method line()
+ * @method position()
+ * @method university()
+ * @method location()
+ * @method payments()
+ * @method programs()
  */
 class UserResource extends JsonResource
 {
@@ -38,13 +45,13 @@ class UserResource extends JsonResource
             "phoneNumber" => $this->phoneNumber,
             "image" => $this->image,
             "expiredSubscriptionDate" => $this->expiredSubscriptionDate,
-            'subscription' => $this->whenLoaded('subscription', new SubscriptionResource($this->subscription)),
-            'line' => $this->whenLoaded('line', new TransportationLineResource($this->line)),
-            'position' => $this->whenLoaded('position', new TransferPositionResource($this->position)),
-            'university' => $this->whenLoaded('university', new UniversityResource($this->university)),
-            'location' => $this->whenLoaded('location', new LocationResource($this->location)),
-            "payments" => $this->whenLoaded("payments", PayResource::collection($this->payments)),
-            "programs" => $this->whenLoaded("programs", ProgramResource::collection($this->programs)),
+            'subscription' => $this->whenLoaded('subscription', new SubscriptionResource($this->subscription()->first())),
+            'line' => $this->whenLoaded('line', new TransportationLineResource($this->line()->first())),
+            'position' => $this->whenLoaded('position', new TransferPositionResource($this->position()->first())),
+            'university' => $this->whenLoaded('university', new UniversityResource($this->university()->first())),
+            'location' => $this->whenLoaded('location', new LocationResource($this->location()->first())),
+            "payments" => $this->whenLoaded("payments", PayResource::collection($this->payments()->get())),
+            "programs" => $this->whenLoaded("programs", ProgramResource::collection($this->programs()->get())),
         ];
     }
 }

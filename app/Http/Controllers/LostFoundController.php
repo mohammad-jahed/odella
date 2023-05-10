@@ -33,6 +33,7 @@ class LostFoundController extends Controller
                 return $this->getJsonResponse(null, "There Are No Lost&Founds Found!");
             }
             $lost_founds = Lost_FoundResource::collection($lost_founds)->response()->getData(true);
+
             return $this->getJsonResponse($lost_founds, "Lost&Founds Fetched Successfully");
 
 
@@ -67,6 +68,7 @@ class LostFoundController extends Controller
             $data['user_id'] = $user->id;
 
             $lost_found = Lost_Found::query()->create($data);
+
             $lost_found = new Lost_FoundResource($lost_found);
 
             return $this->getJsonResponse($lost_found, "Lost&Founds Created Successfully");
@@ -91,7 +93,9 @@ class LostFoundController extends Controller
         $auth = auth()->user();
 
         Gate::forUser($auth)->authorize('viewLost&Found', $lost_found);
+
         $lost_found = new Lost_FoundResource($lost_found);
+
         return $this->getJsonResponse($lost_found, "Lost&Found Fetched Successfully");
     }
 
@@ -108,6 +112,7 @@ class LostFoundController extends Controller
         $auth = auth()->user();
 
         Gate::forUser($auth)->authorize('updateLost&Found', $lost_found);
+
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
@@ -118,6 +123,7 @@ class LostFoundController extends Controller
         }
 
         $lost_found->update($data);
+
         $lost_found = new Lost_FoundResource($lost_found);
 
 

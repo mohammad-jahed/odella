@@ -11,6 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $user
  * @property mixed $image
  * @property mixed $description
+ * @method user()
  */
 class Lost_FoundResource extends JsonResource
 {
@@ -23,10 +24,10 @@ class Lost_FoundResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'trip' => $this->whenLoaded('trip', $this->trip),
-            'user' => $this->whenLoaded('user', new UserResource($this->user)),
+            'description' => $this->description,
             'image' => $this->image,
-            'description' => $this->description
+            'trip' => $this->whenLoaded('trip'),
+            'user' => $this->whenLoaded('user', new UserResource($this->user()->first())),
         ];
     }
 }
