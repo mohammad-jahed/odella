@@ -27,7 +27,7 @@ class Lost_FoundResource extends JsonResource
             'description' => $this->description,
             'image' => $this->image,
             'trip' => $this->whenLoaded('trip'),
-            'user' => $this->whenLoaded('user', new UserResource($this->user()->first())),
+            'user' => new UserResource($this->whenLoaded('user'))
         ];
     }
 }
