@@ -45,13 +45,13 @@ class UserResource extends JsonResource
             "phoneNumber" => $this->phoneNumber,
             "image" => $this->image,
             "expiredSubscriptionDate" => $this->expiredSubscriptionDate,
-            'subscription' => $this->whenLoaded('subscription', new SubscriptionResource($this->subscription()->first())),
-            'line' => $this->whenLoaded('line', new TransportationLineResource($this->line()->first())),
-            'position' => $this->whenLoaded('position', new TransferPositionResource($this->position()->first())),
-            'university' => $this->whenLoaded('university', new UniversityResource($this->university()->first())),
-            'location' => $this->whenLoaded('location', new LocationResource($this->location()->first())),
-            "payments" => $this->whenLoaded("payments", PayResource::collection($this->payments()->get())),
-            "programs" => $this->whenLoaded("programs", ProgramResource::collection($this->programs()->get())),
+            'subscription' => new SubscriptionResource($this->whenLoaded('subscription')),
+            'line' => new TransportationLineResource($this->whenLoaded('line')),
+            'position' => new TransferPositionResource($this->whenLoaded('position')),
+            'university' => new UniversityResource($this->whenLoaded('university')),
+            'location' => new LocationResource($this->whenLoaded('location')),
+            "payments" => new PayResource($this->whenLoaded('payments')),
+            "programs" => new ProgramResource($this->whenLoaded('programs')),
         ];
     }
 }
