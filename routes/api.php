@@ -267,6 +267,12 @@ Route::group([
          */
         Route::get('/trip/returnTrips', [TripController::class, 'getReturnTrips']);
 
+
+        /**
+         * Get all weekly trips
+         */
+        Route::get('/trip/weeklyTrips', [TripController::class, 'getWeeklyStudentTrips']);
+
         /**
          * Resource routes for claims.
          */

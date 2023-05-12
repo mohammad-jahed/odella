@@ -27,7 +27,7 @@ class GenerateTripsCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         //
         /**
@@ -37,9 +37,7 @@ class GenerateTripsCommand extends Command
         $startOfWeek = now()->subWeek()->startOfWeek();
         $endOfWeek = now()->subWeek()->endOfWeek();
         $trips = Trip::query()->whereHas('time',
-            function (Builder $builder) use ($endOfWeek, $startOfWeek) {
-                $builder->whereBetween('date', [$startOfWeek, $endOfWeek]);
-            }
+            fn(Builder $builder) => $builder->whereBetween('date', [$startOfWeek, $endOfWeek])
         )->get();
         foreach ($trips as $trip) {
             $newTrip = $trip->replicate();

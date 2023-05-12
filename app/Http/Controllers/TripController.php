@@ -422,6 +422,23 @@ class TripController extends Controller
 
     }
 
+    public function getWeeklyStudentTrips(): JsonResponse
+    {
+        /**
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+        $startOfWeek = now()->subWeek()->startOfWeek();
+        $endOfWeek = now()->subWeek()->endOfWeek();
+        $trips = $auth->trips()->whereHas('time',
+            fn(Builder $builder) => $builder->whereBetween('date', [$startOfWeek, $endOfWeek])->where('date', '<', now())
+        )->get();
+        $trips = TripResource::collection($trips);
+
+        return $this->getJsonResponse($trips, "Trips Fetched Successfully");
+
+    }
+
     public function getGoTrips(): JsonResponse
     {
         /**
