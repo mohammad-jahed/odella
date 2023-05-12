@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use function Symfony\Component\Translation\t;
 
 class ProgramController extends Controller
 {
@@ -23,15 +22,16 @@ class ProgramController extends Controller
         $user = auth()->user();
 
         if ($user->can('View Programs')) {
-
-            $programs = Program::query()->paginate(10);
-
+            $startOfWeek = now()->subWeek()->startOfWeek();
+            $endOfWeek = now()->subWeek()->endOfWeek();
+            $programs = Program::query()
+                ->whereBetween('created_at',[$startOfWeek, $endOfWeek])
+                ->get();
             if ($programs->isEmpty()) {
-
                 return $this->getJsonResponse(null, "There Are No Programs Found!");
             }
 
-            $programs = ProgramResource::collection($programs)->response()->getData(true);
+            $programs = ProgramResource::collection($programs);
 
             return $this->getJsonResponse($programs, 'Programs Fetched Successfully');
 
