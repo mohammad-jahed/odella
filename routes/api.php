@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Route;
 // Authentication routes
 Route::group([
     'middleware' => ['api', 'set.lang'],
-    'prefix'     => 'auth'
+    'prefix' => 'auth'
 ], function () {
     /**
      * Login route.
@@ -143,7 +143,6 @@ Route::group([
      * Resource routes for days.
      */
     Route::apiResource('/days', DaysController::class);
-
 
 
 // Authenticated routes
@@ -255,7 +254,7 @@ Route::group([
          */
         Route::get('/trips/{trip}/students/{student}', [TripController::class, 'deleteStudent']);
 
-        Route::get('/trips/students/student' , [TripController::class, 'getStudentTrips']);
+        Route::get('/trips/students/student', [TripController::class, 'getStudentTrips']);
 
         /**
          * Get all go trips.
@@ -278,20 +277,27 @@ Route::group([
          */
         Route::apiResource('/claims', ClaimController::class);
 
+
         /**
          * Resource routes for lost&founds.
          */
         Route::apiResource('/lost_found', LostFoundController::class);
 
         /**
+         * Get All Lost&Founds On The Logged In Supervisor Trip
+         */
+
+        Route::get('/lost_founds/supervisor', [LostFoundController::class, 'getLostAndFoundsOnLoggedInSupervisorTrip']);
+
+        /**
          * Adds Evaluation to a specific trip.
          */
-        Route::post('/evaluation/trip/{trip}',[EvaluationController::class,'store']);
+        Route::post('/evaluation/trip/{trip}', [EvaluationController::class, 'store']);
 
         /**
          * Get all Evaluations for a specific trip.
          */
-        Route::get('/evaluation/trip/{trip}',[EvaluationController::class , 'trip_evaluations']);
+        Route::get('/evaluation/trip/{trip}', [EvaluationController::class, 'trip_evaluations']);
 
         /**
          * Resource routes for Evaluations.

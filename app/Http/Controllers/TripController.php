@@ -175,8 +175,7 @@ class TripController extends Controller
     /**
      * Display the specified resource.
      */
-    public
-    function show(Trip $trip)
+    public function show(Trip $trip)
     {
         /**
          * @var User $user ;
@@ -201,8 +200,7 @@ class TripController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public
-    function update(UpdateTripRequest $request, Trip $trip)
+    public function update(UpdateTripRequest $request, Trip $trip)
     {
         /**
          * @var User $user ;
@@ -279,8 +277,7 @@ class TripController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public
-    function destroy(Trip $trip)
+    public function destroy(Trip $trip)
     {
         /**
          * @var User $user ;
@@ -303,8 +300,7 @@ class TripController extends Controller
     /**
      * Adds one or more students to a specific trip.
      */
-    public
-    function addStudents(StoreTripStudentsRequest $request, Trip $trip): JsonResponse
+    public function addStudents(StoreTripStudentsRequest $request, Trip $trip): JsonResponse
     {
         /**
          * @var User $user ;
@@ -427,8 +423,7 @@ class TripController extends Controller
     /**
      * Get all trips for a specific transportation line.
      */
-    public
-    function tripsLine(TransportationLine $transportationLine): JsonResponse
+    public function tripsLine(TransportationLine $transportationLine): JsonResponse
     {
         /**
          * @var User $user ;
@@ -456,8 +451,7 @@ class TripController extends Controller
     }
 
 
-    public
-    function getStudentTrips(): JsonResponse
+    public function getStudentTrips(): JsonResponse
     {
         /**
          * @var User $auth ;
@@ -472,8 +466,7 @@ class TripController extends Controller
 
     }
 
-    public
-    function getWeeklyStudentTrips(): JsonResponse
+    public function getWeeklyStudentTrips(): JsonResponse
     {
         /**
          * @var User $auth ;
@@ -481,7 +474,7 @@ class TripController extends Controller
         $auth = auth()->user();
         $startOfWeek = now()->subWeek()->startOfWeek();
         $endOfWeek = now()->subWeek()->endOfWeek();
-        $trips = $auth->trips()->with(['time','transferPositions'])->whereHas('time',
+        $trips = $auth->trips()->with(['time', 'transferPositions', 'lines', 'busDriver'])->whereHas('time',
             fn(Builder $builder) => $builder->whereBetween('date', [$startOfWeek, $endOfWeek])->where('date', '<', now())
         )->get();
         $trips = TripResource::collection($trips);
@@ -490,8 +483,7 @@ class TripController extends Controller
 
     }
 
-    public
-    function getGoTrips(): JsonResponse
+    public function getGoTrips(): JsonResponse
     {
         /**
          * @var User $auth ;
@@ -516,8 +508,7 @@ class TripController extends Controller
         }
     }
 
-    public
-    function getReturnTrips(): JsonResponse
+    public function getReturnTrips(): JsonResponse
     {
         /**
          * @var User $auth ;
@@ -544,8 +535,7 @@ class TripController extends Controller
     }
 
 
-    public
-    function sendNotification()
+    public function sendNotification()
     {
         return Larafirebase::withTitle('Test Title')
             ->withBody('Test body')

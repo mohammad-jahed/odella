@@ -8,6 +8,7 @@ use App\Http\Resources\Lost_FoundResource;
 use App\Models\Lost_Found;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -147,5 +148,28 @@ class LostFoundController extends Controller
         $lost_found->delete();
 
         return $this->getJsonResponse(null, "Lost&Found Deleted Successfully");
+    }
+
+    public function getLostAndFoundsOnLoggedInSupervisorTrip()
+    {
+        /**
+         * @var User $supervisor
+         */
+        $supervisor = auth()->user();
+        if ($supervisor->hasRole('Supervisor')) {
+            $lost_Founds = Lost_Found::query()->with(['user', 'trip'])->whereHas('trip',
+                fn(Builder $builder) => $builder->whereHas('supervisor',
+                    fn(Builder $builder1) => $builder1->where('id', $supervisor->id)
+                )
+            )->get();
+            if ($lost_Founds->isEmpty()) {
+                return $this->getJsonResponse(null, 'No Lost And Founds Found');
+            }
+            $lost_Founds = Lost_FoundResource::collection($lost_Founds);
+            return $this->getJsonResponse($lost_Founds, "Lost And Founds Fetched Successfully");
+        } else {
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Dont Have Permission To Access This Action");
+        }
     }
 }

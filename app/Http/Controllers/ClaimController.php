@@ -133,6 +133,7 @@ class ClaimController extends Controller
         $claim->delete();
 
         return $this->getJsonResponse(null, "Claim Deleted Successfully");
-
     }
+
+
 }
