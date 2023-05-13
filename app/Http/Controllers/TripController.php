@@ -7,6 +7,7 @@ use App\Http\Requests\Student\StoreTripStudentsRequest;
 use App\Http\Requests\Trip\StoreTripRequest;
 use App\Http\Requests\Trip\UpdateTripRequest;
 use App\Http\Resources\TripResource;
+use App\Models\Day;
 use App\Models\Program;
 use App\Models\Time;
 use App\Models\TransferPosition;
@@ -15,6 +16,7 @@ use App\Models\Trip;
 use App\Models\TripPositionsTimes;
 use App\Models\TripUser;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -108,14 +110,55 @@ class TripController extends Controller
                         TripPositionsTimes::query()->create($data);
                     }
                 }
-
+                /**
+                 * @var Program[] $programs ;
+                 * @var Day $day ;
+                 */
+                $dayName = Carbon::parse($credentials['date'])->format('l');
+                $day = Day::query()->firstWhere('name_en', $dayName);
+                //get all supervisor programs
+                $programs = Program::query()
+                    ->where('user_id', $credentials['supervisor_id'])
+                    ->when($dayName, function ($query, $dayName) {
+                        $query->whereHas('day', fn(Builder $builder) => $builder->where('name_en', $dayName));
+                    })->get();
+                if (!$programs->isEmpty()) {
+                    $addField = true;
+                    foreach ($programs as $program) {
+                        if ($trip->status == TripStatus::GoTrip && $program->start == "00:00:00") {
+                            $program->start = $trip->time->start;
+                            $addField = false;
+                        }
+                        if ($trip->status == TripStatus::ReturnTrip && $program->end == "00:00:00") {
+                            $program->end = $trip->time->start;
+                            $addField = false;
+                        }
+                        $program->save();
+                        if ($addField) {
+                            $data = [
+                                'user_id' => $credentials['supervisor_id'],
+                                'day_id' => $day->id,
+                                ($trip->status == TripStatus::GoTrip ? 'start' : 'end') => $trip->time->start
+                            ];
+                            Program::query()->create($data);
+                        }
+                    }
+                } else {
+                    $data = [
+                        'user_id' => $credentials['supervisor_id'],
+                        'day_id' => $day->id,
+                        ($trip->status == TripStatus::GoTrip ? 'start' : 'end') => $trip->time->start
+                    ];
+                    Program::query()->create($data);
+                }
                 DB::commit();
 
                 $trip = new TripResource($trip);
 
                 return $this->getJsonResponse($trip, "Trip Created Successfully");
 
-            } catch (Exception $exception) {
+            } catch
+            (Exception $exception) {
 
                 DB::rollBack();
 
@@ -132,7 +175,8 @@ class TripController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Trip $trip)
+    public
+    function show(Trip $trip)
     {
         /**
          * @var User $user ;
@@ -157,7 +201,8 @@ class TripController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTripRequest $request, Trip $trip)
+    public
+    function update(UpdateTripRequest $request, Trip $trip)
     {
         /**
          * @var User $user ;
@@ -234,7 +279,8 @@ class TripController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Trip $trip)
+    public
+    function destroy(Trip $trip)
     {
         /**
          * @var User $user ;
@@ -257,7 +303,8 @@ class TripController extends Controller
     /**
      * Adds one or more students to a specific trip.
      */
-    public function addStudents(StoreTripStudentsRequest $request, Trip $trip): JsonResponse
+    public
+    function addStudents(StoreTripStudentsRequest $request, Trip $trip): JsonResponse
     {
         /**
          * @var User $user ;
@@ -322,7 +369,8 @@ class TripController extends Controller
     /**
      * Deletes a specific student from a specific trip.
      */
-    public function deleteStudent(Trip $trip, User $student): JsonResponse
+    public
+    function deleteStudent(Trip $trip, User $student): JsonResponse
     {
         /**
          * @var Program $program ;
@@ -379,7 +427,8 @@ class TripController extends Controller
     /**
      * Get all trips for a specific transportation line.
      */
-    public function tripsLine(TransportationLine $transportationLine): JsonResponse
+    public
+    function tripsLine(TransportationLine $transportationLine): JsonResponse
     {
         /**
          * @var User $user ;
@@ -407,7 +456,8 @@ class TripController extends Controller
     }
 
 
-    public function getStudentTrips(): JsonResponse
+    public
+    function getStudentTrips(): JsonResponse
     {
         /**
          * @var User $auth ;
@@ -422,7 +472,8 @@ class TripController extends Controller
 
     }
 
-    public function getWeeklyStudentTrips(): JsonResponse
+    public
+    function getWeeklyStudentTrips(): JsonResponse
     {
         /**
          * @var User $auth ;
@@ -430,7 +481,7 @@ class TripController extends Controller
         $auth = auth()->user();
         $startOfWeek = now()->subWeek()->startOfWeek();
         $endOfWeek = now()->subWeek()->endOfWeek();
-        $trips = $auth->trips()->whereHas('time',
+        $trips = $auth->trips()->with(['time','transferPositions'])->whereHas('time',
             fn(Builder $builder) => $builder->whereBetween('date', [$startOfWeek, $endOfWeek])->where('date', '<', now())
         )->get();
         $trips = TripResource::collection($trips);
@@ -439,7 +490,8 @@ class TripController extends Controller
 
     }
 
-    public function getGoTrips(): JsonResponse
+    public
+    function getGoTrips(): JsonResponse
     {
         /**
          * @var User $auth ;
@@ -464,7 +516,8 @@ class TripController extends Controller
         }
     }
 
-    public function getReturnTrips(): JsonResponse
+    public
+    function getReturnTrips(): JsonResponse
     {
         /**
          * @var User $auth ;
@@ -491,7 +544,8 @@ class TripController extends Controller
     }
 
 
-    public function sendNotification()
+    public
+    function sendNotification()
     {
         return Larafirebase::withTitle('Test Title')
             ->withBody('Test body')
@@ -504,7 +558,8 @@ class TripController extends Controller
             ->sendNotification('fw36VpKTIa9qWr6wuKzKSx:APA91bGEFLZw81g4tQ-BWrA3VueA3vrgF_VwsCLpCeozrGPTHB14G17sQKmIyw8p-4Zm66rhVkbEQcyZma1P4R-vZkujj9vKR21FHZcz_KKZNToJ188fq8G755oHKK8HdTr8PBfw7dDQ');
     }
 
-    public function test_go_trips_notification()
+    public
+    function test_go_trips_notification()
     {
 
 //        /**
@@ -619,7 +674,8 @@ class TripController extends Controller
     }
 
 
-    public function test_return_trips_notification()
+    public
+    function test_return_trips_notification()
     {
 
         /**

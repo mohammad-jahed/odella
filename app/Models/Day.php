@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property string name_en;
+ * @property integert id;
  */
 class Day extends Model
 {

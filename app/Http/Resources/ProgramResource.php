@@ -2,17 +2,18 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property mixed $day
- * @property mixed $position
+ * @method  Builder position()
  * @property mixed $start
  * @property mixed $end
  * @property mixed $confirmAttendance1
  * @property mixed $confirmAttendance2
  * @property mixed $id
+ * @method Builder day()
  */
 class ProgramResource extends JsonResource
 {
@@ -25,8 +26,8 @@ class ProgramResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            "day" => $this->whenLoaded("day", new DayResource($this->day)),
-            "transfer_position" => $this->whenLoaded("position", new TransferPositionResource($this->position)),
+            "day" => new DayResource($this->whenLoaded('day')),
+            "transfer_position" => new TransferPositionResource($this->whenLoaded('position')),
             "start" => $this->start,
             "end" => $this->end,
             'confirmAttendance1' => $this->confirmAttendance1,

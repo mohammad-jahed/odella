@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Enums\GuestStatus;
 use App\Enums\TripStatus;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -34,9 +33,6 @@ class Trip extends Model
     ];
 
     protected $hidden = [
-        'supervisor_id',
-        'bus_driver_id',
-        'time_id',
         'created_at',
         'updated_at'
     ];

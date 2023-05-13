@@ -22,8 +22,8 @@ class ClaimResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'trip' => $this->whenLoaded('trip', $this->trip),
-            'user' => $this->whenLoaded('user', new UserResource($this->user)),
+            'trip' => new TripResource($this->whenLoaded('trip')),
+            'user' => new UserResource($this->whenLoaded('user')),
             'description' => $this->description
         ];
     }
