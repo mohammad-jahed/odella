@@ -264,7 +264,7 @@ class EmployeeController extends Controller
 
                         $data = [
                             'day_id' => $credentials['day_ids'][$key],
-                            'transfer_position_id' => $credentials['position_ids'][$key],
+                            'transfer_position_id' => $credentials['position_ids'][$value],
                             'start' => $goTime->time,
                             'end' => $returnTrips[$k]->time->start,
                             'user_id' => $user->id
