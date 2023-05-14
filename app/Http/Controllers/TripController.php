@@ -76,7 +76,7 @@ class TripController extends Controller
 
                 $credentials = $request->validated();
 
-                $credentials['status'] = ($credentials['start'] > "07:00" && $credentials['start'] < "11:00") ? 1 : 2;
+                $credentials['status'] = ($credentials['start'] > "07:00" && $credentials['start'] < "11:00") ? TripStatus::GoTrip : TripStatus::ReturnTrip;
                 /**
                  * @var Time $time ;
                  * @var Trip $trip ;
@@ -115,31 +115,41 @@ class TripController extends Controller
                  * @var Day $day ;
                  */
                 $dayName = Carbon::parse($credentials['date'])->format('l');
+
                 $day = Day::query()->firstWhere('name_en', $dayName);
+
                 //get all supervisor programs
                 $programs = Program::query()
                     ->where('user_id', $credentials['supervisor_id'])
                     ->when($dayName, function ($query, $dayName) {
                         $query->whereHas('day', fn(Builder $builder) => $builder->where('name_en', $dayName));
                     })->get();
+
                 if (!$programs->isEmpty()) {
+
                     $addField = true;
+
                     foreach ($programs as $program) {
+
                         if ($trip->status == TripStatus::GoTrip && $program->start == "00:00:00") {
                             $program->start = $trip->time->start;
                             $addField = false;
                         }
+
                         if ($trip->status == TripStatus::ReturnTrip && $program->end == "00:00:00") {
                             $program->end = $trip->time->start;
                             $addField = false;
                         }
+
                         $program->save();
+
                         if ($addField) {
                             $data = [
                                 'user_id' => $credentials['supervisor_id'],
                                 'day_id' => $day->id,
                                 ($trip->status == TripStatus::GoTrip ? 'start' : 'end') => $trip->time->start
                             ];
+
                             Program::query()->create($data);
                         }
                     }
@@ -149,16 +159,17 @@ class TripController extends Controller
                         'day_id' => $day->id,
                         ($trip->status == TripStatus::GoTrip ? 'start' : 'end') => $trip->time->start
                     ];
+
                     Program::query()->create($data);
                 }
+
                 DB::commit();
 
                 $trip = new TripResource($trip);
 
                 return $this->getJsonResponse($trip, "Trip Created Successfully");
 
-            } catch
-            (Exception $exception) {
+            } catch (Exception $exception) {
 
                 DB::rollBack();
 
@@ -213,6 +224,42 @@ class TripController extends Controller
 
             $data = [];
 
+            $dayName = Carbon::parse($trip->time->date)->format('l');
+            /**
+             * @var Day $day ;
+             */
+            $day = Day::query()->firstWhere('name_en', $dayName);
+
+            $oldSupervisor = $trip->supervisor;
+
+            $oldSupervisorProgram = $oldSupervisor->programs()
+                ->where('day_id', $day->id)
+                ->where(($trip->status == TripStatus::GoTrip ? 'start' : 'end'), $trip->time->start)
+                ->first();
+
+            if (isset($credentials['supervisor_id'])){
+
+                $oldSupervisorProgram->delete();
+
+                $dayName1 = Carbon::parse(($credentials['date'] ?? $trip->time->date))->format('l');
+                /**
+                 * @var Day $day1 ;
+                 */
+                $day1 = Day::query()->firstWhere('name_en', $dayName1);
+
+                if (isset($credentials['status'])) {
+
+                    $ptime = ($credentials['status'] == TripStatus::GoTrip ? 'start' : 'end');
+                }
+
+                Program::query()->create([
+                    'user_id' => $credentials['supervisor_id'],
+                    'day_id' => $day1->id,
+                    ($ptime ?? $trip->status == TripStatus::GoTrip ? 'start' : 'end')
+                    => ($credentials['start'] ?? $trip->time->start)
+                ]);
+            }
+
             if (isset($credentials['start'])) {
 
                 $data += ['start' => $credentials['start']];
@@ -234,6 +281,22 @@ class TripController extends Controller
 
             $trip->update($credentials);
 
+            if (! isset($credentials['supervisor_id'])){
+
+                $dayName1 = Carbon::parse(($credentials['date'] ?? $trip->time->date))->format('l');
+                /**
+                 * @var Day $day1 ;
+                 */
+                $day1 = Day::query()->firstWhere('name_en', $dayName1);
+
+                $newProgramData =[
+                    'day_id' => $day1->id,
+                    ($trip->status == TripStatus::GoTrip ? 'start' : 'end') => $trip->time->start
+                ];
+
+                $oldSupervisorProgram->update($newProgramData);
+            }
+
             if (isset($credentials['line_id'])) {
 
                 $line = TransportationLine::query()->where('id', $credentials['line_id'])->first();
@@ -244,6 +307,11 @@ class TripController extends Controller
             if (isset($credentials['position_ids']) && isset($credentials['time'])) {
 
                 $transportationTimes = TripPositionsTimes::query()->where('trip_id', $trip->id)->get();
+
+                $users_ids = $trip->users()->pluck('user_id');
+
+                $programs = Program::query()->whereIn('user_id', $users_ids)
+                    ->where('day_id', $day->id)->get();
 
                 for ($i = 0; $i < sizeof($credentials['position_ids']); $i++) {
 
@@ -258,6 +326,14 @@ class TripController extends Controller
                             ];
 
                             $transportationTimes[$i]->update($data);
+
+                            foreach ($programs as $program) {
+                                if ($program->transfer_position_id == $data['position_id']) {
+                                    $program->update([
+                                        ($trip->status == TripStatus::GoTrip ? 'start' : 'end') => $data['time']
+                                    ]);
+                                }
+                            }
                         }
                     }
                 }
@@ -472,11 +548,17 @@ class TripController extends Controller
          * @var User $auth ;
          */
         $auth = auth()->user();
+
         $startOfWeek = now()->subWeek()->startOfWeek();
+
         $endOfWeek = now()->subWeek()->endOfWeek();
-        $trips = $auth->trips()->with(['time', 'transferPositions', 'lines', 'busDriver'])->whereHas('time',
-            fn(Builder $builder) => $builder->whereBetween('date', [$startOfWeek, $endOfWeek])->where('date', '<', now())
+
+        $trips = $auth->trips()->with(['time', 'transferPositions', 'lines', 'busDriver'])
+            ->whereHas('time', fn(Builder $builder)
+            => $builder->whereBetween('date', [$startOfWeek, $endOfWeek])
+                ->where('date', '<', now())
         )->get();
+
         $trips = TripResource::collection($trips);
 
         return $this->getJsonResponse($trips, "Trips Fetched Successfully");
