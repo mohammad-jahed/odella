@@ -17,7 +17,7 @@ class DaySeeder extends Seeder
             ['name_ar' => 'الاثنين', 'name_en' => 'Monday'],
             ['name_ar' => 'الثلاثاء', 'name_en' => 'Tuesday'],
             ['name_ar' => 'الاربعاء', 'name_en' => 'Wednesday'],
-            ['name_ar' => 'الخميس', 'name_en' => 'Wednesday'],
+            ['name_ar' => 'الخميس', 'name_en' => 'Thursday'],
             ['name_ar' => 'الجمعة', 'name_en' => 'Friday'],
             ['name_ar' => 'السبت', 'name_en' => 'Saturday'],
             ['name_ar' => 'الاحد', 'name_en' => 'Sunday'],
