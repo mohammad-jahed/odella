@@ -33,13 +33,15 @@ class StudentController extends Controller
 
         if ($user->can('View Student')) {
 
-            $students = User::role('Student')->paginate(10);
+            $students = User::role('Student')
+                ->with(['subscription', 'line', 'position', 'university', 'location', 'payments'])
+                ->paginate(10);
 
             if ($students->isEmpty()) {
 
                 return $this->getJsonResponse(null, "There Are No Students Found!");
             }
-
+            $students = UserResource::collection($students)->response()->getData(true);
             return $this->getJsonResponse($students, "Students Fetched Successfully");
 
         } else {
@@ -68,6 +70,7 @@ class StudentController extends Controller
         $user = auth()->user();
 
         if ($user->can('View Student')) {
+            $student->load(['subscription', 'line', 'position', 'university', 'location', 'payments']);
             $student = new UserResource($student);
             return $this->getJsonResponse($student, "Student Fetched Successfully");
 
@@ -108,7 +111,7 @@ class StudentController extends Controller
             $student->location->update($locationData);
 
             $student->update($credentials);
-
+            $student->load(['subscription', 'line', 'position', 'university', 'location', 'payments']);
             $student = new UserResource($student);
 
 
