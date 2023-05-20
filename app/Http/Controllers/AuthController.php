@@ -206,7 +206,7 @@ class AuthController extends Controller
 
             if (!$user) {
 
-                return $this->getJsonResponse(null, "User Not Found");
+                return $this->getJsonResponse(null, "User Not Found",0);
             }
 
             $code = ConfirmationCode::query()->where('user_id', $user->id)
@@ -217,7 +217,7 @@ class AuthController extends Controller
 
             if (!$code) {
 
-                return $this->getJsonResponse(null, "Wrong Code!");
+                return $this->getJsonResponse(null, "Wrong Code!", 0);
             }
 
             DB::beginTransaction();
