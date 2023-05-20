@@ -11,6 +11,7 @@ use App\Models\Location;
 use App\Models\Pay;
 use App\Models\Program;
 use App\Models\Subscription;
+use App\Models\TransferPosition;
 use App\Models\Trip;
 use App\Models\TripPositionsTimes;
 use App\Models\User;
@@ -243,7 +244,7 @@ class EmployeeController extends Controller
                  * @var Trip[] $trips ;
                  * @var Trip[] $goTrips ;
                  * @var Trip[] $returnTrips ;
-                 * @var TripPositionsTimes $goTime ;
+                 * @var TripPositionsTimes[] $goTimes ;
                  * @var TripPositionsTimes $returnTime ;
                  */
                 $trips = $user->trips;
@@ -258,18 +259,24 @@ class EmployeeController extends Controller
 
                     foreach (array_intersect_key($goTrips, $returnTrips) as $k => $v) {
 
-                        $firstPosition = $goTrips[$k]->transferPositions()->first();
-
-                        $goTime = TripPositionsTimes::query()->where('position_id', $firstPosition->id)->first();
-
+                        $positions = $goTrips[$k]->transferPositions()->get();
+                        /**
+                         * @var TransferPosition $position;
+                         */
+                        foreach ($positions as $position){
+                            $tripPositionTime = TripPositionsTimes::query()->where('position_id', $position->id)->first();
+                            $goTimes[] = $tripPositionTime;
+                        }
                         $data = [
                             'day_id' => $credentials['day_ids'][$key],
-                            'transfer_position_id' => $credentials['position_ids'][$value],
-                            'start' => $goTime->time,
+                            'transfer_position_id' => $credentials['position_ids'][$key],
+                            'start' => $goTimes[$key]->time,
                             'end' => $returnTrips[$k]->time->start,
                             'user_id' => $user->id
                         ];
                         Program::query()->create($data);
+
+
                     }
                 }
                 $pay = Pay::query()->create($credentials);
