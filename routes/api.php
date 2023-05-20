@@ -199,10 +199,7 @@ Route::group([
          */
         Route::get('/supervisor/deny/{reservation}', [SupervisorController::class, 'denyReservation']);
 
-        /**
-         * Get the current trip for the current supervisor.
-         */
-        Route::post('/supervisor/trip',[SupervisorController::class,'supervisor_current_trip']);
+
 
         /**
          * Retrieves the daily reservation for a specific trip.
@@ -276,6 +273,11 @@ Route::group([
          * Get all weekly trips
          */
         Route::get('/trip/weeklyTrips', [TripController::class, 'getWeeklyStudentTrips']);
+
+        /**
+         * Get the current trip for the current supervisor.
+         */
+        Route::post('/supervisor/trip',[TripController::class,'supervisor_current_trip']);
 
         /**
          * Resource routes for claims.
