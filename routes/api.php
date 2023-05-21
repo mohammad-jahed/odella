@@ -160,6 +160,11 @@ Route::group([
         Route::post('/employees/confirmRegistration/{user}', [EmployeeController::class, 'confirmRegistration']);
 
         /**
+         * Update Student Subscription By Employee
+         */
+        Route::put('/employees/subscriptions/{student}', [EmployeeController::class, 'updateStudentSubscription']);
+
+        /**
          * Resource routes for students.
          */
         Route::apiResource('/students', StudentController::class);

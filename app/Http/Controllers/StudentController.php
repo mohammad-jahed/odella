@@ -269,28 +269,6 @@ class StudentController extends Controller
 
         Gate::forUser($auth)->authorize('getStudentsInPosition', $trip);
 
-//        $students = $trip->users;
-//
-//        $users = [];
-//
-//        foreach ($students as $student) {
-//
-//            $users += [
-//                'students' => $student->whereHas(
-//                    "programs",
-//                    function ($query) use ($position) {
-//                        $query
-//                            ->where("transfer_position_id", $position->id)
-//                            ->where('confirmAttendance1', true);
-//                    }
-//                )->get()
-//            ];
-//        }
-//
-//        $users += ['studentsNumber' => sizeof($users) + 1];
-//
-//        return $this->getJsonResponse($users, "Students Fetched Successfully");
-//    }
         $users = $trip->users()->whereHas('programs', function ($query) use ($position) {
             $query->where('transfer_position_id', $position->id)->where('confirmAttendance1', true);
         })->with(['university'])->get();
@@ -304,4 +282,5 @@ class StudentController extends Controller
 
         return $this->getJsonResponse($usersArray, "Students fetched successfully");
     }
+
 }

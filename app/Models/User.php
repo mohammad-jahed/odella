@@ -31,6 +31,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property mixed $firstName
  * @property mixed $lastName
  * @property Date $expiredSubscriptionDate
+ * @property int $subscription_id
  */
 class User extends Authenticatable implements JWTSubject
 {

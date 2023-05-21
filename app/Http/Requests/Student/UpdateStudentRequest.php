@@ -43,7 +43,6 @@ class UpdateStudentRequest extends FormRequest
             ],
             'newPassword' => ['bail', 'string', 'min:6', 'max:256', 'confirmed'],
             'phoneNumber' => ['bail', 'numeric', 'min:10'],
-            'subscription_id' => [Rule::exists('subscriptions', 'id')],
             'transportation_line_id' => [Rule::exists('transportation_lines', 'id')],
             'transfer_position_id' => [Rule::exists('transfer_positions', 'id')],
             'university_id' => [Rule::exists('universities', 'id')],

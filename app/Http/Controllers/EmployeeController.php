@@ -6,6 +6,7 @@ use App\Enums\Status;
 use App\Http\Requests\Employee\ConfirmRegistrationRequest;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
 use App\Http\Requests\Employee\UpdateEmployeeRequest;
+use App\Http\Requests\Employee\UpdateStudentSubscriptionRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Location;
 use App\Models\Pay;
@@ -261,9 +262,9 @@ class EmployeeController extends Controller
 
                         $positions = $goTrips[$k]->transferPositions()->get();
                         /**
-                         * @var TransferPosition $position;
+                         * @var TransferPosition $position ;
                          */
-                        foreach ($positions as $position){
+                        foreach ($positions as $position) {
                             $tripPositionTime = TripPositionsTimes::query()->where('position_id', $position->id)->first();
                             $goTimes[] = $tripPositionTime;
                         }
@@ -302,6 +303,34 @@ class EmployeeController extends Controller
 
             abort(Response::HTTP_UNAUTHORIZED
                 , "Unauthorized , You Dont Have Permission To Access This Action");
+        }
+    }
+
+    /**
+     * Update Student Subscription Information
+     */
+
+    public function updateStudentSubscription(UpdateStudentSubscriptionRequest $request, User $student)
+    {
+        /**
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+        if ($auth->hasRole('Employee')) {
+            $data = $request->validated();
+            if(isset($data['subscription_id'])){
+                $student->subscription_id = $data['subscription_id'];
+            }
+            if(isset($data['expiredSubscriptionDate'])){
+                $student->expiredSubscriptionDate = $data['expiredSubscriptionDate'];
+            }
+            $student->save();
+            $student->load(['subscription', 'line', 'position', 'university', 'location']);
+            $student = new UserResource($student);
+            return $this->getJsonResponse($student, "Student Updated Successfully");
+        } else {
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Don't Have Permission To Access This Action");
         }
     }
 
