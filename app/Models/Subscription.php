@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property int $daysNumber;
  * @property string name;
+ * @property float $price;
  */
 class Subscription extends Model
 {

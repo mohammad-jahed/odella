@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Enums\Status;
 use App\Http\Requests\Employee\ConfirmRegistrationRequest;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
+use App\Http\Requests\Employee\StudentPaymentRequest;
 use App\Http\Requests\Employee\UpdateEmployeeRequest;
 use App\Http\Requests\Employee\UpdateStudentSubscriptionRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Location;
 use App\Models\Pay;
+use App\Models\Payment;
 use App\Models\Program;
 use App\Models\Subscription;
 use App\Models\TransferPosition;
@@ -280,9 +282,17 @@ class EmployeeController extends Controller
 
                     }
                 }
+                /**
+                 * @var Pay $pay ;
+                 */
                 $pay = Pay::query()->create($credentials);
 
-                $user->payments()->attach($pay);
+                $user->pays()->attach($pay,
+                    [
+                        'subscription_id' => $user->subscription_id,
+                        'isFinished' => $pay->amount == $user->subscription->price
+                    ]
+                );
 
                 $user->update(['status' => Status::Active]);
 
@@ -318,16 +328,57 @@ class EmployeeController extends Controller
         $auth = auth()->user();
         if ($auth->hasRole('Employee')) {
             $data = $request->validated();
-            if(isset($data['subscription_id'])){
+            if (isset($data['subscription_id'])) {
                 $student->subscription_id = $data['subscription_id'];
             }
-            if(isset($data['expiredSubscriptionDate'])){
+            if (isset($data['expiredSubscriptionDate'])) {
                 $student->expiredSubscriptionDate = $data['expiredSubscriptionDate'];
+                $student->status = Status::Active;
             }
             $student->save();
             $student->load(['subscription', 'line', 'position', 'university', 'location']);
             $student = new UserResource($student);
             return $this->getJsonResponse($student, "Student Updated Successfully");
+        } else {
+            abort(Response::HTTP_UNAUTHORIZED
+                , "Unauthorized , You Don't Have Permission To Access This Action");
+        }
+    }
+
+    /**
+     * Add Student Payment
+     */
+
+    public function addingStudentPayment(StudentPaymentRequest $request, User $student)
+    {
+        /**
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+        if ($auth->hasRole('Employee')) {
+            $data = $request->validated();
+            /**
+             * @var Pay $pay ;
+             */
+            $pay = Pay::query()->create($data);
+
+            /**
+             * @var Payment $payment;
+             */
+            $totalPrice = 0;
+            $payments = $student->payments;
+            foreach ($payments as $payment){
+                if($payment->subscription_id == $student->subscription_id){
+                    $totalPrice += $payment->pay->amount;
+                }
+            }
+            $student->pays()->attach($pay,
+                [
+                    'subscription_id' => $student->subscription_id,
+                    'isFinished' => $totalPrice == $student->subscription->price
+                ]
+            );
+            return $this->getJsonResponse($student, "Payment Added Successfully");
         } else {
             abort(Response::HTTP_UNAUTHORIZED
                 , "Unauthorized , You Don't Have Permission To Access This Action");

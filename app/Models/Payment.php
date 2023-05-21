@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property Pay $pay
+ * @property mixed $subscription_id
+ */
 class Payment extends Model
 {
     use HasFactory;
@@ -23,7 +27,7 @@ class Payment extends Model
 
     public function pay(): BelongsTo
     {
-        return $this->belongsTo(Pay::class);
+        return $this->belongsTo(Pay::class, 'pay_id');
     }
 
 }

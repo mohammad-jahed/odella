@@ -165,6 +165,10 @@ Route::group([
         Route::put('/employees/subscriptions/{student}', [EmployeeController::class, 'updateStudentSubscription']);
 
         /**
+         * Adding Student Payment
+         */
+        Route::post('/employees/payments/{student}',[EmployeeController::class,'addingStudentPayment']);
+        /**
          * Resource routes for students.
          */
         Route::apiResource('/students', StudentController::class);

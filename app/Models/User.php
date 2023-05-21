@@ -22,7 +22,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property integer $id;
  * @property integer $status;
  * @property mixed $location;
- * @property mixed $subscription;
+ * @property Subscription $subscription;
  * @property mixed $programs;
  * @property Trip[] $trips;
  * @property mixed $fcm_token
@@ -32,6 +32,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property mixed $lastName
  * @property Date $expiredSubscriptionDate
  * @property int $subscription_id
+ * @property mixed $payments
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -121,9 +122,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(TransferPosition::class, 'transfer_position_id');
     }
 
-    public function payments(): BelongsToMany
+    public function pays(): BelongsToMany
     {
-        return $this->belongsToMany(Pay::class, 'payments', 'user_id', 'pay_id');
+        return
+            $this->belongsToMany(Pay::class, 'payments', 'user_id', 'pay_id')
+                ->withPivot(['subscription_id', 'isFinished']);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
     }
 
     public function programs(): HasMany
@@ -151,6 +159,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Lost_Found::class);
     }
+
     public function evaluations(): HasMany
     {
         return $this->hasMany(Evaluation::class);
