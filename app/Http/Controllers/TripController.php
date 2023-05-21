@@ -554,7 +554,7 @@ class TripController extends Controller
 
         $endOfWeek = now()->subWeek()->endOfWeek();
 
-        $trips = $auth->trips()->with(['time', 'transferPositions', 'lines', 'busDriver'])
+        $trips = $auth->trips()->with(['time','busDriver'])
             ->whereHas('time', fn(Builder $builder)
             => $builder->whereBetween('date', [$startOfWeek, $endOfWeek])
                 ->where('date', '<', now())

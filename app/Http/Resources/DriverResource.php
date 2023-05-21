@@ -28,7 +28,7 @@ class DriverResource extends JsonResource
             "firstname" => $this->firstname,
             "lastname" => $this->lastname,
             "number" => $this->number,
-            "buses" => $this->whenLoaded("buses", BusResource::collection($this->buses))
+            "buses" => BusResource::collection($this->whenLoaded('buses'))
         ];
     }
 }
