@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Messages;
 use App\Enums\TripStatus;
 use App\Http\Requests\Student\StoreTripStudentsRequest;
 use App\Http\Requests\Supervisor\SupervisorTripRequest;
@@ -54,8 +55,7 @@ class TripController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -174,13 +174,12 @@ class TripController extends Controller
 
                 DB::rollBack();
 
-                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
             }
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -204,8 +203,7 @@ class TripController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -221,134 +219,150 @@ class TripController extends Controller
 
         if ($user->can('Update Trip')) {
 
-            $credentials = $request->validated();
+        try {
 
-            $data = [];
+            DB::beginTransaction();
 
-            $dayName = Carbon::parse($trip->time->date)->format('l');
-            /**
-             * @var Day $day ;
-             */
-            $day = Day::query()->firstWhere('name_en', $dayName);
+                $credentials = $request->validated();
 
-            $oldSupervisor = $trip->supervisor;
+                $data = [];
 
-            $oldSupervisorProgram = $oldSupervisor->programs()
-                ->where('day_id', $day->id)
-                ->where(($trip->status == TripStatus::GoTrip ? 'start' : 'end'), $trip->time->start)
-                ->first();
-
-            if (isset($credentials['supervisor_id'])){
-
-                $oldSupervisorProgram->delete();
-
-                $dayName1 = Carbon::parse(($credentials['date'] ?? $trip->time->date))->format('l');
+                $dayName = Carbon::parse($trip->time->date)->format('l');
                 /**
-                 * @var Day $day1 ;
+                 * @var Day $day ;
                  */
-                $day1 = Day::query()->firstWhere('name_en', $dayName1);
+                $day = Day::query()->firstWhere('name_en', $dayName);
 
-                if (isset($credentials['status'])) {
+                $oldSupervisor = $trip->supervisor;
 
-                    $ptime = ($credentials['status'] == TripStatus::GoTrip ? 'start' : 'end');
+                $oldSupervisorProgram = $oldSupervisor->programs()
+                    ->where('day_id', $day->id)
+                    ->where(($trip->status == TripStatus::GoTrip ? 'start' : 'end'), $trip->time->start)
+                    ->first();
+
+                if (isset($credentials['supervisor_id'])){
+
+                    $oldSupervisorProgram->delete();
+
+                    $dayName1 = Carbon::parse(($credentials['date'] ?? $trip->time->date))->format('l');
+                    /**
+                     * @var Day $day1 ;
+                     */
+                    $day1 = Day::query()->firstWhere('name_en', $dayName1);
+
+                    if (isset($credentials['status'])) {
+
+                        $ptime = ($credentials['status'] == TripStatus::GoTrip ? 'start' : 'end');
+                    }
+
+                    Program::query()->create([
+                        'user_id' => $credentials['supervisor_id'],
+                        'day_id' => $day1->id,
+                        ($ptime ?? $trip->status == TripStatus::GoTrip ? 'start' : 'end')
+                        => ($credentials['start'] ?? $trip->time->start)
+                    ]);
                 }
 
-                Program::query()->create([
-                    'user_id' => $credentials['supervisor_id'],
-                    'day_id' => $day1->id,
-                    ($ptime ?? $trip->status == TripStatus::GoTrip ? 'start' : 'end')
-                    => ($credentials['start'] ?? $trip->time->start)
-                ]);
-            }
+                if (isset($credentials['start'])) {
 
-            if (isset($credentials['start'])) {
+                    $data += ['start' => $credentials['start']];
 
-                $data += ['start' => $credentials['start']];
+                    $credentials['status'] = ($credentials['start'] > "07:00" && $credentials['start'] < "11:00") ? 1 : 2;
 
-                $credentials['status'] = ($credentials['start'] > "07:00" && $credentials['start'] < "11:00") ? 1 : 2;
+                }
 
-            }
+                if (isset($credentials['date'])) {
 
-            if (isset($credentials['date'])) {
+                    $data += ['date' => $credentials['date']];
+                }
 
-                $data += ['date' => $credentials['date']];
-            }
+                $time = $trip->time;
 
-            $time = $trip->time;
+                $trip->load(['supervisor', 'lines', 'transferPositions', 'users', 'busDriver']);
 
-            $trip->load(['supervisor', 'lines', 'transferPositions', 'users', 'busDriver']);
+                $time->update($data);
 
-            $time->update($data);
+                $trip->update($credentials);
 
-            $trip->update($credentials);
+                if (! isset($credentials['supervisor_id'])){
 
-            if (! isset($credentials['supervisor_id'])){
+                    $dayName1 = Carbon::parse(($credentials['date'] ?? $trip->time->date))->format('l');
+                    /**
+                     * @var Day $day1 ;
+                     */
+                    $day1 = Day::query()->firstWhere('name_en', $dayName1);
 
-                $dayName1 = Carbon::parse(($credentials['date'] ?? $trip->time->date))->format('l');
-                /**
-                 * @var Day $day1 ;
-                 */
-                $day1 = Day::query()->firstWhere('name_en', $dayName1);
+                    $newProgramData =[
+                        'day_id' => $day1->id,
+                        ($trip->status == TripStatus::GoTrip ? 'start' : 'end') => $trip->time->start
+                    ];
 
-                $newProgramData =[
-                    'day_id' => $day1->id,
-                    ($trip->status == TripStatus::GoTrip ? 'start' : 'end') => $trip->time->start
-                ];
+                    $oldSupervisorProgram->update($newProgramData);
+                }
 
-                $oldSupervisorProgram->update($newProgramData);
-            }
+                if (isset($credentials['line_id'])) {
 
-            if (isset($credentials['line_id'])) {
+                    $line = TransportationLine::query()->where('id', $credentials['line_id'])->first();
 
-                $line = TransportationLine::query()->where('id', $credentials['line_id'])->first();
+                    $trip->lines()->sync($line);
+                }
 
-                $trip->lines()->sync($line);
-            }
+                if (isset($credentials['position_ids']) && isset($credentials['time'])) {
 
-            if (isset($credentials['position_ids']) && isset($credentials['time'])) {
+                    $transportationTimes = TripPositionsTimes::query()->where('trip_id', $trip->id)->get();
 
-                $transportationTimes = TripPositionsTimes::query()->where('trip_id', $trip->id)->get();
+                    $users_ids = $trip->users()->pluck('user_id');
 
-                $users_ids = $trip->users()->pluck('user_id');
+                    $programs = Program::query()->whereIn('user_id', $users_ids)
+                        ->where('day_id', $day->id)->get();
 
-                $programs = Program::query()->whereIn('user_id', $users_ids)
-                    ->where('day_id', $day->id)->get();
+                    for ($i = 0; $i < sizeof($credentials['position_ids']); $i++) {
 
-                for ($i = 0; $i < sizeof($credentials['position_ids']); $i++) {
+                        for ($j = 0; $j < sizeof($credentials['time']); $j++) {
 
-                    for ($j = 0; $j < sizeof($credentials['time']); $j++) {
+                            if ($i == $j) {
 
-                        if ($i == $j) {
+                                $data = [
+                                    'position_id' => $credentials['position_ids'][$i],
+                                    'time' => $credentials['time'][$j],
+                                    'trip_id' => $trip->id
+                                ];
 
-                            $data = [
-                                'position_id' => $credentials['position_ids'][$i],
-                                'time' => $credentials['time'][$j],
-                                'trip_id' => $trip->id
-                            ];
+                                $transportationTimes[$i]->update($data);
 
-                            $transportationTimes[$i]->update($data);
-
-                            foreach ($programs as $program) {
-                                if ($program->transfer_position_id == $data['position_id']) {
-                                    $program->update([
-                                        ($trip->status == TripStatus::GoTrip ? 'start' : 'end') => $data['time']
-                                    ]);
+                                foreach ($programs as $program) {
+                                    if ($program->transfer_position_id == $data['position_id']) {
+                                        $program->update([
+                                            ($trip->status == TripStatus::GoTrip ? 'start' : 'end') => $data['time']
+                                        ]);
+                                    }
                                 }
                             }
                         }
                     }
+
                 }
 
-            }
-            $trip = new TripResource($trip);
+                DB::commit();
 
-            return $this->getJsonResponse($trip, "Trip Updated Successfully");
+                $trip = new TripResource($trip);
+
+                return $this->getJsonResponse($trip, "Trip Updated Successfully");
+
+            }
+
+        catch (Exception $exception){
+
+            DB::rollBack();
+
+            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
+        }
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
+
     }
 
     /**
@@ -369,8 +383,7 @@ class TripController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -386,56 +399,71 @@ class TripController extends Controller
 
         if ($user->hasRole('Employee')) {
 
-            $data = $request->validated();
+            try {
 
-            $trip->users()->attach($data['student_ids']);
+                DB::beginTransaction();
 
-            $day = $trip->time->date->format('l');
+                $data = $request->validated();
 
-            foreach ($data['student_ids'] as $student_id) {
-                /**
-                 * @var User $student ;
-                 * @var Program $program ;
-                 * @var TripPositionsTimes $goTime ;
-                 */
-                $student = User::query()->where('id', $student_id)->first();
+                $trip->users()->attach($data['student_ids']);
 
-                $programs = $student->programs;
+                $day = $trip->time->date->format('l');
 
-                foreach ($programs as $program) {
+                foreach ($data['student_ids'] as $student_id) {
+                    /**
+                     * @var User $student ;
+                     * @var Program $program ;
+                     * @var TripPositionsTimes $goTime ;
+                     */
+                    $student = User::query()->where('id', $student_id)->first();
 
-                    if ($program->day->name_en == $day) {
+                    $programs = $student->programs;
 
-                        $firstPosition = $trip->transferPositions()->first();
+                    foreach ($programs as $program) {
 
-                        $goTime = TripPositionsTimes::query()->where('position_id', $firstPosition->id)->first();
+                        if ($program->day->name_en == $day) {
 
-                        if ($trip->status == 1) {
+                            $firstPosition = $trip->transferPositions()->first();
 
-                            $attributes = [
-                                'start' => $goTime->time
-                            ];
-                        } else {
+                            $goTime = TripPositionsTimes::query()->where('position_id', $firstPosition->id)->first();
 
-                            $attributes = [
-                                'end' => $trip->time->start
-                            ];
+                            if ($trip->status == 1) {
+
+                                $attributes = [
+                                    'start' => $goTime->time
+                                ];
+                            } else {
+
+                                $attributes = [
+                                    'end' => $trip->time->start
+                                ];
+                            }
+
+                            $program->update($attributes);
                         }
-
-                        $program->update($attributes);
                     }
                 }
+
+                DB::commit();
+
+                $trip->load('users');
+
+                $trip = new TripResource($trip);
+
+                return $this->getJsonResponse($trip, 'Students Added Successfully To This Trip');
+
             }
-            $trip->load('users');
 
-            $trip = new TripResource($trip);
+            catch (Exception $exception)
+            {
+                DB::rollBack();
 
-            return $this->getJsonResponse($trip, 'Students Added Successfully To This Trip');
+                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
+            }
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -453,47 +481,60 @@ class TripController extends Controller
 
         if ($user->hasRole('Employee')) {
 
-            $day = $trip->time->date->format('l');
+            try {
 
-            $programs = $student->programs;
+                DB::beginTransaction();
 
-            foreach ($programs as $program) {
+                $day = $trip->time->date->format('l');
 
-                if ($program->day->name_en == $day) {
+                $programs = $student->programs;
 
-                    if ($trip->status == 0) {
+                foreach ($programs as $program) {
 
-                        $attributes = [
-                            'start' => '00:00:00'
-                        ];
-                    } else {
+                    if ($program->day->name_en == $day) {
 
-                        $attributes = [
-                            'end' => '00:00:00'
-                        ];
-                    }
+                        if ($trip->status == 0) {
 
-                    $program->update($attributes);
+                            $attributes = [
+                                'start' => '00:00:00'
+                            ];
+                        } else {
 
-                    if ($program->start == '00:00:00' && $program->end == '00:00:00') {
+                            $attributes = [
+                                'end' => '00:00:00'
+                            ];
+                        }
 
-                        $program->delete();
+                        $program->update($attributes);
+
+                        if ($program->start == '00:00:00' && $program->end == '00:00:00') {
+
+                            $program->delete();
+                        }
                     }
                 }
+
+                TripUser::query()->where('user_id', $student->id)->delete();
+
+                DB::commit();
+
+                $trip->load('users');
+
+                $trip = new TripResource($trip);
+
+                return $this->getJsonResponse($trip, "Student Deleted Successfully");
+
             }
+            catch (Exception $exception)
+            {
+                DB::rollBack();
 
-            TripUser::query()->where('user_id', $student->id)->delete();
-
-            $trip->load('users');
-
-            $trip = new TripResource($trip);
-
-            return $this->getJsonResponse($trip, "Student Deleted Successfully");
+                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
+            }
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -515,14 +556,14 @@ class TripController extends Controller
 
                 return $this->getJsonResponse(null, "There Are No Trips Found!");
             }
+
             $trips = TripResource::collection($trips);
 
             return $this->getJsonResponse($trips, "Trips Fetched Successfully");
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
 
     }
@@ -585,9 +626,9 @@ class TripController extends Controller
             $trips = TripResource::collection($trips)->response()->getData(true);
 
             return $this->getJsonResponse($trips, "Go Trips Fetched Successfully!!");
+
         } else {
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -612,8 +653,7 @@ class TripController extends Controller
             return $this->getJsonResponse($trips, "Return Trips Fetched Successfully!!");
 
         } else {
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
