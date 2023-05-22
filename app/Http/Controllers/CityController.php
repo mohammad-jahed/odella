@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Messages;
 use App\Http\Requests\City\StoreCityRequest;
 use App\Http\Requests\City\UpdateCityRequest;
 use App\Models\City;
@@ -22,6 +23,7 @@ class CityController extends Controller
 
             return $this->getJsonResponse(null, "There Are No Cities Found!");
         }
+
         return $this->getJsonResponse($cities, "Cities Fetched Successfully");
     }
 
@@ -47,8 +49,7 @@ class CityController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -84,8 +85,7 @@ class CityController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -109,8 +109,7 @@ class CityController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 

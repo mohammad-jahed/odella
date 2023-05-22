@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Messages;
 use App\Enums\Status;
 use App\Http\Requests\Student\ConfirmAttendanceRequest;
 use App\Http\Requests\Student\UpdateStudentRequest;
@@ -41,12 +42,13 @@ class StudentController extends Controller
 
                 return $this->getJsonResponse(null, "There Are No Students Found!");
             }
+
             $students = UserResource::collection($students)->response()->getData(true);
+
             return $this->getJsonResponse($students, "Students Fetched Successfully");
 
         } else {
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Don't Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
 
     }
@@ -70,13 +72,15 @@ class StudentController extends Controller
         $user = auth()->user();
 
         if ($user->can('View Student')) {
+
             $student->load(['subscription', 'line', 'position', 'university', 'location', 'payments']);
+
             $student = new UserResource($student);
+
             return $this->getJsonResponse($student, "Student Fetched Successfully");
 
         } else {
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -111,7 +115,9 @@ class StudentController extends Controller
             $student->location->update($locationData);
 
             $student->update($credentials);
+
             $student->load(['subscription', 'line', 'position', 'university', 'location', 'payments']);
+
             $student = new UserResource($student);
 
 
@@ -121,7 +127,7 @@ class StudentController extends Controller
 
             DB::rollBack();
 
-            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
 
         }
 
@@ -144,8 +150,7 @@ class StudentController extends Controller
             return $this->getJsonResponse(null, 'Student Deleted Successfully');
 
         } else {
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
 
     }
@@ -175,8 +180,7 @@ class StudentController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -213,8 +217,7 @@ class StudentController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Don't Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
 
     }
@@ -278,6 +281,7 @@ class StudentController extends Controller
         }
 
         $usersArray = $users->toArray();
+
         $usersArray['studentsNumber'] = $users->count();
 
         return $this->getJsonResponse($usersArray, "Students fetched successfully");

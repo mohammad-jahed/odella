@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Messages;
 use App\Http\Requests\Driver\StoreDriverRequest;
 use App\Http\Requests\Driver\UpdateDriverRequest;
 use App\Http\Resources\BusDriverResource;
@@ -45,8 +46,7 @@ class DriverController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -74,8 +74,7 @@ class DriverController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -85,7 +84,9 @@ class DriverController extends Controller
     public function show(Driver $driver): JsonResponse
     {
         $driver->load("buses");
+
         $driver = new DriverResource($driver);
+
         return $this->getJsonResponse($driver, "Driver Fetched Successfully");
     }
 
@@ -115,8 +116,7 @@ class DriverController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
 
     }
@@ -139,8 +139,7 @@ class DriverController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -164,8 +163,7 @@ class DriverController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 }

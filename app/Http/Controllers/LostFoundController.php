@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Messages;
 use App\Http\Requests\Lost_Founds\StoreLost_FoundsRequest;
 use App\Http\Requests\Lost_Founds\UpdateLost_FoundsRequest;
 use App\Http\Resources\Lost_FoundResource;
@@ -27,7 +28,7 @@ class LostFoundController extends Controller
 
         if ($user->can('View Lost&Found')) {
 
-            $lost_founds = Lost_Found::query()->with(['user','trip'])->paginate(10);
+            $lost_founds = Lost_Found::query()->with(['user', 'trip'])->paginate(10);
 
             if ($lost_founds->isEmpty()) {
 
@@ -40,8 +41,7 @@ class LostFoundController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -77,8 +77,7 @@ class LostFoundController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -156,20 +155,22 @@ class LostFoundController extends Controller
          * @var User $supervisor
          */
         $supervisor = auth()->user();
+
         if ($supervisor->hasRole('Supervisor')) {
-            $lost_Founds = Lost_Found::query()->with(['user', 'trip'])->whereHas('trip',
-                fn(Builder $builder) => $builder->whereHas('supervisor',
-                    fn(Builder $builder1) => $builder1->where('id', $supervisor->id)
-                )
-            )->get();
+
+            $lost_Founds = Lost_Found::query()->with(['user', 'trip'])->whereHas('trip', fn(Builder $builder) => $builder->whereHas('supervisor', fn(Builder $builder1) => $builder1->where('id', $supervisor->id)))->get();
+
             if ($lost_Founds->isEmpty()) {
+
                 return $this->getJsonResponse(null, 'No Lost And Founds Found');
             }
+
             $lost_Founds = Lost_FoundResource::collection($lost_Founds);
+
             return $this->getJsonResponse($lost_Founds, "Lost And Founds Fetched Successfully");
+
         } else {
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 }

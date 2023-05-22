@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\GuestStatus;
+use App\Enums\Messages;
 use App\Enums\Status;
 use App\Enums\TripStatus;
 use App\Http\Requests\Supervisor\StoreSupervisorRequest;
@@ -54,8 +55,7 @@ class SupervisorController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -112,13 +112,12 @@ class SupervisorController extends Controller
 
                 DB::rollBack();
 
-                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
             }
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -138,8 +137,7 @@ class SupervisorController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -190,7 +188,7 @@ class SupervisorController extends Controller
 
             DB::rollBack();
 
-            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
         }
     }
 
@@ -212,8 +210,7 @@ class SupervisorController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Don't Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -226,6 +223,7 @@ class SupervisorController extends Controller
          * @var User $auth ;
          */
         $auth = auth()->user();
+
         if ($auth->hasRole('Supervisor') && $auth->id === $reservation->trip->supervisor->id) {
 
             $reservation->guestRequestStatus = GuestStatus::Approved;
@@ -243,8 +241,7 @@ class SupervisorController extends Controller
                 "Reservation has been Approved successfully"
             );
         } else {
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
 
     }
@@ -270,12 +267,10 @@ class SupervisorController extends Controller
                 new DailyReservationResource($reservation),
                 "Reservation has been Rejected successfully"
             );
+
         } else {
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
-
-
 
 }

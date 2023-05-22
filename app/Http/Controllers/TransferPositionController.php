@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Messages;
 use App\Http\Requests\TransferPosition\StoreTransferPositionRequest;
 use App\Http\Requests\TransferPosition\UpdateTransferPositionRequest;
 use App\Http\Resources\TransferPositionResource;
@@ -56,8 +57,7 @@ class TransferPositionController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -93,12 +93,12 @@ class TransferPositionController extends Controller
 
                 $transferPosition->lines()->sync([$line->id]);
             }
+
             return $this->getJsonResponse($transferPosition, "TransferPosition Updated Successfully");
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -120,8 +120,7 @@ class TransferPositionController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 

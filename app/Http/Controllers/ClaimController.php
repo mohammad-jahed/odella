@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Messages;
 use App\Http\Requests\Claims\ClaimStoreRequest;
 use App\Http\Requests\Claims\ClaimUpdateRequest;
 use App\Http\Resources\ClaimResource;
@@ -39,8 +40,7 @@ class ClaimController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -69,8 +69,7 @@ class ClaimController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -87,7 +86,9 @@ class ClaimController extends Controller
         $auth = auth()->user();
 
         Gate::forUser($auth)->authorize('updateClaim', $claim);
+
         $claim->load(['user', 'trip']);
+
         $claim = new ClaimResource($claim);
 
         return $this->getJsonResponse($claim, "Claim Fetched Successfully");
@@ -110,7 +111,9 @@ class ClaimController extends Controller
         $data = $request->validated();
 
         $claim->update($data);
+
         $claim->load(['user', 'trip']);
+
         $claim = new ClaimResource($claim);
 
         return $this->getJsonResponse($claim, "Claim Updated Successfully");

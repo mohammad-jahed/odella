@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\GuestStatus;
+use App\Enums\Messages;
 use App\Http\Requests\Guest\DailyReservationRequest;
 use App\Http\Resources\DailyReservationResource;
 use App\Models\DailyReservation;
@@ -98,8 +99,7 @@ class DailyReservationController extends Controller
             return $this->getJsonResponse($reservations, "Daily Reservation Fetched Successfully");
 
         } else {
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 }

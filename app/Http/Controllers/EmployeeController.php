@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Messages;
 use App\Enums\Status;
 use App\Http\Requests\Employee\ConfirmRegistrationRequest;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
@@ -52,8 +53,7 @@ class EmployeeController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -109,13 +109,12 @@ class EmployeeController extends Controller
 
                 DB::rollBack();
 
-                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
             }
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
 
     }
@@ -136,8 +135,7 @@ class EmployeeController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -190,7 +188,7 @@ class EmployeeController extends Controller
 
             DB::rollBack();
 
-            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
 
         }
 
@@ -214,8 +212,7 @@ class EmployeeController extends Controller
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -306,13 +303,12 @@ class EmployeeController extends Controller
 
                 DB::rollBack();
 
-                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
             }
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -326,22 +322,33 @@ class EmployeeController extends Controller
          * @var User $auth ;
          */
         $auth = auth()->user();
+
         if ($auth->hasRole('Employee')) {
+
             $data = $request->validated();
+
             if (isset($data['subscription_id'])) {
+
                 $student->subscription_id = $data['subscription_id'];
             }
+
             if (isset($data['expiredSubscriptionDate'])) {
+
                 $student->expiredSubscriptionDate = $data['expiredSubscriptionDate'];
+
                 $student->status = Status::Active;
             }
+
             $student->save();
+
             $student->load(['subscription', 'line', 'position', 'university', 'location']);
+
             $student = new UserResource($student);
+
             return $this->getJsonResponse($student, "Student Updated Successfully");
+
         } else {
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Don't Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -355,6 +362,7 @@ class EmployeeController extends Controller
          * @var User $auth ;
          */
         $auth = auth()->user();
+
         if ($auth->hasRole('Employee')) {
             $data = $request->validated();
             /**
@@ -363,25 +371,31 @@ class EmployeeController extends Controller
             $pay = Pay::query()->create($data);
 
             /**
-             * @var Payment $payment;
+             * @var Payment $payment ;
              */
             $totalPrice = 0;
+
             $payments = $student->payments;
-            foreach ($payments as $payment){
-                if($payment->subscription_id == $student->subscription_id){
+
+            foreach ($payments as $payment) {
+
+                if ($payment->subscription_id == $student->subscription_id) {
+
                     $totalPrice += $payment->pay->amount;
                 }
             }
+
             $student->pays()->attach($pay,
                 [
                     'subscription_id' => $student->subscription_id,
                     'isFinished' => $totalPrice == $student->subscription->price
                 ]
             );
+
             return $this->getJsonResponse($student, "Payment Added Successfully");
+
         } else {
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Don't Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 

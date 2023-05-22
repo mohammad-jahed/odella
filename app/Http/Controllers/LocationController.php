@@ -22,17 +22,13 @@ class LocationController extends Controller
 
         Gate::forUser($user)->authorize('getAllLocations');
 
-        $locations = Location::query()
-            ->with('city')
-            ->with('area')
+        $locations = Location::query()->with(['city', 'area'])
             ->paginate(10);
 
         if ($locations->isEmpty()) {
 
             return $this->getJsonResponse(null, "There Are No Locations Found!");
         }
-
-        //$locations->load(['city', 'area']);
 
         $locations = LocationResource::collection($locations)->response()->getData(true);
 
@@ -63,8 +59,11 @@ class LocationController extends Controller
         $user = auth()->user();
 
         Gate::forUser($user)->authorize('getLocation', $location);
+
         $location->load(['city', 'area']);
+
         $location = new LocationResource($location);
+
         return $this->getJsonResponse($location, "Location Fetched Successfully");
 
     }

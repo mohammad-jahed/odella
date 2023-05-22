@@ -111,7 +111,7 @@ class AuthController extends Controller
 
             DB::rollBack();
 
-            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
         }
 
     }
@@ -152,12 +152,13 @@ class AuthController extends Controller
             if (!$user) {
                 return $this->getJsonResponse(null, "User Not Found");
             }
+
             $checkCode = ConfirmationCode::query()->where('user_id', $user->id)
                 ->where('is_confirmed', ConfirmationCodeStatus::NotConfirmed)
                 ->first();
 
             if ($checkCode) {
-                return $this->getJsonResponse(null, "Code Already Sent");
+                return $this->getJsonResponse(null, "Code Already Sent", 0);
             }
 
             DB::beginTransaction();
@@ -174,7 +175,7 @@ class AuthController extends Controller
 
             if (!$confirmCode->save()) {
                 DB::rollBack();
-                return $this->getJsonResponse(null, "Code Not Save!");
+                return $this->getJsonResponse(null, "Code Not Save!", 0);
             }
 
             Mail::to($user->email)->send((new ForgetPasswordMail($user, $code))->afterCommit());
@@ -187,7 +188,7 @@ class AuthController extends Controller
 
             DB::rollBack();
 
-            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!");
+            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
         }
 
 
@@ -206,7 +207,7 @@ class AuthController extends Controller
 
             if (!$user) {
 
-                return $this->getJsonResponse(null, "User Not Found",0);
+                return $this->getJsonResponse(null, "User Not Found", 0);
             }
 
             $code = ConfirmationCode::query()->where('user_id', $user->id)
@@ -223,10 +224,13 @@ class AuthController extends Controller
             DB::beginTransaction();
 
             $newPassword = Hash::make($request->newPassword);
+
             $user->password = $newPassword;
+
             $user->save();
 
             $code->is_confirmed = ConfirmationCodeStatus::Confirmed;
+
             $code->save();
 
             DB::commit();
@@ -237,7 +241,7 @@ class AuthController extends Controller
 
             DB::rollBack();
 
-            return $this->getJsonResponse($exception->getMessage(), "Some Thing Went Wrong!!");
+            return $this->getJsonResponse($exception->getMessage(), "Some Thing Went Wrong!!", 0);
 
         }
 
@@ -295,7 +299,9 @@ class AuthController extends Controller
          * @var User $user ;
          */
         $user = auth()->user();
+
         $user->load('roles');
+
         return $this->getJsonResponse($user, "Profile");
 
     }

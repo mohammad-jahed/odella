@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Messages;
 use App\Http\Requests\Evaluations\StoreEvaluationRequest;
 use App\Http\Requests\Evaluations\UpdateEvaluationRequest;
 use App\Http\Resources\EvaluationResource;
@@ -33,14 +34,14 @@ class EvaluationController extends Controller
 
                 return $this->getJsonResponse(null, "There Are No Evaluations Found!");
             }
+
             $evaluations = EvaluationResource::collection($evaluations)->response()->getData(true);
 
             return $this->getJsonResponse($evaluations, "Evaluations Fetched Successfully");
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -59,16 +60,18 @@ class EvaluationController extends Controller
             $data = $request->validated();
 
             $data['user_id'] = $user->id;
+
             $data['trip_id'] = $trip->id;
 
             $evaluation = Evaluation::query()->create($data);
+
             $evaluation = new EvaluationResource($evaluation);
+
             return $this->getJsonResponse($evaluation, "Evaluations Created Successfully");
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 
@@ -79,11 +82,14 @@ class EvaluationController extends Controller
     public function show(Evaluation $evaluation): JsonResponse
     {
         /**
-         * @var User $auth;
+         * @var User $auth ;
          */
         $auth = auth()->user();
+
         Gate::forUser($auth)->authorize('viewEvaluation', $evaluation);
+
         $evaluation = new EvaluationResource($evaluation);
+
         return $this->getJsonResponse($evaluation, "Evaluation Fetched Successfully");
     }
 
@@ -94,13 +100,18 @@ class EvaluationController extends Controller
     public function update(UpdateEvaluationRequest $request, Evaluation $evaluation): JsonResponse
     {
         /**
-         * @var User $auth;
+         * @var User $auth ;
          */
         $auth = auth()->user();
+
         $data = $request->validated();
+
         Gate::forUser($auth)->authorize('updateEvaluation', $evaluation);
+
         $evaluation->update($data);
+
         $evaluation = new EvaluationResource($evaluation);
+
         return $this->getJsonResponse($evaluation, "Evaluations Updated Successfully");
 
     }
@@ -115,8 +126,11 @@ class EvaluationController extends Controller
          * @var User $user
          */
         $user = auth()->user();
+
         Gate::forUser($user)->authorize('deleteEvaluation', $evaluation);
+
         $evaluation->delete();
+
         return $this->getJsonResponse(null, "Evaluations Deleted Successfully");
     }
 
@@ -133,13 +147,14 @@ class EvaluationController extends Controller
         if ($user->can('View SupervisorEvaluation')) {
 
             $evaluations = $trip->evaluations;
+
             $evaluations = EvaluationResource::collection($evaluations);
+
             return $this->getJsonResponse($evaluations, "Evaluations Fetched Successfully");
 
         } else {
 
-            abort(Response::HTTP_UNAUTHORIZED
-                , "Unauthorized , You Dont Have Permission To Access This Action");
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
 }

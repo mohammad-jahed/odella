@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Enums\Status;
 use App\Models\User;
-use App\Notifications\Students\ExpiredSubscriptionNotification;
 use App\Notifications\Students\StopRegistrationNotification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Date;
