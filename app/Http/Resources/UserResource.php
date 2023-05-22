@@ -50,8 +50,8 @@ class UserResource extends JsonResource
             'position' => new TransferPositionResource($this->whenLoaded('position')),
             'university' => new UniversityResource($this->whenLoaded('university')),
             'location' => new LocationResource($this->whenLoaded('location')),
-            "payments" => new PayResource($this->whenLoaded('payments')),
-            "programs" => new ProgramResource($this->whenLoaded('programs')),
+            "payments" => PayResource::collection($this->whenLoaded('pays')),
+            "programs" => ProgramResource::collection($this->whenLoaded('programs')),
         ];
     }
 }

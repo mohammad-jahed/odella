@@ -35,7 +35,7 @@ class StudentController extends Controller
         if ($user->can('View Student')) {
 
             $students = User::role('Student')
-                ->with(['subscription', 'line', 'position', 'university', 'location', 'payments'])
+                ->with(['subscription', 'line', 'position', 'university', 'location', 'pays'])
                 ->paginate(10);
 
             if ($students->isEmpty()) {
@@ -73,7 +73,7 @@ class StudentController extends Controller
 
         if ($user->can('View Student')) {
 
-            $student->load(['subscription', 'line', 'position', 'university', 'location', 'payments']);
+            $student->load(['subscription', 'line', 'position', 'university', 'location', 'pays']);
 
             $student = new UserResource($student);
 
@@ -116,7 +116,7 @@ class StudentController extends Controller
 
             $student->update($credentials);
 
-            $student->load(['subscription', 'line', 'position', 'university', 'location', 'payments']);
+            $student->load(['subscription', 'line', 'position', 'university', 'location', 'pays']);
 
             $student = new UserResource($student);
 
@@ -166,14 +166,13 @@ class StudentController extends Controller
 
             $students = User::role('Student')->where('status', Status::Active)
                 ->with(['location', 'subscription', 'line', 'position',
-                    'university', 'payments', 'programs'])
+                    'university', 'pays', 'programs'])
                 ->paginate(10);
 
             if ($students->isEmpty()) {
 
                 return $this->getJsonResponse(null, "There Are No Active Students Found!");
             }
-
             $activeStudents = UserResource::collection($students)->response()->getData(true);
 
             return $this->getJsonResponse($activeStudents, "Students Fetch Successfully");
