@@ -5,17 +5,12 @@ namespace App\Http\Controllers;
 use App\Enums\GuestStatus;
 use App\Enums\Messages;
 use App\Enums\Status;
-use App\Enums\TripStatus;
 use App\Http\Requests\Supervisor\StoreSupervisorRequest;
-use App\Http\Requests\Supervisor\SupervisorTripRequest;
 use App\Http\Requests\Supervisor\UpdateSupervisorRequest;
 use App\Http\Resources\DailyReservationResource;
-use App\Http\Resources\TripResource;
 use App\Http\Resources\UserResource;
 use App\Models\DailyReservation;
-use App\Models\Day;
 use App\Models\Location;
-use App\Models\Program;
 use App\Models\Trip;
 use App\Models\TripPositionsTimes;
 use App\Models\User;
@@ -23,7 +18,6 @@ use App\Notifications\Guests\DailyReservationNotification;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -230,16 +224,11 @@ class SupervisorController extends Controller
 
             $reservation->save();
 
-            $time = TripPositionsTimes::query()->where('trip_id', $reservation->trip_id)
-                ->where('position_id', $reservation->transfer_position_id)
-                ->get(['time']);
+            $time = TripPositionsTimes::query()->where('trip_id', $reservation->trip_id)->where('position_id', $reservation->transfer_position_id)->get(['time']);
 
             $reservation->notify(new DailyReservationNotification(true, $time));
 
-            return $this->getJsonResponse(
-                new DailyReservationResource($reservation),
-                "Reservation has been Approved successfully"
-            );
+            return $this->getJsonResponse(new DailyReservationResource($reservation), "Reservation has been Approved successfully");
         } else {
             abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
@@ -263,12 +252,36 @@ class SupervisorController extends Controller
 
             $reservation->notify(new DailyReservationNotification(false));
 
-            return $this->getJsonResponse(
-                new DailyReservationResource($reservation),
-                "Reservation has been Rejected successfully"
-            );
+            return $this->getJsonResponse(new DailyReservationResource($reservation), "Reservation has been Rejected successfully");
 
         } else {
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
+        }
+    }
+
+    public function qrConfirmAttendance(Trip $trip, User $user)
+    {
+        /**
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+
+        if ($auth->hasRole('Supervisor')) {
+
+            $tripUser = $trip->users()->where('user_id', $user->id)->firstOrFail();
+
+            if (isset($tripUser->pivot)) {
+                $tripUser->pivot->studentAttendance = true;
+            }
+
+            if (isset($tripUser->pivot)) {
+                $tripUser->pivot->save();
+            }
+
+            return $this->getJsonResponse(null, "Student AttendanceConfirm Successfully");
+
+        } else {
+
             abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }

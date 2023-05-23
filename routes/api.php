@@ -208,7 +208,10 @@ Route::group([
          */
         Route::get('/supervisor/deny/{reservation}', [SupervisorController::class, 'denyReservation']);
 
-
+        /**
+         * Student Confirm Attendance With QR Code made by a supervisor.
+         */
+        Route::post('/supervisor/qrcode/confirm/trip/{trip}/user/{user}',[SupervisorController::class, 'qrConfirmAttendance']);
 
         /**
          * Retrieves the daily reservation for a specific trip.
@@ -265,6 +268,9 @@ Route::group([
          */
         Route::get('/trips/{trip}/students/{student}', [TripController::class, 'deleteStudent']);
 
+        /**
+         * Get all trips for a specific student.
+         */
         Route::get('/trips/students/student', [TripController::class, 'getStudentTrips']);
 
         /**
@@ -276,7 +282,6 @@ Route::group([
          * Get all return trips.
          */
         Route::get('/trip/returnTrips', [TripController::class, 'getReturnTrips']);
-
 
         /**
          * Get all weekly trips
@@ -293,7 +298,6 @@ Route::group([
          */
         Route::apiResource('/claims', ClaimController::class);
 
-
         /**
          * Resource routes for lost&founds.
          */
@@ -302,7 +306,6 @@ Route::group([
         /**
          * Get All Lost&Founds On The Logged In Supervisor Trip
          */
-
         Route::get('/lost_founds/supervisor', [LostFoundController::class, 'getLostAndFoundsOnLoggedInSupervisorTrip']);
 
         /**
