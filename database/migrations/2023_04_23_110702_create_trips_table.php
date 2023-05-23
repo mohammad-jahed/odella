@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->foreignId('time_id')->constrained();
             $table->tinyInteger('status');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
