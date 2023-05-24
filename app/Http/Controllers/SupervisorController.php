@@ -246,11 +246,13 @@ class SupervisorController extends Controller
         $auth = auth()->user();
         if ($auth->hasRole('Supervisor') && $auth->id === $reservation->trip->supervisor->id) {
 
+            $time = TripPositionsTimes::query()->where('trip_id', $reservation->trip_id)->where('position_id', $reservation->transfer_position_id)->get(['time']);
+
             $reservation->guestRequestStatus = GuestStatus::Rejected;
 
             $reservation->save();
 
-            $reservation->notify(new DailyReservationNotification(false));
+            $reservation->notify(new DailyReservationNotification(false, $time));
 
             return $this->getJsonResponse(new DailyReservationResource($reservation), "Reservation has been Rejected successfully");
 
