@@ -286,4 +286,21 @@ class StudentController extends Controller
         return $this->getJsonResponse($usersArray, "Students fetched successfully");
     }
 
+
+//    function getStudentsOuterTrip(Trip $trip): JsonResponse
+//    {
+//        /**
+//         * @var User $auth ;
+//         */
+//        $auth = auth()->user();
+//        if ($auth->hasRole("Employee")) {
+//            $tripUsersIds = $trip->users()->select('id');
+//            $outerTripUsers = User::role('Student')->whereNotIn('user_id', $tripUsersIds)->get();
+//            return $this->getJsonResponse($outerTripUsers, "Students Fetched Successfully");
+//        } else {
+//            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
+//        }
+//
+//    }
+
 }

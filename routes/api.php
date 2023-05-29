@@ -194,6 +194,11 @@ Route::group([
         Route::get('/student/trips/{trip}/positions/{position}', [StudentController::class, 'getAllStudentsInThePosition']);
 
         /**
+         * get all students outer specif trip
+         */
+//        Route::get('/student/trips/outerTrip/{trip}', [StudentController::class, 'getStudentsOuterTrip']);
+
+        /**
          * Resource routes for supervisors.
          */
         Route::apiResource('/supervisors', SupervisorController::class);
