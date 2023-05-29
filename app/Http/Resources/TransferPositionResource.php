@@ -4,11 +4,12 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @property mixed $name
  * @property int $id;
+ * @property mixed $lng
+ * @property mixed $ltd
  */
 class TransferPositionResource extends JsonResource
 {
@@ -17,12 +18,13 @@ class TransferPositionResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    #[ArrayShape(["id" => "int", "name" => "mixed"])]
     public function toArray(Request $request): array
     {
         return [
             "id" => $this->id,
-            "name" => $this->name
+            "name" => $this->name,
+            "lng" =>$this->lng,
+            "lat" =>$this->ltd
         ];
     }
 }

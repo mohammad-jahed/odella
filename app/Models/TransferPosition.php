@@ -13,7 +13,9 @@ class TransferPosition extends Model
 {
     protected $fillable = [
         "name_ar",
-        "name_en"
+        "name_en",
+        "lng",
+        "lat"
     ];
 
     protected $hidden = [

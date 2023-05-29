@@ -20,6 +20,7 @@ class TransferPositionController extends Controller
     public function index(): JsonResponse
     {
         $transferPositions = TransferPosition::query()->paginate(10);
+        $transferPositions = TransferPositionResource::collection($transferPositions)->response()->getData(true);
 
         if ($transferPositions->isEmpty()) {
 
@@ -52,7 +53,7 @@ class TransferPositionController extends Controller
             $line = TransportationLine::query()->where('id', $data['line_id'])->first();
 
             $transferPosition->lines()->attach($line->id);
-
+            $transferPosition = new TransferPositionResource($transferPosition);
             return $this->getJsonResponse($transferPosition, "TransferPosition Created Successfully");
 
         } else {
@@ -66,6 +67,7 @@ class TransferPositionController extends Controller
      */
     public function show(TransferPosition $transferPosition): JsonResponse
     {
+        $transferPosition = new TransferPositionResource($transferPosition);
         return $this->getJsonResponse($transferPosition, "TransferPosition Fetched Successfully");
     }
 
@@ -93,7 +95,7 @@ class TransferPositionController extends Controller
 
                 $transferPosition->lines()->sync([$line->id]);
             }
-
+            $transferPosition = new TransferPositionResource($transferPosition);
             return $this->getJsonResponse($transferPosition, "TransferPosition Updated Successfully");
 
         } else {
