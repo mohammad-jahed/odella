@@ -415,6 +415,7 @@ class TripController extends Controller
                      * @var Program $program ;
                      * @var TripPositionsTimes $goTime ;
                      */
+
                     $student = User::query()->where('id', $student_id)->first();
 
                     $programs = $student->programs;

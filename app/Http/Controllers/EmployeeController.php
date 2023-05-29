@@ -18,6 +18,7 @@ use App\Models\Subscription;
 use App\Models\TransferPosition;
 use App\Models\Trip;
 use App\Models\TripPositionsTimes;
+use App\Models\TripUser;
 use App\Models\User;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -235,7 +236,10 @@ class EmployeeController extends Controller
                  */
 
                 $credentials = $request->validated();
-
+                $userTrips = $user->trips()->whereIn('trip_id', $credentials['trip_ids'])->get();
+                if(!$userTrips->isEmpty()){
+                    return $this->getJsonResponse(null, "This student was already added to this trip");
+                }
                 $user->expiredSubscriptionDate = $credentials['expiredSubscriptionDate'];
                 $user->save();
 
