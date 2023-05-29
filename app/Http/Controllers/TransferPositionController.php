@@ -20,12 +20,13 @@ class TransferPositionController extends Controller
     public function index(): JsonResponse
     {
         $transferPositions = TransferPosition::query()->paginate(10);
-        $transferPositions = TransferPositionResource::collection($transferPositions)->response()->getData(true);
 
         if ($transferPositions->isEmpty()) {
 
             return $this->getJsonResponse(null, "There Are No TransferPositions Found!");
         }
+        $transferPositions = TransferPositionResource::collection($transferPositions)->response()->getData(true);
+
 
         return $this->getJsonResponse($transferPositions, "TransferPositions Fetched Successfully");
     }

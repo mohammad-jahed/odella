@@ -9,7 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $name
  * @property int $id;
  * @property mixed $lng
- * @property mixed $ltd
+ * @property mixed $lat
  */
 class TransferPositionResource extends JsonResource
 {
@@ -24,7 +24,7 @@ class TransferPositionResource extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "lng" =>$this->lng,
-            "lat" =>$this->ltd
+            "lat" =>$this->lat
         ];
     }
 }
