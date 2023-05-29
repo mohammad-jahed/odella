@@ -67,26 +67,6 @@ class TransferPositionSeeder extends Seeder
                 'transportation_line_id' => '1',
                 'transfer_position_id' => '5'
             ],
-            [
-                'transportation_line_id' => '2',
-                'transfer_position_id' => '3'
-            ],
-            [
-                'transportation_line_id' => '2',
-                'transfer_position_id' => '4'
-            ],
-            [
-                'transportation_line_id' => '3',
-                'transfer_position_id' => '1'
-            ],
-            [
-                'transportation_line_id' => '3',
-                'transfer_position_id' => '2'
-            ],
-            [
-                'transportation_line_id' => '3',
-                'transfer_position_id' => '3'
-            ],
         ]);
     }
 }

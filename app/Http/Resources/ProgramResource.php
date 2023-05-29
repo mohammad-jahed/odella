@@ -13,6 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $confirmAttendance1
  * @property mixed $confirmAttendance2
  * @property mixed $id
+ * @property mixed $line
  * @method Builder day()
  */
 class ProgramResource extends JsonResource
@@ -28,6 +29,7 @@ class ProgramResource extends JsonResource
             'id' => $this->id,
             "day" => new DayResource($this->whenLoaded('day')),
             "transfer_position" => new TransferPositionResource($this->whenLoaded('position')),
+            "line" => $this->line,
             "start" => $this->start,
             "end" => $this->end,
             'confirmAttendance1' => $this->confirmAttendance1,

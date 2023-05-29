@@ -27,7 +27,6 @@ class TransferPositionController extends Controller
         }
         $transferPositions = TransferPositionResource::collection($transferPositions)->response()->getData(true);
 
-
         return $this->getJsonResponse($transferPositions, "TransferPositions Fetched Successfully");
     }
 

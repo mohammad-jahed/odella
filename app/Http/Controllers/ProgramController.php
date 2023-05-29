@@ -84,7 +84,6 @@ class ProgramController extends Controller
          * @var Program $program
          */
         $user = auth()->user();
-
         $programs = $user->programs()->with(['day', 'position'])->get();
 
         if ($programs->isEmpty()) {

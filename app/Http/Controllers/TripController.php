@@ -76,8 +76,8 @@ class TripController extends Controller
                 DB::beginTransaction();
 
                 $credentials = $request->validated();
-
                 $credentials['status'] = ($credentials['start'] > "07:00" && $credentials['start'] < "11:00") ? TripStatus::GoTrip : TripStatus::ReturnTrip;
+
                 /**
                  * @var Time $time ;
                  * @var Trip $trip ;
@@ -92,7 +92,6 @@ class TripController extends Controller
                 $trip->lines()->attach($credentials['line_ids']);
 
                 $trip = $trip->load('lines', 'time', 'busDriver');
-
 
                 foreach ($credentials['line_ids'] as $line_id) {
 
@@ -111,6 +110,7 @@ class TripController extends Controller
                         TripPositionsTimes::query()->create($data);
                     }
                 }
+
                 /**
                  * @var Program[] $programs ;
                  * @var Day $day ;
