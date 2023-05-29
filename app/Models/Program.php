@@ -50,7 +50,7 @@ class Program extends Model
         return TransportationLine::query()
             ->whereHas('trips',
                 fn(Builder $builder) => $builder->whereHas('time',
-                    fn(Builder $builder1) => $builder1->where('start', $this->start)
+                    fn(Builder $builder) => $builder->where('start', $this->start)
                 )
             )->pluck('name_' . app()->getLocale());
     }
