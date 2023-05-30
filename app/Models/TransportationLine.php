@@ -31,9 +31,9 @@ class TransportationLine extends Model
     ];
 
     protected $appends = [
+        'name',
         'from',
         'to',
-        'name'
     ];
 
     public function getNameAttribute()
@@ -41,16 +41,24 @@ class TransportationLine extends Model
         return $this->{'name_' . app()->getLocale()};
     }
 
-    public function getFromAttribute(): TransferPositionResource
+    public function getFromAttribute(): ?TransferPositionResource
     {
         $position = $this->positions()->first();
-        return new TransferPositionResource($position);
+
+        if ($position) {
+            return new TransferPositionResource($position);
+        } else
+            return null;
     }
 
-    public function getToAttribute(): TransferPositionResource
+    public function getToAttribute(): ?TransferPositionResource
     {
         $position = $this->positions()->orderBy('id', 'desc')->first();
-        return new TransferPositionResource($position);
+
+        if ($position) {
+            return new TransferPositionResource($position);
+        } else
+            return null;
     }
 
 
