@@ -21,8 +21,8 @@ class BusDriverResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'driver' => $this->whenLoaded('driver', new DriverResource($this->driver)),
-            'bus' => $this->whenLoaded('bus', new BusResource($this->bus)),
+            'driver' =>new DriverResource($this->whenLoaded('driver')),
+            'bus' =>  new BusResource($this->whenLoaded('bus'))
         ];
     }
 }

@@ -26,12 +26,12 @@ class TripResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'supervisor' => new UserResource($this->whenLoaded('supervisor')),
-            'busDriver' => new BusDriverResource($this->whenLoaded('busDriver')),
-            'time' => $this->whenLoaded('time', $this->time()->first()),
             'availableSeats' => $this->availableSeats,
+            'time' => $this->whenLoaded('time'),
+            'supervisor' => new UserResource($this->whenLoaded('supervisor')),
             'lines' => TransportationLineResource::collection($this->whenLoaded('lines')),
             'transferPositions' => TransferPositionResource::collection($this->whenLoaded('transferPositions')),
+            'busDriver' => new BusDriverResource($this->whenLoaded('busDriver')),
             'users' => UserResource::collection($this->whenLoaded('users'))
         ];
     }

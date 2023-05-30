@@ -22,9 +22,9 @@ class EvaluationResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'user' => $this->whenLoaded('user', new UserResource($this->user)),
-            'trip' => $this->whenLoaded('trip', new TripResource($this->trip)),
-            'review' => $this->review
+            'review' => $this->review,
+            'trip' => new TripResource($this->whenLoaded('trip')),
+            'user' => new UserResource($this->whenLoaded('user')),
         ];
     }
 }

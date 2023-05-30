@@ -27,8 +27,9 @@ class DailyReservationResource extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "phoneNumber" => $this->phoneNumber,
-            "position" => $this->whenLoaded('position', new TransferPositionResource($this->position)),
-            "seatsNumber" => $this->seatsNumber
+            "seatsNumber" => $this->seatsNumber,
+            "position" => new TransferPositionResource($this->whenLoaded('position'))
+
         ];
     }
 }
