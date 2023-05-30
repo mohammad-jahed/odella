@@ -276,6 +276,7 @@ class StudentController extends Controller
         })->with(['university'])->get();
 
         if ($users->isEmpty()) {
+
             return $this->getJsonResponse(null, "There are no students in this position!");
         }
 
@@ -287,20 +288,31 @@ class StudentController extends Controller
     }
 
 
-//    function getStudentsOuterTrip(Trip $trip): JsonResponse
-//    {
-//        /**
-//         * @var User $auth ;
-//         */
-//        $auth = auth()->user();
-//        if ($auth->hasRole("Employee")) {
-//            $tripUsersIds = $trip->users()->select('id');
-//            $outerTripUsers = User::role('Student')->whereNotIn('user_id', $tripUsersIds)->get();
-//            return $this->getJsonResponse($outerTripUsers, "Students Fetched Successfully");
-//        } else {
-//            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
-//        }
-//
-//    }
+    function getStudentsOuterTrip(Trip $trip): JsonResponse
+    {
+        /**
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+
+        if ($auth->hasRole("Employee")) {
+
+            $tripUsersIds = $trip->users()->select('user_id');
+
+            $outerTripUsers = User::role('Student')->whereNotIn('id', $tripUsersIds)
+                ->where('status', Status::Active)->get();
+
+            if ($outerTripUsers->isEmpty()){
+
+                return $this->getJsonResponse(null, "There Are No Students Found!");
+            }
+
+            return $this->getJsonResponse($outerTripUsers, "Students Fetched Successfully");
+
+        } else {
+
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
+        }
+    }
 
 }

@@ -196,7 +196,7 @@ Route::group([
         /**
          * get all students outer specif trip
          */
-//        Route::get('/student/trips/outerTrip/{trip}', [StudentController::class, 'getStudentsOuterTrip']);
+        Route::get('/student/trips/outerTrip/{trip}', [StudentController::class, 'getStudentsOuterTrip']);
 
         /**
          * Resource routes for supervisors.
