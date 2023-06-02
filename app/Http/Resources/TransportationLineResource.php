@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed $name
  * @property mixed $from
  * @property mixed $to
+ * @property mixed $id
  */
 class TransportationLineResource extends JsonResource
 {
@@ -20,9 +21,10 @@ class TransportationLineResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            "id" => $this->id,
             "name" => $this->name,
-            "from" => $this->from,
-            "to" => $this->to,
+            "from" => $this->whenNotNull($this->from),
+            "to" => $this->whenNotNull($this->to),
         ];
     }
 }

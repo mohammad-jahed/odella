@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\Messages;
 use App\Http\Requests\TransportationLine\StoreTransportationLineRequest;
 use App\Http\Requests\TransportationLine\UpdateTransportationLineRequest;
+use App\Http\Resources\TransportationLineResource;
 use App\Models\TransferPosition;
 use App\Models\TransportationLine;
 use App\Models\User;
@@ -31,7 +32,7 @@ class TransportationLineController extends Controller
 
             return $this->getJsonResponse(null, "There Are No TransportationLines Found!");
         }
-
+        $transportationLines = TransportationLineResource::collection($transportationLines)->response()->getData(true);
         return $this->getJsonResponse($transportationLines, "TransportationLines Fetch Successfully");
     }
 
@@ -64,7 +65,7 @@ class TransportationLineController extends Controller
      */
     public function show(TransportationLine $transportationLine): JsonResponse
     {
-
+        $transportationLine = new TransportationLineResource($transportationLine);
         return $this->getJsonResponse($transportationLine, "TransportationLine Fetch Successfully");
 
     }
@@ -84,7 +85,7 @@ class TransportationLineController extends Controller
             $data = $request->validated();
 
             $transportationLine->update($data);
-
+            $transportationLine = new TransportationLineResource($transportationLine);
             return $this->getJsonResponse($transportationLine, "TransportationLine Updated Successfully");
 
         } else {
