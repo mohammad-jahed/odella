@@ -4,10 +4,11 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * @property mixed $name
+ * @property mixed $from
+ * @property mixed $to
  */
 class TransportationLineResource extends JsonResource
 {
@@ -16,11 +17,12 @@ class TransportationLineResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    #[ArrayShape(["name" => "mixed"])]
     public function toArray(Request $request): array
     {
         return [
-            "name" => $this->name
+            "name" => $this->name,
+            "from" => $this->from,
+            "to" => $this->to,
         ];
     }
 }
