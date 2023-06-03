@@ -229,6 +229,7 @@ class SupervisorController extends Controller
             $reservation->notify(new DailyReservationNotification(true, $time));
 
             return $this->getJsonResponse(new DailyReservationResource($reservation), "Reservation has been Approved successfully");
+
         } else {
             abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
@@ -244,6 +245,7 @@ class SupervisorController extends Controller
          * @var User $auth ;
          */
         $auth = auth()->user();
+
         if ($auth->hasRole('Supervisor') && $auth->id === $reservation->trip->supervisor->id) {
 
             $time = TripPositionsTimes::query()->where('trip_id', $reservation->trip_id)->where('position_id', $reservation->transfer_position_id)->get(['time']);
@@ -271,6 +273,10 @@ class SupervisorController extends Controller
         if ($auth->hasRole('Supervisor')) {
 
             $tripUser = $trip->users()->where('user_id', $user->id)->firstOrFail();
+
+            if ($tripUser->status != Status::Active) {
+                return $this->getJsonResponse(null, "This Student is not Subscribe", 0);
+            }
 
             if (isset($tripUser->pivot)) {
                 $tripUser->pivot->studentAttendance = true;
