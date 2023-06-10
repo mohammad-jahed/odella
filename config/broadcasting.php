@@ -43,9 +43,11 @@ return [
 //                //'useTLS' => env('PUSHER_SCHEME', 'https') === 'https',
                 //'cluster' => env('PUSHER_APP_CLUSTER'),
                 //'encrypted' => true,
-                'host' => '127.0.0.1',
+                //'host' => '127.0.0.1',//for localhost *****************************************************************
+                'host' => 'https://yaamen1.com',//for server
                 'port' => 6001,
-                'scheme' => 'http'
+                //'scheme' => 'http'//for localhost ********************************************************
+                'scheme' => 'https'//for server
             ],
 //            'client_options' => [
 //                // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
