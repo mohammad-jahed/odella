@@ -294,12 +294,16 @@ Route::group([
         /**
          * Get all weekly trips
          */
-        Route::get('/trip/weeklyTrips', [TripController::class, 'getPreviousWeeklyStudentTrips']);
+        Route::get('/trip/weeklyTrips', [TripController::class, 'getPreviousWeekStudentTrips']);
 
         /**
          * Get the current trip for the current supervisor.
          */
         Route::post('/supervisor/trip',[TripController::class,'supervisor_current_trip']);
+        /**
+         * Get all weekly trips before today
+         */
+        Route::get('/trip/weeklyTripsBeforeToday', [TripController::class, 'getWeeklyTripsBeforeToday']);
 
         /**
          * Resource routes for claims.

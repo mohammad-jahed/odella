@@ -24,7 +24,7 @@ class EvaluationResource extends JsonResource
             'id' => $this->id,
             'review' => $this->review,
             'trip' => new TripResource($this->whenLoaded('trip')),
-            'user' => new UserResource($this->whenLoaded('user')),
+            'user' => new UserResource($this->user),
         ];
     }
 }
