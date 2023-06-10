@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Enums\GuestStatus;
 use App\Enums\Messages;
 use App\Enums\Status;
+use App\Events\TrackingEvent;
 use App\Http\Requests\Supervisor\StoreSupervisorRequest;
+use App\Http\Requests\Supervisor\UpdatePositionRequest;
 use App\Http\Requests\Supervisor\UpdateSupervisorRequest;
 use App\Http\Resources\DailyReservationResource;
 use App\Http\Resources\UserResource;
@@ -224,7 +226,8 @@ class SupervisorController extends Controller
 
             $reservation->save();
 
-            $time = TripPositionsTimes::query()->where('trip_id', $reservation->trip_id)->where('position_id', $reservation->transfer_position_id)->get(['time']);
+            $time = TripPositionsTimes::query()->where('trip_id', $reservation->trip_id)
+                ->where('position_id', $reservation->transfer_position_id)->get(['time']);
 
             $reservation->notify(new DailyReservationNotification(true, $time));
 
@@ -248,7 +251,8 @@ class SupervisorController extends Controller
 
         if ($auth->hasRole('Supervisor') && $auth->id === $reservation->trip->supervisor->id) {
 
-            $time = TripPositionsTimes::query()->where('trip_id', $reservation->trip_id)->where('position_id', $reservation->transfer_position_id)->get(['time']);
+            $time = TripPositionsTimes::query()->where('trip_id', $reservation->trip_id)
+                ->where('position_id', $reservation->transfer_position_id)->get(['time']);
 
             $reservation->guestRequestStatus = GuestStatus::Rejected;
 
@@ -271,7 +275,9 @@ class SupervisorController extends Controller
         $auth = auth()->user();
 
         if ($auth->hasRole('Supervisor')) {
-
+            /**
+             * @var User $tripUser ;
+             */
             $tripUser = $trip->users()->where('user_id', $user->id)->firstOrFail();
 
             if ($tripUser->status != Status::Active) {
@@ -294,4 +300,24 @@ class SupervisorController extends Controller
         }
     }
 
+    public function updatePosition(UpdatePositionRequest $request)
+    {
+        /**
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+
+        if ($auth->hasRole('Supervisor')){
+
+            $data = $request->validated();
+
+            event(new TrackingEvent($data['lng'], $data['lat'], $data['trip_id']));
+
+            return $this->getJsonResponse(null , "Success");
+        }
+        else{
+
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
+        }
+    }
 }
