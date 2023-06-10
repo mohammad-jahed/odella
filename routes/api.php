@@ -1,6 +1,5 @@
 <?php
 
-use App\Events\TrackingEvent;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BusController;
@@ -22,8 +21,6 @@ use App\Http\Controllers\TransferPositionController;
 use App\Http\Controllers\TransportationLineController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\UniversityController;
-use App\Http\Requests\Supervisor\UpdatePositionRequest;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
