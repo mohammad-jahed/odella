@@ -47,7 +47,7 @@ return [
                 'host' => 'https://yaamen1.com',//for server
                 'port' => 6001,
                 //'scheme' => 'http'//for localhost ********************************************************
-                'scheme' => 'https'//for server
+                'scheme' => 'http'//for server
             ],
 //            'client_options' => [
 //                // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
