@@ -294,7 +294,7 @@ Route::group([
         /**
          * Get all weekly trips
          */
-        Route::get('/trip/weeklyTrips', [TripController::class, 'getWeeklyStudentTrips']);
+        Route::get('/trip/weeklyTrips', [TripController::class, 'getPreviousWeeklyStudentTrips']);
 
         /**
          * Get the current trip for the current supervisor.

@@ -219,9 +219,9 @@ class TripController extends Controller
 
         if ($user->can('Update Trip')) {
 
-        try {
+            try {
 
-            DB::beginTransaction();
+                DB::beginTransaction();
 
                 $credentials = $request->validated();
 
@@ -240,7 +240,7 @@ class TripController extends Controller
                     ->where(($trip->status == TripStatus::GoTrip ? 'start' : 'end'), $trip->time->start)
                     ->first();
 
-                if (isset($credentials['supervisor_id'])){
+                if (isset($credentials['supervisor_id'])) {
 
                     $oldSupervisorProgram->delete();
 
@@ -284,7 +284,7 @@ class TripController extends Controller
 
                 $trip->update($credentials);
 
-                if (! isset($credentials['supervisor_id'])){
+                if (!isset($credentials['supervisor_id'])) {
 
                     $dayName1 = Carbon::parse(($credentials['date'] ?? $trip->time->date))->format('l');
                     /**
@@ -292,7 +292,7 @@ class TripController extends Controller
                      */
                     $day1 = Day::query()->firstWhere('name_en', $dayName1);
 
-                    $newProgramData =[
+                    $newProgramData = [
                         'day_id' => $day1->id,
                         ($trip->status == TripStatus::GoTrip ? 'start' : 'end') => $trip->time->start
                     ];
@@ -349,14 +349,12 @@ class TripController extends Controller
 
                 return $this->getJsonResponse($trip, "Trip Updated Successfully");
 
+            } catch (Exception $exception) {
+
+                DB::rollBack();
+
+                return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
             }
-
-        catch (Exception $exception){
-
-            DB::rollBack();
-
-            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
-        }
 
         } else {
 
@@ -453,10 +451,7 @@ class TripController extends Controller
 
                 return $this->getJsonResponse($trip, 'Students Added Successfully To This Trip');
 
-            }
-
-            catch (Exception $exception)
-            {
+            } catch (Exception $exception) {
                 DB::rollBack();
 
                 return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
@@ -525,9 +520,7 @@ class TripController extends Controller
 
                 return $this->getJsonResponse($trip, "Student Deleted Successfully");
 
-            }
-            catch (Exception $exception)
-            {
+            } catch (Exception $exception) {
                 DB::rollBack();
 
                 return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
@@ -585,22 +578,19 @@ class TripController extends Controller
 
     }
 
-    public function getWeeklyStudentTrips(): JsonResponse
+    public function getPreviousWeeklyStudentTrips(): JsonResponse
     {
         /**
          * @var User $auth ;
          */
         $auth = auth()->user();
 
-        $startOfWeek = now()->subWeek()->startOfWeek();
+        $today = Carbon::parse(Carbon::now()); // Replace with your original date
+        $beforeWeek = $today->copy()->subDays(7);
 
-        $endOfWeek = now()->subWeek()->endOfWeek();
-
-        $trips = $auth->trips()->with(['time','busDriver'])
-            ->whereHas('time', fn(Builder $builder)
-            => $builder->whereBetween('date', [$startOfWeek, $endOfWeek])
-                ->where('date', '<', now())
-        )->get();
+        $trips = $auth->trips()->with(['time', 'busDriver'])
+            ->whereHas('time', fn(Builder $builder) => $builder->whereBetween('date', [$beforeWeek, $today])
+            )->get();
 
         $trips = TripResource::collection($trips);
 
@@ -679,7 +669,7 @@ class TripController extends Controller
             ->where('start', '!=', '00:00:00')
             ->whereTime('start', '<=', $request->time)
             ->WhereTime('end', '>', $request->time)
-            ->orWhere('end','=','00:00:00')
+            ->orWhere('end', '=', '00:00:00')
             ->first();
 
         /**
@@ -728,7 +718,6 @@ class TripController extends Controller
         return $this->getJsonResponse($current_trip, "Trip Fetched Successfully");
 
     }
-
 
 
     public function sendNotification()
