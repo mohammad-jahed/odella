@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\NotificationResource;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -27,6 +28,8 @@ class NotificationController extends Controller
             return $this->getJsonResponse(null, 'There Are No Notifications Found!');
         }
 
+        $notifications = NotificationResource::collection($notifications);
+
         return $this->getJsonResponse($notifications, 'Notifications Fetched Successfully');
     }
 
@@ -36,6 +39,7 @@ class NotificationController extends Controller
      */
     public function show(Notification $notification): JsonResponse
     {
+        $notification  = new NotificationResource($notification);
         return $this->getJsonResponse($notification, 'Notification Fetched Successfully');
     }
 
@@ -65,7 +69,6 @@ class NotificationController extends Controller
             ->get();
 
         if ($notifications->isEmpty()) {
-
             return $this->getJsonResponse(null, 'There Are No UnReadNotifications Found!');
         }
 
@@ -80,7 +83,7 @@ class NotificationController extends Controller
         $notification->is_read = 1;
 
         $notification->save();
-
+        $notification = new NotificationResource($notification);
         return $this->getJsonResponse($notification, 'Notification is Read Successfully');
     }
 

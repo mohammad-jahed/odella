@@ -26,6 +26,11 @@ class Notification extends Model
         'is_read',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at'
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
