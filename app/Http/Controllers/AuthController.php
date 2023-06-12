@@ -10,6 +10,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
+use App\Http\Resources\UserResource;
 use App\Mail\ForgetPasswordMail;
 use App\Models\ConfirmationCode;
 use App\Models\Location;
@@ -300,7 +301,9 @@ class AuthController extends Controller
          */
         $user = auth()->user();
 
-        $user->load('roles');
+        $user->load('roles','university','line','position','subscription','location');
+
+        $user = new UserResource($user);
 
         return $this->getJsonResponse($user, "Profile");
 
