@@ -2,6 +2,7 @@
 
 namespace App\Notifications\Supervisor;
 
+use App\Enums\NotificationType;
 use App\Models\User;
 use App\Models\Notification as Notifications;
 use Illuminate\Bus\Queueable;
@@ -41,13 +42,15 @@ class SupervisorDailyReservationNotification extends Notification
         $notification = Notifications::query()->create([
             'user_id' => $notifiable->id,
             'title' => 'New Daily Reservation!',
+            'type' => NotificationType::SupervisorDailyReservation,
             'body' => 'You Have New Pending Daily Reservation',
         ]);
 
         return (new FirebaseMessage)
             ->withTitle($notification->title)
             ->withBody($notification->body)
-            ->withPriority('high')->asNotification($notifiable->fcm_token);
+            ->withAdditionalData($notification->type)
+            ->withPriority('normal')->asNotification($notifiable->fcm_token);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Notifications\Students;
 
+use App\Enums\NotificationType;
 use App\Models\Notification as Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -42,13 +43,15 @@ class ReturnTimeNotification extends Notification
         $notification = Notifications::query()->create([
             'user_id' => $notifiable->id,
             'title' => 'Get Ready!',
+            'type' => NotificationType::ReturnTime,
             'body' => 'Your Bus Will Leave in ' . $this->remainTime . 'Minute',
         ]);
 
         return (new FirebaseMessage)
             ->withTitle($notification->title)
             ->withBody($notification->body)
-            ->withPriority('high')->asNotification($notifiable->fcm_token);
+            ->withAdditionalData($notification->type)
+            ->withPriority('normal')->asNotification($notifiable->fcm_token);
     }
 
     /**

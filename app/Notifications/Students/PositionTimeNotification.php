@@ -2,6 +2,7 @@
 
 namespace App\Notifications\Students;
 
+use App\Enums\NotificationType;
 use App\Models\Notification as Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -40,13 +41,15 @@ class PositionTimeNotification extends Notification
         $notification = Notifications::query()->create([
             'user_id' => $notifiable->id,
             'title' => 'Get Ready!',
+            'type' => NotificationType::PositionTime,
             'body' => 'Your Bus Will Be At the Position In 5 Minute',
         ]);
 
         return (new FirebaseMessage)
             ->withTitle($notification->title)
             ->withBody($notification->body)
-            ->withPriority('high')->asNotification($notifiable->fcm_token);
+            ->withAdditionalData($notification->type)
+            ->withPriority('normal')->asNotification($notifiable->fcm_token);
     }
 
     /**

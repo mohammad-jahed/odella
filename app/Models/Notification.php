@@ -10,7 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property mixed $body
  * @property mixed $title
  * @property mixed $is_read
- *  @method isEmpty()
+ * @property mixed $type
+ * @method isEmpty()
  * @method count()
  */
 class Notification extends Model
@@ -18,10 +19,11 @@ class Notification extends Model
     use HasFactory;
 
     protected $fillable = [
-      'user_id',
-      'title',
-      'body',
-      'is_read',
+        'user_id',
+        'title',
+        'body',
+        'type',
+        'is_read',
     ];
 
     public function user(): BelongsTo

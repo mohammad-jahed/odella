@@ -6,6 +6,6 @@ class ConfirmationCodeTypes
 {
 
     const Confirmation = 2;
-    Const ForgetPassword = 1;
+    const ForgetPassword = 1;
 
 }

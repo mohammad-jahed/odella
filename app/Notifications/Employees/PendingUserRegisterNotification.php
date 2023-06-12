@@ -2,6 +2,7 @@
 
 namespace App\Notifications\Employees;
 
+use App\Enums\NotificationType;
 use App\Models\User;
 use App\Models\Notification as Notifications;
 use Illuminate\Bus\Queueable;
@@ -43,12 +44,14 @@ class PendingUserRegisterNotification extends Notification
         $notification = Notifications::query()->create([
             'user_id' => $notifiable->id,
             'title' => 'New Student!',
+            'type' => NotificationType::Registration,
             'body' => $this->user->firstName . ' ' . $this->user->lastName . ' Want to Register',
         ]);
 
         return (new FirebaseMessage)
             ->withTitle($notification->title)
             ->withBody($notification->body)
+            ->withAdditionalData($notification->type)
             ->withPriority('normal')->asNotification($notifiable->fcm_token);
     }
 
