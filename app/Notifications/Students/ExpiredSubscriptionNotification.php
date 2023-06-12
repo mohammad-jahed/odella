@@ -2,6 +2,7 @@
 
 namespace App\Notifications\Students;
 
+use App\Models\Notification as Notifications;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -36,9 +37,18 @@ class ExpiredSubscriptionNotification extends Notification
      */
     public function toFirebase(User $notifiable)
     {
+        /**
+         * @var Notifications $notification ;
+         */
+        $notification = Notifications::query()->create([
+            'user_id' => $notifiable->id,
+            'title' => 'Your Subscription About to Expired!',
+            'body' => 'Your Subscription Will Expired in' . $this->date . ' Days',
+        ]);
+
         return (new FirebaseMessage)
-            ->withTitle('Your Subscription About Expired!.')
-            ->withBody('Your Subscription Will Expired in' . $this->date . ' Days')
+            ->withTitle($notification->title)
+            ->withBody($notification->body)
             ->withPriority('high')->asNotification($notifiable->fcm_token);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Notifications\Supervisor;
 
 use App\Models\User;
+use App\Models\Notification as Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Kutia\Larafirebase\Messages\FirebaseMessage;
@@ -34,9 +35,18 @@ class SupervisorDailyReservationNotification extends Notification
      */
     public function toFirebase(User $notifiable)
     {
+        /**
+         * @var Notifications $notification ;
+         */
+        $notification = Notifications::query()->create([
+            'user_id' => $notifiable->id,
+            'title' => 'New Daily Reservation!',
+            'body' => 'You Have New Pending Daily Reservation',
+        ]);
+
         return (new FirebaseMessage)
-            ->withTitle('New Daily Reservation.')
-            ->withBody('You Have New Pending Daily Reservation')
+            ->withTitle($notification->title)
+            ->withBody($notification->body)
             ->withPriority('high')->asNotification($notifiable->fcm_token);
     }
 

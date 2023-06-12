@@ -21,7 +21,7 @@ class ExpiredSubscriptionCommand extends Command
      *
      * @var string
      */
-    protected $description = 'A Daily Command To Send Notifications To Student With Near  Subscription Expiration Date ';
+    protected $description = 'A Daily Command To Send Notification To Student With Near  Subscription Expiration Date ';
 
     /**
      * Execute the console command.

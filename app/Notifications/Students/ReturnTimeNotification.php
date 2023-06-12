@@ -2,6 +2,7 @@
 
 namespace App\Notifications\Students;
 
+use App\Models\Notification as Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Kutia\Larafirebase\Messages\FirebaseMessage;
@@ -35,9 +36,18 @@ class ReturnTimeNotification extends Notification
      */
     public function toMail(object $notifiable)
     {
+        /**
+         * @var Notifications $notification ;
+         */
+        $notification = Notifications::query()->create([
+            'user_id' => $notifiable->id,
+            'title' => 'Get Ready!',
+            'body' => 'Your Bus Will Leave in ' . $this->remainTime . 'Minute',
+        ]);
+
         return (new FirebaseMessage)
-            ->withTitle('Get Ready!')
-            ->withBody('Your Bus Will Leave in ' . $this->remainTime . 'Minute')
+            ->withTitle($notification->title)
+            ->withBody($notification->body)
             ->withPriority('high')->asNotification($notifiable->fcm_token);
     }
 

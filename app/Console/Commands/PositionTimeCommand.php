@@ -23,7 +23,7 @@ class PositionTimeCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Send Notifications To the Students To Catch There GoTrips';
+    protected $description = 'Send Notification To the Students To Catch There GoTrips';
 
     /**
      * Execute the console command.

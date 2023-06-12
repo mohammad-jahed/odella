@@ -3,6 +3,7 @@
 namespace App\Notifications\Employees;
 
 use App\Models\User;
+use App\Models\Notification as Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Kutia\Larafirebase\Messages\FirebaseMessage;
@@ -36,9 +37,18 @@ class PendingUserRegisterNotification extends Notification
      */
     public function toFirebase(User $notifiable)
     {
+        /**
+         * @var Notifications $notification ;
+         */
+        $notification = Notifications::query()->create([
+            'user_id' => $notifiable->id,
+            'title' => 'New Student!',
+            'body' => $this->user->firstName . ' ' . $this->user->lastName . ' Want to Register',
+        ]);
+
         return (new FirebaseMessage)
-            ->withTitle('New Student!')
-            ->withBody($this->user->firstName . ' ' . $this->user->lastName . ' Want to Register')
+            ->withTitle($notification->title)
+            ->withBody($notification->body)
             ->withPriority('normal')->asNotification($notifiable->fcm_token);
     }
 

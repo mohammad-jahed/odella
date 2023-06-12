@@ -22,7 +22,7 @@ class ReturnTimeCommand extends Command
      *
      * @var string
      */
-    protected $description = 'end Notifications To the Students To Catch There ReturnTrips';
+    protected $description = 'end Notification To the Students To Catch There ReturnTrips';
 
     /**
      * Execute the console command.
