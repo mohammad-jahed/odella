@@ -12,6 +12,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\LostFoundController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubscriptionController;
@@ -336,6 +337,36 @@ Route::group([
          * Supervisor position update for trip tracking.
          */
         Route::post('/update/position',[SupervisorController::class, 'updatePosition']);
+
+        /**
+         * Get all notifications for the logged-In user.
+         */
+        Route::get('user/notification',[NotificationController::class, 'index']);
+
+        /**
+         * Get UnRead notifications for the logged-In user.
+         */
+        Route::get('user/unread_notification',[NotificationController::class, 'get_unread_notifications']);
+
+        /**
+         * Get A Specific notifications by id.
+         */
+        Route::get('user/notification/{notification}',[NotificationController::class, 'show']);
+
+        /**
+         * Make A Specific notifications Read.
+         */
+        Route::post('user/make_read_notification/{notification}',[NotificationController::class, 'make_notification_read']);
+
+        /**
+         * Make All notifications Read.
+         */
+        Route::get('user/make_all_read_notifications',[NotificationController::class, 'make_all_notification_read']);
+
+        /**
+         * Delete A Specific notifications by id.
+         */
+        Route::delete('user/notification/{notification}',[NotificationController::class, 'destroy']);
     });
 
 
