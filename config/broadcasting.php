@@ -36,18 +36,15 @@ return [
             'secret' => env('PUSHER_APP_SECRET'),
             'app_id' => env('PUSHER_APP_ID'),
             'options' => [
-//                'host' => '127.0.0.1',//env('PUSHER_HOST') ?: 'api-'.env('PUSHER_APP_CLUSTER', 'mt1').'.pusher.com',
-//                'port' => 6001,//env('PUSHER_PORT', 443),
-//                'scheme' => 'http',//env('PUSHER_SCHEME', 'https'),
-//                //'encrypted' => true,
-//                //'useTLS' => env('PUSHER_SCHEME', 'https') === 'https',
-                //'cluster' => env('PUSHER_APP_CLUSTER'),
+                'cluster' => env('PUSHER_APP_CLUSTER'),
                 //'encrypted' => true,
-                //'host' => '127.0.0.1',//for localhost *****************************************************************
-                'host' => 'https://yaamen1.com',//for server
+                'host' => 'https://yaamen1.com',
                 'port' => 6001,
-                //'scheme' => 'http'//for localhost ********************************************************
-                'scheme' => 'https'//for server
+                'scheme' => 'https',
+                'curl_options' => [
+                    CURLOPT_SSL_VERIFYHOST => 0,
+                    CURLOPT_SSL_VERIFYPEER => 0,
+                ],
             ],
 //            'client_options' => [
 //                // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
