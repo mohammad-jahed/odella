@@ -50,6 +50,7 @@ class User extends Authenticatable implements JWTSubject
         'transportation_line_id',
         'transfer_position_id',
         'university_id',
+        'algorithm_inputs_id',
         'firstName',
         'lastName',
         'email',
@@ -169,5 +170,11 @@ class User extends Authenticatable implements JWTSubject
     public function my_notifications(): HasMany
     {
         return $this->hasMany(Notification::class);
+    }
+
+
+    public function algorithm_inputs(): BelongsTo
+    {
+        return $this->belongsTo(AlgorithmInput::class, 'algorithm_inputs_id');
     }
 }

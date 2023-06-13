@@ -8,6 +8,7 @@ use App\Http\Requests\Student\StoreTripStudentsRequest;
 use App\Http\Requests\Supervisor\SupervisorTripRequest;
 use App\Http\Requests\Trip\StoreTripRequest;
 use App\Http\Requests\Trip\UpdateTripRequest;
+use App\Http\Requests\Trips\GenerateTripsRequest;
 use App\Http\Resources\EvaluationResource;
 use App\Http\Resources\TripResource;
 use App\Models\Day;
@@ -761,6 +762,13 @@ class TripController extends Controller
             abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
     }
+
+    public function generateTrips(GenerateTripsRequest $request) {
+        $data = $request->validated();
+
+    }
+
+
 
 
     public function sendNotification()
