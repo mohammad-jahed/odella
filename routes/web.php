@@ -1,7 +1,7 @@
 <?php
 
-use App\Events\TrackingEvent;
 use App\Http\Controllers\TripController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,8 +23,7 @@ Route::get('/firebase', [TripController::class, 'sendNotification']);
 Route::get('/test',[TripController::class,'test_go_trips_notification']);
 Route::get('/test1',[TripController::class,'test_return_trips_notification']);
 
-Route::get('/tracking_test',function (){
-    event(new TrackingEvent(55.2,44.1,2));
-//    broadcast(new TrackingEvent(22.2,11.1,1));
+Route::get('/socket',function (){
+    Artisan::call('websockets:serve');
     return ' ok';
 });
