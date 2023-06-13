@@ -8,6 +8,7 @@ use App\Http\Requests\Student\StoreTripStudentsRequest;
 use App\Http\Requests\Supervisor\SupervisorTripRequest;
 use App\Http\Requests\Trip\StoreTripRequest;
 use App\Http\Requests\Trip\UpdateTripRequest;
+use App\Http\Resources\EvaluationResource;
 use App\Http\Resources\TripResource;
 use App\Models\Day;
 use App\Models\Program;
@@ -441,19 +442,19 @@ class TripController extends Controller
                             $program->update($attributes);
                         } else {
                             /**
-                             * @var Day $day;
+                             * @var Day $day ;
                              */
                             $day = Day::query()->where('name_en', $day)->first();
                             $attributes = [
                                 'user_id' => $student_id,
                                 'day_id' => $day->id,
                             ];
-                            if($trip->status == TripStatus::GoTrip){
+                            if ($trip->status == TripStatus::GoTrip) {
                                 $firstPosition = $trip->transferPositions()->first();
                                 $goTime = TripPositionsTimes::query()->where('position_id', $firstPosition->id)->first();
                                 $attributes['start'] = $goTime->time;
                             } else {
-                              $attributes['end'] = $trip->time->start;
+                                $attributes['end'] = $trip->time->start;
                             }
 
                             Program:: query()->create($attributes);
@@ -738,24 +739,28 @@ class TripController extends Controller
     }
 
 
-     public function getWeeklyTripsBeforeToday(){
+    public function getWeeklyTripsBeforeToday()
+    {
         /**
          * @var User $user
          */
         $user = auth()->user();
-        if( $user->hasRole('Student') || $user->hasRole('Supervisor')){
+        if ($user->hasRole('Student') || $user->hasRole('Supervisor')) {
             $today = Carbon::now();
             $startOfWeek = Carbon::now()->startOfWeek();
-            $trips = $user->trips()->with(['evaluations'])->whereHas('time',
+            $evaluations = $user->evaluations;
+            $evaluations = EvaluationResource::collection($evaluations);
+            $trips = $user->trips()->with(['time'])->whereHas('time',
                 fn(Builder $builder) => $builder->whereBetween('date', [$startOfWeek, $today])
             )->get();
             $trips = TripResource::collection($trips);
+            $trips['evaluations'] = $evaluations;
             return $this->getJsonResponse($trips, "Trips Fetched Successfully");
 
         } else {
             abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
-     }
+    }
 
 
     public function sendNotification()

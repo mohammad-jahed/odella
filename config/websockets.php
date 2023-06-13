@@ -27,10 +27,10 @@ return [
             'name' => env('APP_NAME'),
             'key' => env('PUSHER_APP_KEY'),
             'secret' => env('PUSHER_APP_SECRET'),
-            'path' => env('PUSHER_APP_PATH'),
+            //'path' => env('PUSHER_APP_PATH'),
             'capacity' => null,
             'enable_client_messages' => false,
-            'enable_statistics' => true,
+            'enable_statistics' => false,
         ],
     ],
 
@@ -116,18 +116,20 @@ return [
          * certificate chain of issuers. The private key also may be contained
          * in a separate file specified by local_pk.
          */
-        'local_cert' => env('LARAVEL_WEBSOCKETS_SSL_LOCAL_CERT', null),
+        'local_cert' => env('LARAVEL_WEBSOCKETS_SSL_LOCAL_CERT', "/home/yaamen1c/ssl/certs/_wildcard__yaamen1_com_c4df6_5717f_1693850435_95e83e65825c31c1cc16d68ef7edfd10.crt"),
 
         /*
          * Path to local private key file on filesystem in case of separate files for
          * certificate (local_cert) and private key.
          */
-        'local_pk' => env('LARAVEL_WEBSOCKETS_SSL_LOCAL_PK', null),
+        'local_pk' => env('LARAVEL_WEBSOCKETS_SSL_LOCAL_PK', "/home/yaamen1c/ssl/keys/c4df6_5717f_33f0c212c3412646fef4235feb134557.key"),
 
         /*
          * Passphrase for your local_cert file.
          */
         'passphrase' => env('LARAVEL_WEBSOCKETS_SSL_PASSPHRASE', null),
+
+        'verify_peer' => false,
     ],
 
     /*
