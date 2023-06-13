@@ -748,7 +748,7 @@ class TripController extends Controller
         if ($user->hasRole('Student') || $user->hasRole('Supervisor')) {
             $today = Carbon::now();
             $startOfWeek = Carbon::now()->startOfWeek();
-            $evaluations = $user->evaluations;
+            $evaluations = $user->evaluations()->with(['trip'])->get();
             $evaluations = EvaluationResource::collection($evaluations);
             $trips = $user->trips()->with(['time'])->whereHas('time',
                 fn(Builder $builder) => $builder->whereBetween('date', [$startOfWeek, $today])
