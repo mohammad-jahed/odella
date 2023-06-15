@@ -34,7 +34,7 @@ class TrackingEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('tracking.'.$this->trip_id),
+            new Channel('tracking.'.$this->trip_id),
         ];
     }
     public function broadcastWith(): array
