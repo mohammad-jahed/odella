@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('app:generate-trips-command')->weekly();
         $schedule->command('app:expired-subscription-command')->weekly();
         $schedule->command('app:stop-student-registration-command')->daily();
+        $schedule->command('app:test-command')->everyMinute();
     }
 
     /**
