@@ -8,6 +8,7 @@ use App\Http\Requests\Student\StoreTripStudentsRequest;
 use App\Http\Requests\Supervisor\SupervisorTripRequest;
 use App\Http\Requests\Trip\StoreTripRequest;
 use App\Http\Requests\Trip\UpdateTripRequest;
+use App\Http\Requests\Trips\GenerateTripsRequest;
 use App\Http\Resources\EvaluationResource;
 use App\Http\Resources\TripResource;
 use App\Models\Day;
@@ -20,6 +21,7 @@ use App\Models\TripPositionsTimes;
 use App\Models\TripUser;
 use App\Models\User;
 use Carbon\Carbon;
+use DateTime;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -405,8 +407,11 @@ class TripController extends Controller
                 $data = $request->validated();
 
                 $trip->users()->attach($data['student_ids']);
-
-                $day = $trip->time->date->format('l');
+                /**
+                 * @var DateTime $date ;
+                 */
+                $date = $trip->time->date;
+                $day = $date->format('l');
 
                 foreach ($data['student_ids'] as $student_id) {
                     /**
@@ -499,8 +504,11 @@ class TripController extends Controller
             try {
 
                 DB::beginTransaction();
-
-                $day = $trip->time->date->format('l');
+                /**
+                 * @var DateTime $date ;
+                 */
+                $date = $trip->time->date;
+                $day = $date->format('l');
 
                 $programs = $student->programs;
 
@@ -760,6 +768,66 @@ class TripController extends Controller
         } else {
             abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
+    }
+
+    public function generateTrips(GenerateTripsRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+
+        $initialGoTrips = [
+            new \DateTime('07:00'),
+            new \DateTime('07:30'),
+            new \DateTime('08:00'),
+            new \DateTime('08:30'),
+            new \DateTime('09:00'),
+            new \DateTime('09:30'),
+            new \DateTime('10:00'),
+        ];
+
+        $initialReturnTrips = [
+            new \DateTime('12:00'),
+            new \DateTime('12:30'),
+            new \DateTime('01:00'),
+            new \DateTime('01:30'),
+            new \DateTime('02:00'),
+            new \DateTime('02:30'),
+            new \DateTime('03:00'),
+        ];
+        $goTripsResponse = [];
+        foreach ($initialGoTrips as $goTimeTrip) {
+            $goTimeTrip = $goTimeTrip->format('h:i A');
+            $usersNumber = User::query()->whereHas('algorithm_inputs',
+                fn(Builder $builder) => $builder->whereTime('goTime', $goTimeTrip)
+            )->count();
+            $goTripsResponse[$goTimeTrip] = $usersNumber;
+        }
+
+        sort($goTripsResponse);
+        for ($i = sizeof($goTripsResponse) - 1; $i > sizeof($goTripsResponse) - $data['goTripsNumber']; $i--) {
+            $goTripsResponse[$i - $data['goTripsNumber']] += $goTripsResponse[$i];
+        }
+        $nGoTrip = array_slice($goTripsResponse, 0, $data['goTripsNumber']);
+
+        $returnTripsResponse = [];
+        foreach ($initialReturnTrips as $returnTimeTrip) {
+            $returnTimeTrip = $returnTimeTrip->format('h:i P');
+            $usersNumber = User::query()->whereHas('algorithm_inputs',
+                fn(Builder $builder) => $builder->whereTime('returnTime', $returnTimeTrip)
+            )->count();
+            $returnTripsResponse[$returnTimeTrip] = $usersNumber;
+        }
+        for ($i = sizeof($returnTripsResponse) - 1; $i > sizeof($returnTripsResponse) - $data['returnTripsNumber']; $i--) {
+            $returnTripsResponse[$i - $data['goTripsNumber']] += $returnTripsResponse[$i];
+        }
+        sort($returnTripsResponse);
+        $mReturnTrip = array_slice($returnTripsResponse, 0, $data['returnTripsNumber']);
+
+        $response = [
+            'goTrips' => $nGoTrip,
+            'returnTrips' => $mReturnTrip
+        ];
+
+        return $this->getJsonResponse($response, "Suggestions for trip generation created successfully");
     }
 
 
