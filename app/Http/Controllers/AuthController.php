@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use  App\Enums\ConfirmationCodeStatus;
 use App\Enums\ConfirmationCodeTypes;
 use App\Enums\Status;
+use App\Http\Requests\Auth\EmailConfirmationRequest;
 use App\Http\Requests\Auth\ForgetPasswordRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
@@ -12,6 +13,7 @@ use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Employee\StoreEmployeeRequest;
 use App\Http\Resources\UserResource;
 use App\Mail\ForgetPasswordMail;
+use App\Mail\RegisterConfirmationMail;
 use App\Models\ConfirmationCode;
 use App\Models\Location;
 use App\Models\Subscription;
@@ -31,7 +33,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'adminRegister', 'forgetPassword', 'resetPassword']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'register1', 'emailConfirmation', 'forgetPassword', 'resetPassword']]);
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -117,27 +119,132 @@ class AuthController extends Controller
 
     }
 
-
-    public function adminRegister(StoreEmployeeRequest $request): JsonResponse
+//ToDo
+    public function register1(RegisterRequest $request): JsonResponse
     {
-        /**
-         * @var User $user ;
-         */
-        $credentials = $request->validated();
-        $credentials['password'] = Hash::make($credentials['password']);
-        /**
-         * @var Location $location ;
-         */
-        $location = Location::query()->create($credentials);
-        $credentials['location_id'] = $location->id;
-        $credentials['status'] = Status::NonStudent;
-        $user = User::query()->create($credentials);
 
-        $role = Role::query()->where('name', 'like', 'Admin')->first();
-        $user->assignRole($role);
-        return $this->getJsonResponse($user, "Admin Registered Successfully");
+        try {
+            $credentials = $request->validated();
+
+            if ($request->hasFile('image')) {
+
+                $path = $request->file('image')->store('images/users');
+
+                $credentials['image'] = $path;
+            }
+
+            DB::beginTransaction();
+            /**
+             * @var User $user ;
+             * @var Subscription $subscription ;
+             */
+            $credentials['password'] = Hash::make($credentials['password']);
+
+            /**
+             * @var Location $location ;
+             */
+            $location = Location::query()->create($credentials);
+
+            $credentials['location_id'] = $location->id;
+
+            $credentials['status'] = Status::NOT_CONFIRMED;
+
+            $user = User::query()->create($credentials);
+
+            $role = Role::query()->where('name', 'like', 'Student')->first();
+
+            $user->assignRole($role);
+
+            $code = rand(10000, 99999);
+
+            $data = [
+                'user_id' => $user->id,
+                'confirm_code' => $code,
+                'type' => ConfirmationCodeTypes::Confirmation
+            ];
+
+            $confirmCode = ConfirmationCode::query()->create($data);
+
+            if (!$confirmCode->save()) {
+
+                DB::rollBack();
+
+                return $this->getJsonResponse(null, "Code Not Save!", 0);
+            }
+
+            Mail::to($user->email)->send((new RegisterConfirmationMail($user, $code))->afterCommit());
+
+            DB::commit();
+
+            return $this->getJsonResponse(null, "We Send A Confirmation Code to your Email");
+
+
+        } catch (Exception $exception) {
+
+            DB::rollBack();
+
+            return $this->getJsonResponse($exception->getMessage(), "Something Went Wrong!!", 0);
+        }
+
     }
 
+    public function emailConfirmation(EmailConfirmationRequest $request): JsonResponse
+    {
+
+        try {
+            /**
+             * @var User $user ;
+             */
+
+            $user = User::query()->where('email', $request->email)->first();
+
+            if (!$user) {
+
+                return $this->getJsonResponse(null, "User Not Found", 0);
+            }
+
+            $code = ConfirmationCode::query()->where('user_id', $user->id)
+                ->where('confirm_code', $request->code)
+                ->where('is_confirmed', ConfirmationCodeStatus::NotConfirmed)
+                ->where('type', ConfirmationCodeTypes::Confirmation)
+                ->first();
+
+            if (!$code) {
+
+                return $this->getJsonResponse(null, "Wrong Code!", 0);
+            }
+
+            DB::beginTransaction();
+
+            $user->status = Status::UnActive;
+
+            $user->save();
+
+            $code->is_confirmed = ConfirmationCodeStatus::Confirmed;
+
+            $code->save();
+
+            /**
+             * @var User $employees ;
+             */
+            $employees = User::role('Employee')->get();
+
+            Notification::send($employees, new PendingUserRegisterNotification($user));
+
+            DB::commit();
+
+            return $this->getJsonResponse(null, "Email Confirmed Successfully,
+            Please visit the Company Office to Complete Registration Process");
+
+        } catch (Exception $exception) {
+
+            DB::rollBack();
+
+            return $this->getJsonResponse($exception->getMessage(), "Some Thing Went Wrong!!", 0);
+
+        }
+
+    }
 
     public function forgetPassword(ForgetPasswordRequest $request): JsonResponse
     {
@@ -156,6 +263,7 @@ class AuthController extends Controller
 
             $checkCode = ConfirmationCode::query()->where('user_id', $user->id)
                 ->where('is_confirmed', ConfirmationCodeStatus::NotConfirmed)
+                ->where('type',ConfirmationCodeTypes::ForgetPassword)
                 ->first();
 
             if ($checkCode) {

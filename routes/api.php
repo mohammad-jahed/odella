@@ -56,9 +56,9 @@ Route::group([
     Route::post('/register', [AuthController::class, 'register']);
 
     /**
-     * Register a new admin user.
+     * Check the confirmation code that send to user email.
      */
-    Route::post('/adminRegister', [AuthController::class, 'adminRegister']);
+    Route::post('/EmailConfirmation', [AuthController::class, 'emailConfirmation']);
 
     /**
      * Logout the current user.
