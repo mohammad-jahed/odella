@@ -50,7 +50,7 @@ class PendingUserRegisterNotification extends Notification
         ]);
         return Larafirebase::withTitle($notification->title)
             ->withBody($notification->body)
-            ->withSound('default')
+            //->withSound('default')
             ->withPriority('high')
             ->withAdditionalData([
                 'color' => '#rrggbb',
