@@ -50,13 +50,13 @@ class PendingUserRegisterNotification extends Notification
         ]);
         return Larafirebase::withTitle($notification->title)
             ->withBody($notification->body)
-//            ->withSound('default')
+            ->withSound('default')
             ->withPriority('high')
-//            ->withAdditionalData([
-//                'color' => '#rrggbb',
-//                'badge' => 0,
-//            ])
-            ->withAdditionalData($notification->type)
+            ->withAdditionalData([
+                'color' => '#rrggbb',
+                'badge' => 0,
+            ])
+            //->withAdditionalData($notification->type)
             ->sendNotification($notifiable->fcm_token);
 //        return (new FirebaseMessage)
 //            ->withTitle($notification->title)
