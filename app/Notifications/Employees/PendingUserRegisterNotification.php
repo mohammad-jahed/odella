@@ -56,7 +56,9 @@ class PendingUserRegisterNotification extends Notification
 //                'color' => '#rrggbb',
 //                'badge' => 0,
 //            ])
-            ->withAdditionalData($notification->type)
+            ->withAdditionalData([
+                'type' => $notification->type
+            ])
             ->sendNotification($notifiable->fcm_token);
 //        return (new FirebaseMessage)
 //            ->withTitle($notification->title)
