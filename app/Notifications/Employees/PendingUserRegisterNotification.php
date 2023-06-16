@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Notification as Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
+use Kutia\Larafirebase\Facades\Larafirebase;
 use Kutia\Larafirebase\Messages\FirebaseMessage;
 
 class PendingUserRegisterNotification extends Notification
@@ -47,12 +48,21 @@ class PendingUserRegisterNotification extends Notification
             'type' => NotificationType::Registration,
             'body' => $this->user->firstName . ' ' . $this->user->lastName . ' Want to Register',
         ]);
-
-        return (new FirebaseMessage)
-            ->withTitle($notification->title)
+        return Larafirebase::withTitle($notification->title)
             ->withBody($notification->body)
+//            ->withSound('default')
+            ->withPriority('high')
+//            ->withAdditionalData([
+//                'color' => '#rrggbb',
+//                'badge' => 0,
+//            ])
             ->withAdditionalData($notification->type)
-            ->withPriority('normal')->asNotification($notifiable->fcm_token);
+            ->sendNotification($notifiable->fcm_token);
+//        return (new FirebaseMessage)
+//            ->withTitle($notification->title)
+//            ->withBody($notification->body)
+//            ->withAdditionalData($notification->type)
+//            ->withPriority('normal')->asNotification($notifiable->fcm_token);
     }
 
     /**
