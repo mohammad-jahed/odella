@@ -104,10 +104,10 @@ class AuthController extends Controller
             /**
              * @var User $employees ;
              */
-            $employees = User::role('Employee')->first();
+            $employees = User::role('Employee')->get();
 
-           // Notification::send($employees, new PendingUserRegisterNotification($user));
-            $employees->notify( new PendingUserRegisterNotification($user));
+            Notification::send($employees, new PendingUserRegisterNotification($user));
+            //$employees->notify( new PendingUserRegisterNotification($user));
 
             return $this->getJsonResponse($user, "User Registered Successfully , Please visit the Company Office to Complete Registration Process");
 
