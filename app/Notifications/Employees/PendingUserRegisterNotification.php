@@ -52,10 +52,10 @@ class PendingUserRegisterNotification extends Notification
             ->withBody($notification->body)
             //->withSound('default')
             ->withPriority('high')
-            ->withAdditionalData([
-                'color' => '#rrggbb',
-                'badge' => 0,
-            ])
+//            ->withAdditionalData([
+//                'color' => '#rrggbb',
+//                'badge' => 0,
+//            ])
             //->withAdditionalData($notification->type)
             ->sendNotification($notifiable->fcm_token);
 //        return (new FirebaseMessage)
