@@ -48,23 +48,24 @@ class PendingUserRegisterNotification extends Notification
             'type' => NotificationType::Registration,
             'body' => $this->user->firstName . ' ' . $this->user->lastName . ' Want to Register',
         ]);
-        return Larafirebase::withTitle($notification->title)
-            ->withBody($notification->body)
-            //->withSound('default')
-            ->withPriority('high')
-//            ->withAdditionalData([
-//                'color' => '#rrggbb',
-//                'badge' => 0,
-//            ])
-            ->withAdditionalData([
-                'type' => $notification->type
-            ])
-            ->sendNotification($notifiable->fcm_token);
-//        return (new FirebaseMessage)
-//            ->withTitle($notification->title)
+//        return Larafirebase::withTitle($notification->title)
 //            ->withBody($notification->body)
-//            ->withAdditionalData($notification->type)
-//            ->withPriority('normal')->asNotification($notifiable->fcm_token);
+//            //->withSound('default')
+//            ->withPriority('high')
+////            ->withAdditionalData([
+////                'color' => '#rrggbb',
+////                'badge' => 0,
+////            ])
+//            ->withAdditionalData([
+//                'type' => $notification->type
+//            ])
+//            ->sendNotification($notifiable->fcm_token);
+        return (new FirebaseMessage)
+            ->withTitle($notification->title)
+            ->withBody($notification->body)
+            ->withAdditionalData([
+                'type' => $notification->type])
+            ->withPriority('normal')->asNotification($notifiable->fcm_token);
     }
 
     /**
