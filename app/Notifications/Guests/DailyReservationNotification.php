@@ -40,38 +40,23 @@ class DailyReservationNotification extends Notification
      */
     public function toFirebase(DailyReservation $notifiable)
     {
-        //TODO
-//        /**
-//         * @var Notifications $notification ;
-//         */
-//        $body = [
-//            'user_id' => $notifiable->id,
-//            'title' => 'ODELLA Daily Reservation.',
-//            'type' => NotificationType::GuestDailyReservation,
-//        ];
-//        if ($this->status) {
-//            $body['body'] = `Your Reservation Has been Confirmed,The Bus Will Arrived To Your Position At:' . $this->time`;
-//        } else {
-//            $body['body'] = "Sorry Your Request Has been Rejected, There are No Enough Seats";
-//        }
-//        $notification = Notifications::query()->create($body);
-//        return (new FirebaseMessage)
-//            ->withTitle($notification->title)
-//            ->withBody($notification->body)
-//            ->withAdditionalData($notification->type)
-//            ->withPriority('normal')->asNotification($notifiable->fcm_token);
-
         if ($this->status) {
             return (new FirebaseMessage)
                 ->withTitle('ODELLA Daily Reservation.')
                 ->withBody('Your Reservation Has been Confirmed,
                  The Bus Will Arrived To Your Position At:' . $this->time)
+                ->withAdditionalData([
+                    'type' => NotificationType::GuestDailyReservation
+                ])
                 ->withPriority('high')->asNotification($notifiable->fcm_token);
         } else {
             return (new FirebaseMessage)
                 ->withTitle('ODELLA Daily Reservation.')
                 ->withBody("Sorry Your Request Has been Rejected,
                  There are No Enough Seats")
+                ->withAdditionalData([
+                    'type' => NotificationType::GuestDailyReservation
+                ])
                 ->withPriority('high')->asNotification($notifiable->fcm_token);
         }
 

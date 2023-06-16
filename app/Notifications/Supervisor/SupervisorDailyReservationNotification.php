@@ -49,8 +49,12 @@ class SupervisorDailyReservationNotification extends Notification
         return (new FirebaseMessage)
             ->withTitle($notification->title)
             ->withBody($notification->body)
-            ->withAdditionalData($notification->type)
-            ->withPriority('normal')->asNotification($notifiable->fcm_token);
+            ->withAdditionalData(
+                [
+                    'type' => $notification->type
+                ]
+            )
+            ->withPriority('high')->asNotification($notifiable->fcm_token);
     }
 
     /**

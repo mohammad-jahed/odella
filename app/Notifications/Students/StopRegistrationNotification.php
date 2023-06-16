@@ -47,7 +47,11 @@ class StopRegistrationNotification extends Notification
         return (new FirebaseMessage)
             ->withTitle($notification->title)
             ->withBody($notification->body)
-            ->withAdditionalData($notification->type)
+            ->withAdditionalData(
+                [
+                    'type' => $notification->type
+                ]
+            )
             ->withPriority('normal')->asNotification($notifiable->fcm_token);
     }
 }
