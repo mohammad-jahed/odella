@@ -12,20 +12,19 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
-//        $schedule->command('app:position-time-command')->everyThreeMinutes()->between('07:00', '12:00');
-//        $schedule->command('app:return-time-command')->everyFiveMinutes()->between('12:00', '18:00');
-//        $schedule->command('app:generate-trips-command')->weekly();
-//        $schedule->command('app:expired-subscription-command')->weekly();
-//        $schedule->command('app:stop-student-registration-command')->daily();
-//        $schedule->command('app:test-command')->everyMinute();
-
-        $schedule->command('app:position-time-command')->everyMinute();
-        $schedule->command('app:return-time-command')->everyMinute();
-        $schedule->command('app:generate-trips-command')->everyMinute();
-        $schedule->command('app:expired-subscription-command')->everyMinute();
-        $schedule->command('app:stop-student-registration-command')->everyMinute();
+        $schedule->command('app:position-time-command')->everyThreeMinutes()->between('07:00', '12:00');
+        $schedule->command('app:return-time-command')->everyFiveMinutes()->between('12:00', '18:00');
+        $schedule->command('app:generate-trips-command')->weekly();
+        $schedule->command('app:expired-subscription-command')->weekly();
+        $schedule->command('app:stop-student-registration-command')->daily();
         $schedule->command('app:test-command')->everyMinute();
+
+//        $schedule->command('app:position-time-command')->everyMinute();
+//        $schedule->command('app:return-time-command')->everyMinute();
+//        $schedule->command('app:generate-trips-command')->everyMinute();
+//        $schedule->command('app:expired-subscription-command')->everyMinute();
+//        $schedule->command('app:stop-student-registration-command')->everyMinute();
+//        $schedule->command('app:test-command')->everyMinute();
     }
 
     /**
