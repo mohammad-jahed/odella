@@ -683,7 +683,7 @@ class TripController extends Controller
          */
         $supervisor = auth()->user();
 
-        $dayOfWeek = Date::now()->dayOfWeek;
+        $dayOfWeek = Date::now()->dayOfWeekIso;
         /**
          * @var Day $day ;
          */
@@ -714,23 +714,43 @@ class TripController extends Controller
         $current_trip = null;
 
         if ($got_trip) {
+            if ($supervisor->hasRole('Supervisor')) {
+                $current_trip = Trip::query()->where('supervisor_id', $supervisor->id)
+                    ->where('status', TripStatus::GoTrip)
+                    ->whereHas('time', function ($query) use ($got_trip, $day) {
+                        $query->where('start', $got_trip->start)
+                            ->whereRaw("DayName(date) = '$day->name_en'");
+                    })->first();
+            } else {
+                $current_trip = Trip::query()->whereHas('users',
+                    fn(Builder $builder) => $builder->where('user_id', $supervisor->id)
+                )->where('status', TripStatus::GoTrip)
+                    ->whereHas('time', function ($query) use ($got_trip, $day) {
+                        $query->where('start', $got_trip->start)
+                            ->whereRaw("DayName(date) = '$day->name_en'");
+                    })->first();
+            }
 
-            $current_trip = Trip::query()->where('supervisor_id', $supervisor->id)
-                ->where('status', TripStatus::GoTrip)
-                ->whereHas('time', function ($query) use ($got_trip, $day) {
-                    $query->where('start', $got_trip->start)
-                        ->whereRaw("DayName(date) = '$day->name_en'");
-                })->first();
         }
 
         if ($return_trip) {
 
-            $current_trip = Trip::query()->where('supervisor_id', $supervisor->id)
-                ->where('status', TripStatus::ReturnTrip)
-                ->whereHas('time', function ($query) use ($return_trip, $day) {
-                    $query->where('start', $return_trip->end)
-                        ->whereRaw("DayName(date) = '$day->name_en'");
-                })->first();
+            if ($supervisor->hasRole('Supervisor')) {
+                $current_trip = Trip::query()->where('supervisor_id', $supervisor->id)
+                    ->where('status', TripStatus::ReturnTrip)
+                    ->whereHas('time', function ($query) use ($return_trip, $got_trip, $day) {
+                        $query->where('start', $return_trip->end)
+                            ->whereRaw("DayName(date) = '$day->name_en'");
+                    })->first();
+            } else {
+                $current_trip = Trip::query()->whereHas('users',
+                    fn(Builder $builder) => $builder->where('user_id', $supervisor->id)
+                )->where('status', TripStatus::ReturnTrip)
+                    ->whereHas('time', function ($query) use ($return_trip, $got_trip, $day) {
+                        $query->where('start', $return_trip->end)
+                            ->whereRaw("DayName(date) = '$day->name_en'");
+                    })->first();
+            }
         }
 
         if (!$current_trip) {
