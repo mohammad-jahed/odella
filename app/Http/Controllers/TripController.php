@@ -1053,5 +1053,4 @@ class TripController extends Controller
         return 'ok';
     }
 
-
 }

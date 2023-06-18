@@ -19,13 +19,22 @@ class TransportationLinesSeeder extends Seeder
                 'name_en' => 'Al Mazzah',
             ],
             [
-                'name_ar' => 'المساكن',
-                'name_en' => 'Al Masaken',
-            ],
-            [
                 'name_ar' => 'جرمانا',
                 'name_en' => 'Jaramanah',
             ],
+            [
+                'name_ar' => 'حاميش _ الميسات',
+                'name_en' => 'Hamesh _ Al Misaat',
+            ],
+
+            [
+                'name_ar' => 'شارع بغداد',
+                'name_en' => 'Bagdaad Street',
+            ],
+
+
+
+
         ]);
     }
 }

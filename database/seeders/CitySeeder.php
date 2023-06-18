@@ -22,10 +22,21 @@ class CitySeeder extends Seeder
                 'name_ar' => 'جرمانا ',
                 'name_en' => 'Jaramanah',
             ],
+
             [
                 'name_ar' => 'الشعلان',
                 'name_en' => 'Al shalaan',
             ],
+            [
+                'name_ar' => 'الشام القديمة',
+                'name_en' => 'Old Dimashq',
+            ],
+
+            [
+                'name_ar' => 'المالكة',
+                'name_en' => 'Al malqeh',
+            ],
+
         ]);
     }
 }

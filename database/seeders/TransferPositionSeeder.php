@@ -44,6 +44,7 @@ class TransferPositionSeeder extends Seeder
                 "lng" => 36.250098505988724,
                 "lat" => 33.49854128389337,
             ],
+
         ]);
 
         DB::table('shared_positions')->insert([
