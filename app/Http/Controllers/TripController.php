@@ -721,16 +721,16 @@ class TripController extends Controller
                         $query->where('start', $got_trip->start)
                             ->whereRaw("DayName(date) = '$day->name_en'");
                     })->first();
-            } else {
+            }
+            else {
                 $current_trip = Trip::query()->whereHas('users',
-                    fn(Builder $builder) => $builder->where('user_id', $supervisor->id)
+                    fn($query) => $query->where('user_id', $supervisor->id)
                 )->where('status', TripStatus::GoTrip)
                     ->whereHas('time', function ($query) use ($got_trip, $day) {
-                        $query->where('start', $got_trip->start)
+                        $query->where('start','<=', $got_trip->start)
                             ->whereRaw("DayName(date) = '$day->name_en'");
                     })->first();
             }
-
         }
 
         if ($return_trip) {
@@ -742,7 +742,8 @@ class TripController extends Controller
                         $query->where('start', $return_trip->end)
                             ->whereRaw("DayName(date) = '$day->name_en'");
                     })->first();
-            } else {
+            }
+            else {
                 $current_trip = Trip::query()->whereHas('users',
                     fn(Builder $builder) => $builder->where('user_id', $supervisor->id)
                 )->where('status', TripStatus::ReturnTrip)
