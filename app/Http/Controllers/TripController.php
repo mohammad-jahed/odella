@@ -854,15 +854,15 @@ class TripController extends Controller
 
     public function sendNotification()
     {
-        return Larafirebase::withTitle('Test Title')
-            ->withBody('Test body')
+        return Larafirebase::withTitle('Test Title1')
+            ->withBody('Test body1')
             ->withSound('default')
             ->withPriority('high')
             ->withAdditionalData([
                 'color' => '#rrggbb',
                 'badge' => 0,
             ])
-            ->sendNotification('fJp-Q8srT8KlYP-okTvNqy:APA91bFSd5bTw4DbmyQoeevsLkiaISgBQ_gJF8tz9qKeAq_wwj_6seErja-VQdOsjiDXvCr2fbSfzVuyya55qirsrEG9gNDmAAOFEbiI-Tnlis2EAVRlZ-Udqb957kgb5GUw0Vhpr4dv');
+            ->sendNotification('f3blYFjIc9TbMNmILvfYh2:APA91bHU9WqR7RHiLtwKU9oDeQXgk42TEkfW1_bA2MZGfxIAqzWTHWncCEum4aDGg5KkFsbpdB5sLh2OKWGhneS-ccgAXvXZiL5xPyG6l6RVI-RNfa-a7HcMT57Uc1Scl1bKvQv0W3kv');
     }
 
     public
