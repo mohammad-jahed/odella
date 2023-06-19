@@ -36,7 +36,7 @@ class PositionTimeCommand extends Command
 
         $date = Date::now()->toDateString();
 
-        $day = Date::now()->dayOfWeek;
+        $day = Date::now()->dayOfWeekIso;
 
         $programs = Program::query()
             ->where('day_id', $day)
