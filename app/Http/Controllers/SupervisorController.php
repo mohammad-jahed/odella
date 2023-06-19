@@ -38,7 +38,7 @@ class SupervisorController extends Controller
          */
         $user = auth()->user();
 
-        if ($user->can('View Supervisor')) {
+        if ($user->can('View Supervisor') || $user->hasRole('Employee')) {
 
             $supervisors = User::role('Supervisor')->paginate(10);
 
