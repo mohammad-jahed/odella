@@ -79,7 +79,7 @@ class TripController extends Controller
                 DB::beginTransaction();
 
                 $credentials = $request->validated();
-                $credentials['status'] = ($credentials['start'] > "07:00" && $credentials['start'] < "12:00") ? TripStatus::GoTrip : TripStatus::ReturnTrip;
+                $credentials['status'] = ($credentials['start'] >= "06:00" && $credentials['start'] < "12:00") ? TripStatus::GoTrip : TripStatus::ReturnTrip;
 
                 /**
                  * @var Time $time ;
