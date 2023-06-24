@@ -612,21 +612,30 @@ class TripController extends Controller
          */
         $auth = auth()->user();
 
-        $today = Carbon::parse(Carbon::now()); // Replace with your original date
+        $today = Carbon::now(); // Replace with your original date
         $beforeWeek = $today->copy()->subDays(7);
-        $evaluations = $auth->evaluations()->with(['trip'])->get();
-        $evaluations = EvaluationResource::collection($evaluations);
-        $trips = $auth->trips()->with(['time', 'busDriver'])
-            ->whereHas('time', fn(Builder $builder) => $builder->whereBetween('date', [$beforeWeek, $today])
-            )->get();
 
 
+        $trips = $auth->trips()->with(['time', 'busDriver'])->whereHas('time',
+            fn(Builder $builder) => $builder->whereBetween('date', [$beforeWeek, $today])
+        )->get();
         $trips = TripResource::collection($trips);
 
         $response = [
             'trips' => $trips,
-            'evaluations' => $evaluations
         ];
+
+        $evaluations = $auth->evaluations()->with(['trip'])->whereHas('trip',
+            fn(Builder $builder) => $builder->whereHas('time',
+                fn(Builder $builder) => $builder->whereBetween('date', [$beforeWeek, $today])
+            )
+        )->get();
+
+        if (!$evaluations->isEmpty()) {
+            $evaluations = EvaluationResource::collection($evaluations);
+            $response['evaluations'] = $evaluations;
+        }
+
 
         return $this->getJsonResponse($response, "Trips Fetched Successfully");
 
