@@ -273,18 +273,16 @@ class StudentController extends Controller
 
         $users = $trip->users()->whereHas('programs', function ($query) use ($position) {
             $query->where('transfer_position_id', $position->id)->where('confirmAttendance1', true);
-        })->with(['university'])->get();
+        })->get();
 
         if ($users->isEmpty()) {
 
             return $this->getJsonResponse(null, "There are no students in this position!");
         }
 
-        $usersArray = $users->toArray();
+        $users = UserResource::collection($users);
 
-        $usersArray['studentsNumber'] = $users->count();
-
-        return $this->getJsonResponse($usersArray, "Students fetched successfully");
+        return $this->getJsonResponse($users, "Students fetched successfully");
     }
 
 
