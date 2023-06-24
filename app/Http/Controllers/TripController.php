@@ -614,14 +614,21 @@ class TripController extends Controller
 
         $today = Carbon::parse(Carbon::now()); // Replace with your original date
         $beforeWeek = $today->copy()->subDays(7);
-
+        $evaluations = $auth->evaluations()->with(['trip'])->get();
+        $evaluations = EvaluationResource::collection($evaluations);
         $trips = $auth->trips()->with(['time', 'busDriver'])
             ->whereHas('time', fn(Builder $builder) => $builder->whereBetween('date', [$beforeWeek, $today])
             )->get();
 
+
         $trips = TripResource::collection($trips);
 
-        return $this->getJsonResponse($trips, "Trips Fetched Successfully");
+        $response = [
+            'trips' => $trips,
+            'evaluations' => $evaluations
+        ];
+
+        return $this->getJsonResponse($response, "Trips Fetched Successfully");
 
     }
 
@@ -721,13 +728,12 @@ class TripController extends Controller
                         $query->where('start', $got_trip->start)
                             ->whereRaw("DayName(date) = '$day->name_en'");
                     })->first();
-            }
-            else {
+            } else {
                 $current_trip = Trip::query()->whereHas('users',
                     fn($query) => $query->where('user_id', $supervisor->id)
                 )->where('status', TripStatus::GoTrip)
                     ->whereHas('time', function ($query) use ($got_trip, $day) {
-                        $query->where('start','<=', $got_trip->start)
+                        $query->where('start', '<=', $got_trip->start)
                             ->whereRaw("DayName(date) = '$day->name_en'");
                     })->first();
             }
@@ -742,8 +748,7 @@ class TripController extends Controller
                         $query->where('start', $return_trip->end)
                             ->whereRaw("DayName(date) = '$day->name_en'");
                     })->first();
-            }
-            else {
+            } else {
                 $current_trip = Trip::query()->whereHas('users',
                     fn(Builder $builder) => $builder->where('user_id', $supervisor->id)
                 )->where('status', TripStatus::ReturnTrip)
