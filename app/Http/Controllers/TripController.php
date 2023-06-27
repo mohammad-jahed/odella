@@ -621,21 +621,17 @@ class TripController extends Controller
         )->get();
         $trips = TripResource::collection($trips);
 
-        $response = [
-            'trips' => $trips,
-        ];
-
-        $evaluations = $auth->evaluations()->with(['trip'])->whereHas('trip',
+        $evaluation = $auth->evaluations()->with(['trip'])->whereHas('trip',
             fn(Builder $builder) => $builder->whereHas('time',
                 fn(Builder $builder) => $builder->whereBetween('date', [$beforeWeek, $today])
             )
-        )->get();
+        )->orderBy('id', 'desc')->first();
+        $evaluations = new EvaluationResource($evaluation);
 
-        if (!$evaluations->isEmpty()) {
-            $evaluations = EvaluationResource::collection($evaluations);
-            $response['evaluations'] = $evaluations;
-        }
-
+        $response = [
+            'trips' => $trips,
+            'evaluations' => $evaluations
+        ];
 
         return $this->getJsonResponse($response, "Trips Fetched Successfully");
 
