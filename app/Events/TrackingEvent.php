@@ -46,6 +46,6 @@ class TrackingEvent implements ShouldBroadcast
     }
     public function broadcastAs(): string
     {
-        return 'tracking';
+        return 'client-tracking';
     }
 }
