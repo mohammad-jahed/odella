@@ -621,12 +621,12 @@ class TripController extends Controller
         )->get();
         $trips = TripResource::collection($trips);
 
-        $evaluation = $auth->evaluations()->with(['trip'])->whereHas('trip',
+        $evaluations = $auth->evaluations()->with(['trip'])->whereHas('trip',
             fn(Builder $builder) => $builder->whereHas('time',
                 fn(Builder $builder) => $builder->whereBetween('date', [$beforeWeek, $today])
             )
-        )->orderBy('id', 'desc')->first();
-        $evaluations = new EvaluationResource($evaluation);
+        )->get();
+        $evaluations = EvaluationResource::collection($evaluations);
 
         $response = [
             'trips' => $trips,
@@ -776,7 +776,6 @@ class TripController extends Controller
         return $this->getJsonResponse($current_trip, "Trip Fetched Successfully");
 
     }
-
 
     public function getWeeklyTripsBeforeToday()
     {
