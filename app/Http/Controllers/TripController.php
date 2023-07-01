@@ -616,7 +616,7 @@ class TripController extends Controller
         $beforeWeek = $today->copy()->subDays(7);
 
 
-        $trips = $auth->trips()->with(['time', 'busDriver', 'tripUsers'])->whereHas('time',
+        $trips = $auth->trips()->with(['time', 'busDriver'])->whereHas('time',
             fn(Builder $builder) => $builder->whereBetween('date', [$beforeWeek, $today])
         )->get();
         $trips = TripResource::collection($trips);
@@ -831,7 +831,7 @@ class TripController extends Controller
             return $this->getJsonResponse(null, "You Have No Trips Today");
         }
 
-        $current_trip->load(['time', 'lines', 'transferPositions', 'users', 'tripUsers']);
+        $current_trip->load(['time', 'lines', 'transferPositions', 'users']);
 
         $current_trip = new TripResource($current_trip);
 
