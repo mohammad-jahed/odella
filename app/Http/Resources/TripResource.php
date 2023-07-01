@@ -34,7 +34,7 @@ class TripResource extends JsonResource
             'lines' => TransportationLineResource::collection($this->whenLoaded('lines')),
             'transferPositions' => TransferPositionResource::collection($this->whenLoaded('transferPositions')),
             'busDriver' => new BusDriverResource($this->whenLoaded('busDriver')),
-            'tripUsers' => $this->whenLoaded($this->tripUsers()->get()),
+            'tripUsers' => $this->whenLoaded('tripUsers'),
             'users' => UserResource::collection($this->whenLoaded('users')),
             'evaluations' => EvaluationResource::collection($this->whenLoaded('evaluations'))
         ];

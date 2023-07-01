@@ -54,7 +54,7 @@ class UserResource extends JsonResource
             "payments" => PayResource::collection($this->whenLoaded('pays')),
             "programs" => ProgramResource::collection($this->whenLoaded('programs')),
             "evaluations" => EvaluationResource::collection($this->whenLoaded('evaluations')),
-            "tripUsers" => $this->tripUsers()->get()
+            "tripUsers" => $this->whenLoaded('tripUsers')
         ];
     }
 }
