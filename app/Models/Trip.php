@@ -51,7 +51,7 @@ class Trip extends Model
         $user_ids = $this->users()->pluck('user_id');
 
         /**
-         * @var BusDriver $busDriver;
+         * @var BusDriver $busDriver ;
          */
         $busDriver = $this->busDriver()->first();
         $busCapacity = $busDriver->bus->capacity;
@@ -131,5 +131,11 @@ class Trip extends Model
     public function evaluations(): HasMany
     {
         return $this->hasMany(Evaluation::class);
+    }
+
+
+    public function tripUsers(): HasMany
+    {
+        return $this->hasMany(TripUser::class);
     }
 }

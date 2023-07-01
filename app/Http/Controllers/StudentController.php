@@ -280,6 +280,8 @@ class StudentController extends Controller
             return $this->getJsonResponse(null, "There are no students in this position!");
         }
 
+        $users->load(['tripUsers']);
+
         $users = UserResource::collection($users);
 
         return $this->getJsonResponse($users, "Students fetched successfully");
