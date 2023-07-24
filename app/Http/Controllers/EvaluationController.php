@@ -28,7 +28,8 @@ class EvaluationController extends Controller
 
         if ($user->can('View SupervisorEvaluation')) {
 
-            $evaluations = Evaluation::query()->paginate(10);
+            $evaluations = Evaluation::query()->with(['trip', 'user'])->paginate(10);
+
 
             if ($evaluations->isEmpty()) {
 
@@ -87,7 +88,7 @@ class EvaluationController extends Controller
         $auth = auth()->user();
 
         Gate::forUser($auth)->authorize('viewEvaluation', $evaluation);
-
+        $evaluation > with(['trip', 'user']);
         $evaluation = new EvaluationResource($evaluation);
 
         return $this->getJsonResponse($evaluation, "Evaluation Fetched Successfully");
