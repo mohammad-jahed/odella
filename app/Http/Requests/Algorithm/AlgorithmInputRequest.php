@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Algorithm;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -22,10 +23,17 @@ class AlgorithmInputRequest extends FormRequest
      */
     public function rules(): array
     {
+        /**
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+        $subscription_days = $auth->subscription->daysNumber;
         return [
             //
-            'goTime' => ['required', 'regex:/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/'],
-            'returnTime' => ['required', 'regex:/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/'],
+            'goTimes' => ['required', 'array', "size:$subscription_days"],
+            'goTimes.*' => ['required', 'date_format:H:i'],
+            'returnTimes' => ['required', 'array', "size:$subscription_days"],
+            'returnTimes.*' => ['required', 'date_format:H:i'],
         ];
     }
 }

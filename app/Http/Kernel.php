@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\ApiGuardMiddleware;
+use App\Http\Middleware\RefreshTokenMiddleware;
 use App\Http\Middleware\SetLanguage;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -42,7 +43,7 @@ class Kernel extends HttpKernel
 
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            ApiGuardMiddleware::class,
+            RefreshTokenMiddleware::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],

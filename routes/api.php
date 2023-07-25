@@ -375,6 +375,12 @@ Route::group([
          * Delete A Specific notifications by id.
          */
         Route::delete('user/notification/{notification}',[NotificationController::class, 'destroy']);
+
+        /**
+         *  Store Algorithm Inputs for user.
+         */
+
+        Route::post('algorithmInput', [\App\Http\Controllers\AlgorithmInputController::class, 'store']);
     });
 
 

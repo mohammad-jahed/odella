@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Messages;
+use App\Http\Requests\Algorithm\AlgorithmInputRequest;
 use App\Models\AlgorithmInput;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class AlgorithmInputController extends Controller
 {
@@ -18,9 +23,38 @@ class AlgorithmInputController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(AlgorithmInputRequest $request): JsonResponse
     {
         //
+        $data = $request->validated();
+        /**
+         * @var AlgorithmInput $algorithmInput ;
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+        if ($auth->hasRole('Student')) {
+            $response = [];
+            for ($i = 0; $i < count($data['goTimes']); $i++) {
+
+                $goTime = $data['goTimes'][$i];
+
+                $returnTime = $data['returnTimes'][$i];
+
+                $cred = [
+                    'goTime' => $goTime,
+                    'returnTime' => $returnTime
+                ];
+
+                $algorithmInput = AlgorithmInput::query()->create($cred);
+
+                $response[] = $algorithmInput;
+
+                $algorithmInput->users()->attach($auth->id);
+            }
+            return $this->getJsonResponse($response, "Data Added Successfully!!");
+        } else {
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
+        }
     }
 
     /**
