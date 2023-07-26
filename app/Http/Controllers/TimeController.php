@@ -7,6 +7,7 @@ use App\Http\Requests\Time\StoreTimeRequest;
 use App\Http\Requests\Time\UpdateTimeRequest;
 use App\Models\Time;
 use App\Models\User;
+use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\Response;
 
 class TimeController extends Controller
@@ -52,6 +53,8 @@ class TimeController extends Controller
 
             $data = $request->validated();
 
+            $data['day'] = Carbon::createFromFormat('Y-m-d', Carbon::parse($data['date'])->format('Y-m-d'))->format('l');
+
             $time = Time::query()->Create($data);
 
             return $this->getJsonResponse($time, "Time Created Successfully");
@@ -71,6 +74,7 @@ class TimeController extends Controller
          * @var User $user ;
          */
         $user = auth()->user();
+
 
         if ($user->can('View Time')) {
 
@@ -95,6 +99,9 @@ class TimeController extends Controller
         if ($user->can('Update Time')) {
 
             $data = $request->validated();
+
+            $data['day'] = Carbon::createFromFormat('Y-m-d', Carbon::parse($data['date'])->format('Y-m-d'))->format('l');
+
 
             $time->update($data);
 

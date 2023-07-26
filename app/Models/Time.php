@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,8 +19,12 @@ class Time extends Model
 
     protected $fillable = [
         'start',
-        'date'
+        'date',
+        'day'
     ];
+
+
+
 
     protected $hidden = [
         'created_at',

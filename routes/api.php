@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\AlgorithmInputController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BusController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\ClaimController;
 use App\Http\Controllers\DailyReservationController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DaysController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\EmployeeController;
@@ -372,7 +374,10 @@ Route::group([
          *  Store Algorithm Inputs for user.
          */
 
-        Route::post('algorithmInput', [\App\Http\Controllers\AlgorithmInputController::class, 'store']);
+        Route::post('algorithmInput', [AlgorithmInputController::class, 'store']);
+
+        Route::get('dashboard/studentsAndTrips', [DashboardController::class, 'studentsAndTripsByDayAndUniversity']);
+        Route::get('dashboard/studentsByLine', [DashboardController::class, 'studentsByLine']);
     });
 
 

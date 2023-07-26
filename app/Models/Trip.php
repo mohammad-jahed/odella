@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Date;
  * @property mixed $evaluations
  * @method isEmpty()
  */
-class Trip extends Model
+class   Trip extends Model
 {
 
     use SoftDeletes;
@@ -51,7 +51,7 @@ class Trip extends Model
         $user_ids = $this->users()->pluck('user_id');
 
         /**
-         * @var BusDriver $busDriver;
+         * @var BusDriver $busDriver ;
          */
         $busDriver = $this->busDriver()->first();
         $busCapacity = $busDriver->bus->capacity;
