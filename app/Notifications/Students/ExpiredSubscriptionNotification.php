@@ -45,7 +45,7 @@ class ExpiredSubscriptionNotification extends Notification
             'user_id' => $notifiable->id,
             'title' => 'Your Subscription About to Expired!',
             'type' => NotificationType::ExpiredSubscription,
-            'body' => 'Your Subscription Will Expired in' . $this->date . ' Days',
+            'body' => 'Your Subscription Will Expired in ' . $this->date . ' Days',
         ]);
 
         return (new FirebaseMessage)

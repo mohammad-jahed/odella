@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\Status;
 use App\Models\User;
 use App\Notifications\Students\ExpiredSubscriptionNotification;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Date;
 
@@ -29,18 +31,14 @@ class ExpiredSubscriptionCommand extends Command
     public function handle(): void
     {
         /**
-         * @var User $students
+         * @var User $student
          */
-        $students = User::role('Student')
-            ->where('expiredSubscriptionDate', '<=', Date::now()->subMonth())
-            ->get();
+        $students = User::role('Student')->where('status', Status::Active)->get();
 
         foreach ($students as $student) {
-
             $date = Date::now()->diffInDays($student->expiredSubscriptionDate, false);
 
             if ($date <= 15) {
-
                 $student->notify(new ExpiredSubscriptionNotification($date));
             }
         }

@@ -132,4 +132,10 @@ class   Trip extends Model
     {
         return $this->hasMany(Evaluation::class);
     }
+
+
+    public function tripUsers(): HasMany
+    {
+        return $this->hasMany(TripUser::class);
+    }
 }

@@ -79,7 +79,7 @@ class TripController extends Controller
                 DB::beginTransaction();
 
                 $credentials = $request->validated();
-                $credentials['status'] = ($credentials['start'] > "07:00" && $credentials['start'] < "11:00") ? TripStatus::GoTrip : TripStatus::ReturnTrip;
+                $credentials['status'] = ($credentials['start'] >= "06:00" && $credentials['start'] < "12:00") ? TripStatus::GoTrip : TripStatus::ReturnTrip;
 
                 /**
                  * @var Time $time ;
@@ -618,17 +618,91 @@ class TripController extends Controller
          */
         $auth = auth()->user();
 
-        $today = Carbon::parse(Carbon::now()); // Replace with your original date
+        $today = Carbon::now(); // Replace with your original date
         $beforeWeek = $today->copy()->subDays(7);
 
-        $trips = $auth->trips()->with(['time', 'busDriver'])
-            ->whereHas('time', fn(Builder $builder) => $builder->whereBetween('date', [$beforeWeek, $today])
-            )->get();
 
+        $trips = $auth->trips()->with(['time', 'busDriver'])->whereHas('time',
+            fn(Builder $builder) => $builder->whereBetween('date', [$beforeWeek, $today])
+        )->get();
         $trips = TripResource::collection($trips);
 
-        return $this->getJsonResponse($trips, "Trips Fetched Successfully");
+        $evaluations = $auth->evaluations()->with(['trip'])->whereHas('trip',
+            fn(Builder $builder) => $builder->whereHas('time',
+                fn(Builder $builder) => $builder->whereBetween('date', [$beforeWeek, $today])
+            )
+        )->get();
+        $evaluations = EvaluationResource::collection($evaluations);
 
+        $response = [
+            'trips' => $trips,
+            'evaluations' => $evaluations
+        ];
+
+        return $this->getJsonResponse($response, "Trips Fetched Successfully");
+
+    }
+
+    public function current_trips(SupervisorTripRequest $request): JsonResponse
+    {
+        $dayOfWeek = Date::now()->dayOfWeekIso;
+
+        /**
+         * @var Day $day;
+         */
+        $day = Day::query()->find($dayOfWeek);
+
+        $got_trip = Program::query()
+            ->where('day_id', $dayOfWeek)
+            ->where('start', '!=', '00:00:00')
+            ->whereTime('start', '<=', $request->time)
+            ->whereTime('end', '>', $request->time)
+            ->orWhere('end', '=', '00:00:00')
+            ->get();
+
+        $return_trip = Program::query()
+            ->where('day_id', $dayOfWeek)
+            ->where('end', '!=', '00:00:00')
+            ->whereTime('end', '<=', $request->time)
+            ->get();
+
+        $current_trips = collect();
+
+        foreach ($got_trip as $trip) {
+            $current_trip = Trip::query()
+                ->where('status', TripStatus::GoTrip)
+                ->whereHas('time', function ($query) use ($trip, $day) {
+                    $query->where('start', $trip->start)
+                        ->whereRaw("DayName(date) = '$day->name_en'");
+                })->first();
+
+            if ($current_trip) {
+                $current_trips->push($current_trip);
+            }
+        }
+
+        foreach ($return_trip as $trip) {
+            $current_trip = Trip::query()
+                ->where('status', TripStatus::ReturnTrip)
+                ->whereHas('time', function ($query) use ($trip, $day) {
+                    $query->where('start', $trip->end)
+                        ->whereRaw("DayName(date) = '$day->name_en'");
+                })->first();
+
+            if ($current_trip) {
+                $current_trips->push($current_trip);
+            }
+        }
+
+        if ($current_trips->isEmpty()) {
+            return $this->getJsonResponse(null, "There are no current trips for any user");
+        }
+
+        $current_trips->load(['time', 'lines', 'transferPositions', 'users']);
+
+        $current_trips = TripResource::collection($current_trips);
+
+        return $this->getJsonResponse($current_trips, "Current trips fetched successfully");
     }
 
     public function getGoTrips(): JsonResponse
@@ -770,7 +844,6 @@ class TripController extends Controller
         return $this->getJsonResponse($current_trip, "Trip Fetched Successfully");
 
     }
-
 
     public function getWeeklyTripsBeforeToday()
     {

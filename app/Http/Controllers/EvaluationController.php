@@ -10,6 +10,7 @@ use App\Models\Evaluation;
 use App\Models\Trip;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,16 +60,26 @@ class EvaluationController extends Controller
         if ($user->can('Rating Supervisor')) {
 
             $data = $request->validated();
+            /**
+             * @var Evaluation $currentEvaluation ;
+             */
+
 
             $data['user_id'] = $user->id;
-
             $data['trip_id'] = $trip->id;
 
-            $evaluation = Evaluation::query()->create($data);
+            $currentEvaluation = $user->evaluations()->whereHas('trip',
+                fn(Builder $builder) => $builder->where('trip_id', $data['trip_id'])
+            )->first();
+            if ($currentEvaluation) {
+                $currentEvaluation->update($data);
+            } else {
+                $currentEvaluation = Evaluation::query()->create($data);
+            }
 
-            $evaluation = new EvaluationResource($evaluation);
+            $evaluation = new EvaluationResource($currentEvaluation);
+            return $this->getJsonResponse($evaluation, "Evaluation Created Successfully");
 
-            return $this->getJsonResponse($evaluation, "Evaluations Created Successfully");
 
         } else {
 

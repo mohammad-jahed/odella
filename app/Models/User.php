@@ -171,10 +171,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Notification::class);
     }
 
-    public function algorithmInputs(): BelongsToMany
+
+    public function algorithm_inputs(): BelongsTo
     {
-        return $this->belongsToMany(AlgorithmInput::class, 'algorithm_input_users', 'user_id', 'algorithm_input_id');
+        return $this->belongsTo(AlgorithmInput::class, 'algorithm_inputs_id');
     }
-
-
 }
