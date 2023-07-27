@@ -13,7 +13,7 @@ class DashboardController extends Controller
 {
     //
 
-    public function studentsAndTripsByDayAndUniversity(): JsonResponse
+    public function studentsByDayAndUniversity(): JsonResponse
     {
         /**
          * @var User $auth ;
@@ -27,14 +27,42 @@ class DashboardController extends Controller
                 ->join('trips', 'trip_users.trip_id', '=', 'trips.id')
                 ->join('times', 'trips.time_id', '=', 'times.id')
                 ->select('universities.name_en as university', 'times.day as day',
-                    DB::raw('count(distinct users.id) as num_users'),
-                    DB::raw('count(distinct trips.id) as num_trips'))
+                    DB::raw('count(distinct users.id) as num_users')
+                )
                 ->groupBy('universities.name_en', 'times.day')
                 ->orderBy('universities.name_en', 'asc')
                 ->orderBy('times.day', 'asc')
                 ->get();
 
             return $this->getJsonResponse($usersAndTrips, 'Data Fetched Successfully');
+
+        } else {
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
+        }
+    }
+
+
+    public function tripsByDayAndUniversities(): JsonResponse
+    {
+        /**
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+        if ($auth->hasRole('Admin')) {
+
+            $trips = User::role('Student')
+                ->join('universities', 'users.university_id', '=', 'universities.id')
+                ->join('trip_users', 'users.id', '=', 'trip_users.user_id')
+                ->join('trips', 'trip_users.trip_id', '=', 'trips.id')
+                ->join('times', 'trips.time_id', '=', 'times.id')
+                ->select('universities.name_en as university', 'times.day as day',
+                    DB::raw('count(distinct trips.id) as num_trips'))
+                ->groupBy('universities.name_en', 'times.day')
+                ->orderBy('universities.name_en', 'asc')
+                ->orderBy('times.day', 'asc')
+                ->get();
+
+            return $this->getJsonResponse($trips, 'Data Fetched Successfully');
 
         } else {
             abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);

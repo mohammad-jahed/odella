@@ -384,7 +384,14 @@ Route::group([
 
         Route::post('algorithmInput', [AlgorithmInputController::class, 'store']);
 
-        Route::get('dashboard/studentsAndTrips', [DashboardController::class, 'studentsAndTripsByDayAndUniversity']);
+        /**
+         * Dashboard
+         */
+
+        Route::get('dashboard/studentsByDayAndUniversities', [DashboardController::class, 'studentsByDayAndUniversity']);
+
+        Route::get('dashboard/tripsByDayAndUniversities', [DashboardController::class, 'tripsByDayAndUniversities']);
+
         Route::get('dashboard/studentsByLine', [DashboardController::class, 'studentsByLine']);
     });
 
