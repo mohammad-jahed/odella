@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Messages;
+use App\Models\Trip;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
@@ -98,6 +98,36 @@ class DashboardController extends Controller
             abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
 
+    }
 
+    public function tripClaimStatistics()
+    {
+        /**
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+
+        if ($auth->hasRole('Admin')) {
+
+//            $tripClaims = Trip::query()->withCount('claims')->get(['id', 'claims_count']);
+//
+//            return $this->getJsonResponse($tripClaims, 'Data Fetched Successfully');
+
+            $tripClaims = Trip::with(['time', 'claims' => function ($query) {
+                $query->selectRaw('count(*) as claim_count, trip_id')->groupBy('trip_id');
+            }])->get(['id']);
+
+            $result = $tripClaims->map(function ($trip) {
+                return [
+                    'time' => $trip->time->start,
+                    'claims_count' => $trip->claims->isEmpty() ? 0 : $trip->claims->first()->claim_count,
+                ];
+            });
+
+            return $this->getJsonResponse($result, 'Data Fetched Successfully');
+
+        } else {
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
+        }
     }
 }
