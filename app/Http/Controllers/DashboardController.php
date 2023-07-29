@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\GuestStatus;
 use App\Enums\Messages;
 use App\Models\Trip;
 use App\Models\User;
@@ -88,8 +89,8 @@ class DashboardController extends Controller
                 ->select('universities.name_en as university', 'transportation_lines.name_en as name',
                     DB::raw('count(distinct users.id) as num_users'))
                 ->groupBy('universities.name_en', 'transportation_lines.name_en')
-                ->orderBy('universities.name_en', 'asc')
-                ->orderBy('transportation_lines.name_en', 'asc')
+                ->orderBy('universities.name_en')
+                ->orderBy('transportation_lines.name_en')
                 ->get();
 
             return $this->getJsonResponse($users, 'Data Fetched Successfully');
@@ -109,13 +110,10 @@ class DashboardController extends Controller
 
         if ($auth->hasRole('Admin')) {
 
-//            $tripClaims = Trip::query()->withCount('claims')->get(['id', 'claims_count']);
-//
-//            return $this->getJsonResponse($tripClaims, 'Data Fetched Successfully');
-
-            $tripClaims = Trip::with(['time', 'claims' => function ($query) {
+            $tripClaims = Trip::query()->with(['time', 'claims' => function ($query) {
                 $query->selectRaw('count(*) as claim_count, trip_id')->groupBy('trip_id');
-            }])->get(['id']);
+            }])->get();
+
 
             $result = $tripClaims->map(function ($trip) {
                 return [
@@ -129,5 +127,60 @@ class DashboardController extends Controller
         } else {
             abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
+    }
+
+    public function tripEvaluationsStatistics(): JsonResponse
+    {
+
+        /**
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+
+        if (!$auth->hasRole('Admin')) {
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
+        }
+        $tripEvaluations = Trip::query()->with(['time', 'evaluations' => function ($query) {
+            $query->selectRaw('count(*) as evaluation_count, trip_id')->groupBy('trip_id');
+        }])->get();
+
+
+        $result = $tripEvaluations->map(function ($trip) {
+            return [
+                'time' => $trip->time->start,
+                'evaluations_count' => $trip->evaluations->isEmpty() ? 0 : $trip->evaluations->first()->evaluation_count,
+            ];
+        });
+
+        return $this->getJsonResponse($result, 'Data Fetched Successfully');
+
+    }
+
+    public function dailyReservationStatistics(): JsonResponse
+    {
+        /**
+         * @var User $auth ;
+         */
+        $auth = auth()->user();
+
+        if (!$auth->hasRole('Admin')) {
+            abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
+        }
+
+        $tripDailyReservations = Trip::query()->with(['time',
+            'dailyReservations' => function ($query) {
+                $query->selectRaw('count(*) as reservations_count, trip_id')->where('guestRequestStatus', '=', GuestStatus::Approved)->groupBy('trip_id');
+            }
+        ])->get();
+
+        $result = $tripDailyReservations->map(function ($trip) {
+            return [
+                'time' => $trip->time->start,
+                'reservations_count' => $trip->dailyReservations->isEmpty() ? 0 : $trip->dailyReservations->first()->reservations_count,
+            ];
+        });
+
+        return $this->getJsonResponse($result, 'Data Fetched Successfully');
+
     }
 }

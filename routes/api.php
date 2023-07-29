@@ -395,6 +395,13 @@ Route::group([
         Route::get('dashboard/studentsByLine', [DashboardController::class, 'studentsByLine']);
 
         Route::get('dashboard/tripClaimStatistics', [DashboardController::class, 'tripClaimStatistics']);
+
+        Route::get('dashboard/tripEvaluationsStatistics', [DashboardController::class, 'tripEvaluationsStatistics']);
+
+        Route::get('dashboard/tripReservationsStatistics', [DashboardController::class, 'dailyReservationStatistics']);
+
+
+
     });
 
 

@@ -111,9 +111,9 @@ class   Trip extends Model
 
     }
 
-    public function reservations(): HasMany
+    public function dailyReservations(): HasMany
     {
-        return $this->hasMany(DailyReservation::class, "daily_reservation_id");
+        return $this->hasMany(DailyReservation::class);
     }
 
 
