@@ -148,6 +148,10 @@ Route::group([
      */
     Route::post('/currentTrips', [TripController::class, 'current_trips']);
 
+    /**
+     * Get all today trips for daily reservation.
+     */
+    Route::post('/trip/todayTrips', [TripController::class, 'todayTrips']);
 
     /**
      * Resource routes for days.
@@ -307,10 +311,16 @@ Route::group([
          * Get the current trip for the current supervisor.
          */
         Route::post('/supervisor/trip',[TripController::class,'supervisor_current_trip']);
+
         /**
-         * Get all weekly trips before today
+         * Get all weekly trips before today.
          */
         Route::get('/trip/weeklyTripsBeforeToday', [TripController::class, 'getWeeklyTripsBeforeToday']);
+
+//        /**
+//         * Get all today trips for daily reservation.
+//         */
+//        Route::post('/trip/todayTrips', [TripController::class, 'todayTrips']);
 
 
         /**

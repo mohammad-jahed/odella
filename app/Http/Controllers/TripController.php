@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\Messages;
 use App\Enums\TripStatus;
+use App\Http\Requests\Guest\TodayTripsRequest;
 use App\Http\Requests\Student\StoreTripStudentsRequest;
 use App\Http\Requests\Supervisor\SupervisorTripRequest;
 use App\Http\Requests\Trip\StoreTripRequest;
@@ -866,6 +867,31 @@ class TripController extends Controller
         } else {
             abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
+    }
+
+    public function todayTrips(TodayTripsRequest $request): JsonResponse
+    {
+        $dayOfWeek = Date::now()->dayOfWeekIso;
+        /**
+         * @var Day $day ;
+         */
+        $day = Day::query()->find($dayOfWeek);
+
+        $today_trips = Trip::query()->whereHas('time', function ($query) use ($day, $request) {
+            $query->where('start','<=', $request->time)
+                    ->whereRaw("DayName(date) = '$day->name_en'");
+            })->get();
+
+        if ($today_trips->isEmpty()) {
+
+            return $this->getJsonResponse(null, "There are No Trips Today");
+        }
+
+        $today_trips->load(['time', 'lines', 'transferPositions']);
+
+        $today_trips = TripResource::collection($today_trips);
+
+        return $this->getJsonResponse($today_trips, "Trips Fetched Successfully");
     }
 
     public function generateTrips(GenerateTripsRequest $request): JsonResponse
