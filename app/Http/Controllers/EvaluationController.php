@@ -8,6 +8,7 @@ use App\Http\Requests\Evaluations\UpdateEvaluationRequest;
 use App\Http\Resources\EvaluationResource;
 use App\Models\Evaluation;
 use App\Models\Trip;
+use App\Models\TripUser;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
@@ -71,15 +72,29 @@ class EvaluationController extends Controller
             $currentEvaluation = $user->evaluations()->whereHas('trip',
                 fn(Builder $builder) => $builder->where('trip_id', $data['trip_id'])
             )->first();
+
             if ($currentEvaluation) {
                 $currentEvaluation->update($data);
-            } else {
-                $currentEvaluation = Evaluation::query()->create($data);
+            }
+            else {
+                $AttendanceCheck = TripUser::query()->where('user_id',$user->id)
+                    ->where('trip_id', $trip->id)
+                    ->where('studentAttendance', 1)
+                    ->first();
+
+                if ($AttendanceCheck)
+                {
+                    $currentEvaluation = Evaluation::query()->create($data);
+                }
+                else{
+
+                    return $this->getJsonResponse(null, "you did not confirmed your attendance in this trip!", 0);
+                }
             }
 
             $evaluation = new EvaluationResource($currentEvaluation);
-            return $this->getJsonResponse($evaluation, "Evaluation Created Successfully");
 
+            return $this->getJsonResponse($evaluation, "Evaluation Created Successfully");
 
         } else {
 
@@ -99,7 +114,9 @@ class EvaluationController extends Controller
         $auth = auth()->user();
 
         Gate::forUser($auth)->authorize('viewEvaluation', $evaluation);
+
         $evaluation > with(['trip', 'user']);
+
         $evaluation = new EvaluationResource($evaluation);
 
         return $this->getJsonResponse($evaluation, "Evaluation Fetched Successfully");
