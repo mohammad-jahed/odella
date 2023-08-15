@@ -18,7 +18,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int)$user->id === (int)$id;
 });
 
-//Broadcast::channel('tracking.{trip_id}', function (User $user, $trip_id) {
-////    return !$user->trips()->where('id', $trip_id)->get()->isEmpty();
-//    return true;
-//});
+Broadcast::channel('tracking.{trip_id}', function (User $user, $trip_id) {
+//    return !$user->trips()->where('id', $trip_id)->get()->isEmpty();
+    return true;
+});
