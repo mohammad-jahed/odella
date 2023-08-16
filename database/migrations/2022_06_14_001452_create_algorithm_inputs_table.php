@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('algorithm_inputs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('day_id')->constrained()->cascadeOnDelete();
             $table->time('goTime');
             $table->time('returnTime');
             $table->timestamps();
