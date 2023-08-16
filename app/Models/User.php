@@ -176,4 +176,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo(AlgorithmInput::class, 'algorithm_inputs_id');
     }
+
+    public function tripUsers(): HasMany
+    {
+        return $this->hasMany(TripUser::class);
+    }
 }

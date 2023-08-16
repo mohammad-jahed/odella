@@ -838,7 +838,14 @@ class TripController extends Controller
             return $this->getJsonResponse(null, "You Have No Trips Today");
         }
 
-        $current_trip->load(['time', 'lines', 'transferPositions', 'users']);
+        $current_trip->load([
+            'time',
+            'lines',
+            'transferPositions',
+            'users.tripUsers' => function($query) use ($current_trip) {
+                return $query->where('trip_id', $current_trip->id);
+            }
+        ]);
 
         $current_trip = new TripResource($current_trip);
 
