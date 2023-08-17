@@ -394,6 +394,8 @@ Route::group([
 
         Route::post('algorithmInput', [AlgorithmInputController::class, 'store']);
 
+        Route::post('admininput',[TripController::class, 'generateTrips']);
+
         /**
          * Dashboard
          */

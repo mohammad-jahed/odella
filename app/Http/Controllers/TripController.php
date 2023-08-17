@@ -12,6 +12,7 @@ use App\Http\Requests\Trip\UpdateTripRequest;
 use App\Http\Requests\Trips\GenerateTripsRequest;
 use App\Http\Resources\EvaluationResource;
 use App\Http\Resources\TripResource;
+use App\Models\AlgorithmInput;
 use App\Models\Day;
 use App\Models\Program;
 use App\Models\Time;
@@ -918,40 +919,54 @@ class TripController extends Controller
         $initialReturnTrips = [
             new \DateTime('12:00'),
             new \DateTime('12:30'),
-            new \DateTime('01:00'),
-            new \DateTime('01:30'),
-            new \DateTime('02:00'),
-            new \DateTime('02:30'),
-            new \DateTime('03:00'),
+            new \DateTime('13:00'),
+            new \DateTime('13:30'),
+            new \DateTime('14:00'),
+            new \DateTime('14:30'),
+            new \DateTime('15:00'),
         ];
         $goTripsResponse = [];
+
         foreach ($initialGoTrips as $goTimeTrip) {
             $goTimeTrip = $goTimeTrip->format('h:i A');
             $usersNumber = User::query()->whereHas('algorithm_inputs',
                 fn(Builder $builder) => $builder->whereTime('goTime', $goTimeTrip)
+                    ->where('day_id', $data['day_id'])
             )->count();
+
             $goTripsResponse[$goTimeTrip] = $usersNumber;
         }
 
-        sort($goTripsResponse);
-        for ($i = sizeof($goTripsResponse) - 1; $i > sizeof($goTripsResponse) - $data['goTripsNumber']; $i--) {
-            $goTripsResponse[$i - $data['goTripsNumber']] += $goTripsResponse[$i];
-        }
-        $nGoTrip = array_slice($goTripsResponse, 0, $data['goTripsNumber']);
+        arsort($goTripsResponse);
+
+        $slicedArray = array_slice($goTripsResponse, 0, $data['goTripsNumber'], true);
+        $sumBeyondN = array_sum(array_slice($goTripsResponse,  $data['goTripsNumber']));
+        end($slicedArray);
+        $key = key($slicedArray);
+        $slicedArray[$key] += $sumBeyondN;
+        $nGoTrip = $slicedArray;
+
 
         $returnTripsResponse = [];
+
         foreach ($initialReturnTrips as $returnTimeTrip) {
-            $returnTimeTrip = $returnTimeTrip->format('h:i P');
-            $usersNumber = User::query()->whereHas('algorithm_inputs',
-                fn(Builder $builder) => $builder->whereTime('returnTime', $returnTimeTrip)
+            $returnTimeTrip = $returnTimeTrip->format('H:i:s');
+            $usersNumber1 = User::query()->whereHas('algorithm_inputs',
+                fn(Builder $builder) => $builder->where('returnTime', $returnTimeTrip)
+                    ->where('day_id', $data['day_id'])
             )->count();
-            $returnTripsResponse[$returnTimeTrip] = $usersNumber;
+
+            $returnTripsResponse[$returnTimeTrip] = $usersNumber1;
         }
-        for ($i = sizeof($returnTripsResponse) - 1; $i > sizeof($returnTripsResponse) - $data['returnTripsNumber']; $i--) {
-            $returnTripsResponse[$i - $data['goTripsNumber']] += $returnTripsResponse[$i];
-        }
-        sort($returnTripsResponse);
-        $mReturnTrip = array_slice($returnTripsResponse, 0, $data['returnTripsNumber']);
+
+        arsort($returnTripsResponse);
+
+        $slicedArray1 = array_slice($returnTripsResponse, 0, $data['returnTripsNumber'], true);
+        $sumBeyondN1 = array_sum(array_slice($returnTripsResponse,  $data['returnTripsNumber']));
+        end($slicedArray1);
+        $key1 = key($slicedArray1);
+        $slicedArray1[$key1] += $sumBeyondN1;
+        $mReturnTrip = $slicedArray1;
 
         $response = [
             'goTrips' => $nGoTrip,

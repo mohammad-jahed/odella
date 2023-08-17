@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Trips;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class GenerateTripsRequest extends FormRequest
 {
@@ -24,7 +25,8 @@ class GenerateTripsRequest extends FormRequest
         return [
             //
             'goTripsNumber' => ['required', 'numeric'],
-            'returnTripsNumber' => ['required', 'numeric']
+            'returnTripsNumber' => ['required', 'numeric'],
+            'day_id' => ['required', Rule::exists('days', 'id')]
         ];
     }
 }
