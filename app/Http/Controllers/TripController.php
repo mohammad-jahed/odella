@@ -973,7 +973,22 @@ class TripController extends Controller
             'returnTrips' => $mReturnTrip
         ];
 
-        return $this->getJsonResponse($response, "Suggestions for trip generation created successfully");
+        $newData = [];
+
+        foreach ($response as $tripType => $trips) {
+            $newTrips = [];
+
+            foreach ($trips as $time => $studentNumber) {
+                $newTrips[] = [
+                    "time" => $time,
+                    "studentNumber" => $studentNumber
+                ];
+            }
+
+            $newData[$tripType] = $newTrips;
+        }
+
+        return $this->getJsonResponse($newData, "Suggestions for trip generation created successfully");
     }
 
 
