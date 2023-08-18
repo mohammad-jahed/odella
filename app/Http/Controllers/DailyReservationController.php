@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\GuestStatus;
 use App\Enums\Messages;
 use App\Http\Requests\Guest\DailyReservationRequest;
+use App\Http\Requests\Guest\MessageGuestRequest;
 use App\Http\Resources\DailyReservationResource;
 use App\Models\DailyReservation;
 use App\Models\Trip;
@@ -101,5 +102,14 @@ class DailyReservationController extends Controller
         } else {
             abort(Response::HTTP_UNAUTHORIZED, Messages::UNAUTHORIZED);
         }
+    }
+
+
+
+    public function messageGuest(MessageGuestRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $dr = DailyReservation::query()->where('phoneNumber', $data['phoneNumber'])->first();
+        return $this->getJsonResponse($dr, 'Success');
     }
 }
