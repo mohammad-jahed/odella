@@ -40,9 +40,12 @@ class AlgorithmInputController extends Controller
 
                 $returnTime = $data['returnTimes'][$i];
 
+                $day_id = $data['day_ids'][$i];
+
                 $cred = [
                     'goTime' => $goTime,
-                    'returnTime' => $returnTime
+                    'returnTime' => $returnTime,
+                    'day_id' => $day_id
                 ];
 
                 $algorithmInput = AlgorithmInput::query()->create($cred);

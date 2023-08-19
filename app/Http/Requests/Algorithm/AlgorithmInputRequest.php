@@ -34,7 +34,7 @@ class AlgorithmInputRequest extends FormRequest
             'goTimes.*' => ['required', 'date_format:H:i'],
             'returnTimes' => ['required', 'array', "size:$subscription_days"],
             'returnTimes.*' => ['required', 'date_format:H:i'],
-            'day_ids' =>['required','array'],
+            'day_ids' =>['required','array',"size:$subscription_days"],
             'day_ids.*' => ['required',Rule::exists('days', 'id')],
         ];
     }
