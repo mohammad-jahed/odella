@@ -110,6 +110,10 @@ class DailyReservationController extends Controller
     {
         $data = $request->validated();
         $dr = DailyReservation::query()->where('phoneNumber', $data['phoneNumber'])->latest()->first();
+
+        if($dr == null) {
+            return $this->getJsonResponse($dr, 'Sorry, you did not send a daily reservation', 0);
+        }
         return $this->getJsonResponse($dr, 'Success');
     }
 }
