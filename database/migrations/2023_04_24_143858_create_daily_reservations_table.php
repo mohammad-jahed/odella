@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('daily_reservations', function (Blueprint $table) {
             $table->id();
             $table->string("name");
-            $table->string("phoneNumber")->unique();
+            $table->string("phoneNumber");
             $table->foreignId('transfer_position_id')->constrained()->cascadeOnDelete();
             $table->foreignId('trip_id')->constrained()->cascadeOnDelete();
             $table->tinyInteger('guestRequestStatus')->default(0);

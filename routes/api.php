@@ -157,6 +157,8 @@ Route::group([
      * Resource routes for days.
      */
     Route::apiResource('/days', DaysController::class);
+    Route::post('/dailyReservations/message', [DailyReservationController::class, 'messageGuest']);
+
 
 
 // Authenticated routes
@@ -236,7 +238,6 @@ Route::group([
          * Retrieves the daily reservation for a specific trip.
          */
         Route::get('/dailyReservations/trips/{trip}', [DailyReservationController::class, 'getDailyReservation']);
-        Route::post('/dailyReservations/message', [DailyReservationController::class, 'messageGuest']);
         /**
          * Resource routes for buses.
          */

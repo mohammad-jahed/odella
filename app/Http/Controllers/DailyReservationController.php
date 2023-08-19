@@ -109,7 +109,7 @@ class DailyReservationController extends Controller
     public function messageGuest(MessageGuestRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $dr = DailyReservation::query()->where('phoneNumber', $data['phoneNumber'])->first();
+        $dr = DailyReservation::query()->where('phoneNumber', $data['phoneNumber'])->latest()->first();
         return $this->getJsonResponse($dr, 'Success');
     }
 }
